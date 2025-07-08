@@ -55,7 +55,7 @@ export function SitemapSeoSettingsForm({ settings }: Props) {
     google_tag_manager_id: settings?.google_tag_manager_id || '',
     robots_txt: settings?.robots_txt || '',
     sitemap_schedule: settings?.sitemap_schedule || 'daily',
-    sitemap_enabled: settings?.sitemap_enabled ?? true,
+    sitemap_enabled: settings?.sitemap_enabled ?? false,
     sitemap_include_properties: settings?.sitemap_include_properties ?? true,
     sitemap_include_users: settings?.sitemap_include_users ?? false,
     sitemap_include_blog: settings?.sitemap_include_blog ?? true,
