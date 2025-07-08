@@ -1,0 +1,117 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Property } from '@/types/property';
+import { useRouter } from 'next/navigation';
+import MobilePropertyHeroGallery from '@/components/mobile/property/MobilePropertyHeroGallery';
+import MobilePropertyInfoCard from '@/components/mobile/property/MobilePropertyInfoCard';
+import MobilePropertyDescription from '@/components/mobile/property/MobilePropertyDescription';
+import MobilePropertyConfigurations from '@/components/mobile/property/MobilePropertyConfigurations';
+import MobilePropertyFeatures from '@/components/mobile/property/MobilePropertyFeatures';
+import MobilePropertyLocationMap from '@/components/mobile/property/MobilePropertyLocationMap';
+
+import MobileListingBySection from '@/components/mobile/property/MobileListingBySection';
+import MobileSimilarProperties from '@/components/mobile/property/MobileSimilarProperties';
+import MobileEnquiryModal from '@/components/mobile/property/MobileEnquiryModal';
+
+interface MobilePropertyPageClientProps {
+  property: Property;
+  similarProperties: Property[];
+}
+
+export default function MobilePropertyPageClient({ 
+  property, 
+  similarProperties 
+}: MobilePropertyPageClientProps) {
+  const router = useRouter();
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [enquiryModalOpen, setEnquiryModalOpen] = useState<'contact' | 'tour' | null>(null);
+
+  const handleBack = () => {
+    router.push('/m/properties');
+  };
+
+  const handleFavoriteToggle = () => {
+    setIsFavorited(!isFavorited);
+    // Here you would typically make an API call to save the favorite status
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-24">
+      {/* Hero Section with Gallery and Info Card */}
+      <div className="relative">
+        <MobilePropertyHeroGallery property={property} onBack={handleBack} />
+        <div className="relative -mt-8 z-10">
+          <MobilePropertyInfoCard 
+            property={property} 
+          />
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="py-6">
+        {/* Key Highlights */}
+        {property.description && (
+          <section id="key-highlights" className="mb-6">
+            <MobilePropertyDescription property={property} />
+          </section>
+        )}
+
+        {/* Listed By Section */}
+        <section id="listed-by" className="mb-6">
+          <MobileListingBySection property={property} />
+        </section>
+
+        {/* Available Configurations */}
+        <section id="configurations" className="mb-6">
+          <MobilePropertyConfigurations property={property} />
+        </section>
+
+        {/* Location Map */}
+        {(property.latitude && property.longitude) ? (
+          <section id="location" className="mb-6">
+            <MobilePropertyLocationMap property={property} />
+          </section>
+        ) : property.location_data?.name ? (
+          <section id="location" className="mb-6">
+            <MobilePropertyLocationMap property={property} locationName={property.location_data.name} />
+          </section>
+        ) : null}
+
+        {/* Property Features */}
+        <section id="features" className="mb-6">
+          <MobilePropertyFeatures property={property} />
+        </section>
+
+        {/* Similar Properties */}
+        {similarProperties.length > 0 && (
+          <section id="similar-projects">
+            <MobileSimilarProperties properties={similarProperties} />
+          </section>
+        )}
+
+
+      </div>
+      <MobileEnquiryModal
+        open={enquiryModalOpen !== null}
+        type={enquiryModalOpen || 'contact'}
+        property={property}
+        onClose={() => setEnquiryModalOpen(null)}
+      />
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t border-gray-200 flex gap-2 px-4 py-3 shadow-lg">
+        <button
+          className={`flex-1 py-3 rounded-xl font-semibold text-base transition-colors bg-[#0A1736] text-white shadow-md`}
+          onClick={() => setEnquiryModalOpen('contact')}
+        >
+          Contact Now
+        </button>
+        <button
+          className={`flex-1 py-3 rounded-xl font-semibold text-base transition-colors bg-gray-100 text-[#0A1736] shadow-md`}
+          onClick={() => setEnquiryModalOpen('tour')}
+        >
+          Request a tour
+        </button>
+      </div>
+    </div>
+  );
+} 
