@@ -35,7 +35,7 @@ export function KeysAuthGate() {
   useEffect(() => {
     checkAuth()
     checkConfig()
-  }, [])
+  }, [checkAuth])
 
   const checkAuth = async () => {
     try {
@@ -81,7 +81,7 @@ export function KeysAuthGate() {
   const testConnection = async () => {
     setIsTesting(true)
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('blog_categories')
         .select('count')
         .limit(1)

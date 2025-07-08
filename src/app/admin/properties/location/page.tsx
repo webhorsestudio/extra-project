@@ -5,21 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { 
-  MapPin, 
-  Search, 
-  Filter, 
-  MoreHorizontal,
-  Eye,
   Edit,
-  Trash2,
-  UserCheck,
-  UserX,
-  Mail,
-  Phone,
-  Calendar,
-  Shield,
-  Crown,
-  User,
   List
 } from 'lucide-react'
 import { AddLocationForm } from '@/components/admin/properties/locations/AddLocationForm'

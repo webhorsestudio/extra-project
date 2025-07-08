@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { toast } from 'sonner'
@@ -11,11 +11,9 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { 
   Eye, 
-  Trash2, 
   Plus, 
   Building2, 
   MapPin, 
-  DollarSign, 
   Bed, 
   Bath, 
   Square,
@@ -24,15 +22,14 @@ import {
   Grid3X3,
   List,
   Edit,
-  Calendar,
   TrendingUp,
   Star,
   Heart,
   Users,
-  Target,
   CheckCircle,
   RefreshCw
 } from 'lucide-react'
+import Image from 'next/image'
 import { formatIndianPrice, formatIndianNumber } from '@/lib/utils'
 
 interface Property {
@@ -72,9 +69,57 @@ export default function EnhancedPropertiesPage() {
     fetchProperties()
   }, [])
 
+  const filterAndSortProperties = useCallback(() => {
+    let filtered = properties
+
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(property =>
+        property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        property.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        property.property_type.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    // Filter by property type
+    if (filterType !== 'all') {
+      filtered = filtered.filter(property => property.property_type === filterType)
+    }
+
+    // Sort properties
+    switch (sortBy) {
+      case 'newest':
+        filtered = filtered.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime())
+        break
+      case 'oldest':
+        filtered = filtered.sort((a, b) => new Date(a.created_at || '').getTime() - new Date(b.created_at || '').getTime())
+        break
+      case 'price-high':
+        filtered = filtered.sort((a, b) => b.price - a.price)
+        break
+      case 'price-low':
+        filtered = filtered.sort((a, b) => a.price - b.price)
+        break
+      case 'name':
+        filtered = filtered.sort((a, b) => a.title.localeCompare(b.title))
+        break
+      case 'views':
+        filtered = filtered.sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
+        break
+      case 'favorites':
+        filtered = filtered.sort((a, b) => (b.favorite_count || 0) - (a.favorite_count || 0))
+        break
+      case 'rating':
+        filtered = filtered.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0))
+        break
+    }
+
+    setFilteredProperties(filtered)
+  }, [properties, searchTerm, filterType, sortBy])
+
   useEffect(() => {
     filterAndSortProperties()
-  }, [properties, searchTerm, filterType, sortBy])
+  }, [filterAndSortProperties])
 
   const fetchProperties = async () => {
     try {
@@ -152,98 +197,6 @@ export default function EnhancedPropertiesPage() {
       toast.error('Failed to fetch properties')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const filterAndSortProperties = () => {
-    let filtered = properties
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(property =>
-        property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        property.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        property.property_type.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    // Filter by property type
-    if (filterType !== 'all') {
-      filtered = filtered.filter(property => property.property_type === filterType)
-    }
-
-    // Sort properties
-    switch (sortBy) {
-      case 'newest':
-        filtered = filtered.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime())
-        break
-      case 'oldest':
-        filtered = filtered.sort((a, b) => new Date(a.created_at || '').getTime() - new Date(b.created_at || '').getTime())
-        break
-      case 'price-high':
-        filtered = filtered.sort((a, b) => b.price - a.price)
-        break
-      case 'price-low':
-        filtered = filtered.sort((a, b) => a.price - b.price)
-        break
-      case 'name':
-        filtered = filtered.sort((a, b) => a.title.localeCompare(b.title))
-        break
-      case 'views':
-        filtered = filtered.sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
-        break
-      case 'favorites':
-        filtered = filtered.sort((a, b) => (b.favorite_count || 0) - (a.favorite_count || 0))
-        break
-      case 'rating':
-        filtered = filtered.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0))
-        break
-    }
-
-    setFilteredProperties(filtered)
-  }
-
-  const handleDelete = async (propertyId: string) => {
-    try {
-      // Delete property images from storage first
-      const { data: images } = await supabase
-        .from('property_images')
-        .select('image_url')
-        .eq('property_id', propertyId)
-
-      if (images) {
-        const deletePromises = images.map(async (image) => {
-          const path = image.image_url.split('/').pop()
-          if (path) {
-            await supabase.storage
-              .from('property-images')
-              .remove([`${propertyId}/${path}`])
-          }
-        })
-        await Promise.all(deletePromises)
-      }
-
-      // Delete property images from database
-      const { error: imagesError } = await supabase
-        .from('property_images')
-        .delete()
-        .eq('property_id', propertyId)
-
-      if (imagesError) throw imagesError
-
-      // Delete the property
-      const { error: propertyError } = await supabase
-        .from('properties')
-        .delete()
-        .eq('id', propertyId)
-
-      if (propertyError) throw propertyError
-
-      toast.success('Property deleted successfully')
-      fetchProperties()
-    } catch (error) {
-      console.error('Error deleting property:', error)
-      toast.error('Failed to delete property')
     }
   }
 
@@ -541,10 +494,11 @@ export default function EnhancedPropertiesPage() {
                   <div className="relative">
                     <div className="h-48 bg-muted relative overflow-hidden">
                       {property.thumbnail_url ? (
-                        <img
+                        <Image
                           src={property.thumbnail_url}
                           alt={property.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">

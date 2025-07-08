@@ -1,7 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   Building2, 
   Users, 
@@ -9,20 +6,10 @@ import {
   TrendingUp, 
   TrendingDown, 
   Eye, 
-  Heart, 
-  Star,
-  Calendar,
-  Clock,
-  DollarSign,
-  BarChart3,
-  Settings,
-  ArrowUpRight,
-  ArrowDownRight,
-  AlertCircle,
-  MessageSquare,
-  FileText
+  ArrowUpRight, 
+  MessageSquare, 
+  Settings
 } from 'lucide-react'
-import { formatIndianPrice, formatIndianNumber } from '@/lib/utils'
 import { getDashboardStats, DashboardStats } from '@/lib/admin-data'
 
 export default async function DashboardPage() {
@@ -49,7 +36,7 @@ export default async function DashboardPage() {
   const QuickActionCard = ({ title, description, icon: Icon, href, variant = 'default' }: {
     title: string
     description: string
-    icon: any
+    icon: React.ComponentType<{ className?: string }>
     href: string
     variant?: 'default' | 'primary'
   }) => (
@@ -73,7 +60,7 @@ export default async function DashboardPage() {
     title: string
     value: string | number
     description: string
-    icon: any
+    icon: React.ComponentType<{ className?: string }>
     trend?: { value: number; isPositive: boolean }
     color?: 'default' | 'green' | 'blue' | 'yellow' | 'purple'
   }) => {
@@ -117,7 +104,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome to the admin dashboard. Here's what's happening with your properties.
+          Welcome to the admin dashboard. Here&apos;s what&apos;s happening with your properties.
         </p>
       </div>
       

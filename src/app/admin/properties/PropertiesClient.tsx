@@ -4,66 +4,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
-import { 
-  Eye, 
-  Trash2, 
-  Plus, 
-  Building2, 
-  MapPin, 
-  DollarSign, 
-  Bed, 
-  Bath, 
-  Square,
-  Search,
-  Filter,
-  Grid3X3,
-  List,
-  MoreVertical,
-  Edit,
-  Calendar,
-  TrendingUp,
-  Star,
-  Heart,
-  Users,
-  Target,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-  ArrowUpRight,
-  ArrowDownRight,
-  BarChart3,
-  Settings,
-  RefreshCw,
-  Home,
-  MessageSquare,
-  FileText,
-  BookOpen,
-  UserCheck
-} from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu'
-import { formatIndianPrice, formatIndianNumber } from '@/lib/utils'
-import { supabase } from '@/lib/supabaseClient'
+import { Eye, Trash2, Plus, Building2, Search, Filter, MoreVertical, Edit } from 'lucide-react'
 import Link from 'next/link'
 import PropertiesTabs from '@/components/admin/properties/PropertiesTabs'
 import PropertyCard from '@/components/admin/properties/PropertyCard'

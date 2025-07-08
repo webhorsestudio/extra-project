@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { 
   Select,
   SelectContent,
@@ -24,18 +23,9 @@ import {
   Users, 
   Plus, 
   Search, 
-  MoreHorizontal,
-  Eye,
   Edit,
-  Trash2,
-  UserCheck,
-  UserX,
   Mail,
-  Phone,
   Calendar,
-  Shield,
-  Crown,
-  User as UserIcon,
   ArrowUpDown
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
@@ -182,7 +172,7 @@ export default function UsersClient({ initialUsers }: UsersClientProps) {
             />
           </div>
           <div className="flex gap-2">
-            <Select value={filters.role} onValueChange={(value) => setFilters(prev => ({ ...prev, role: value as any }))}>
+            <Select value={filters.role} onValueChange={(value) => setFilters(prev => ({ ...prev, role: value as UserFilters['role'] }))}>
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>

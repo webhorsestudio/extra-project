@@ -1,13 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { 
   Key, 
@@ -16,14 +14,6 @@ import {
   EyeOff, 
   CheckCircle, 
   AlertCircle, 
-  Clock, 
-  Settings,
-  Globe,
-  Palette,
-  Phone,
-  FileText,
-  ImageIcon,
-  ArrowRight,
   Database,
   XCircle,
   Shield
@@ -40,15 +30,9 @@ export function ApiKeysAuthGate() {
     canConnect: false,
     connectionError: null as string | null
   })
-  const [isTesting, setIsTesting] = useState(false)
   const [showKeys, setShowKeys] = useState(false)
 
-  useEffect(() => {
-    checkAuth()
-    checkConfig()
-  }, [])
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const { data: { user }, error } = await supabase.auth.getUser()
       if (error || !user) {
@@ -74,7 +58,12 @@ export function ApiKeysAuthGate() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    checkAuth()
+    checkConfig()
+  }, [checkAuth])
 
   const checkConfig = () => {
     const hasUrl = !!process.env.NEXT_PUBLIC_SUPABASE_URL

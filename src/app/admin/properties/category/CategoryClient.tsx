@@ -6,9 +6,17 @@ import { Tag } from 'lucide-react'
 import CategoryForm from '@/components/admin/properties/CategoryForm'
 import CategoryList from '@/components/admin/properties/CategoryList'
 
-export default function CategoryClient({ categories: initialCategories }: { categories: any[] }) {
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export default function CategoryClient({ categories: initialCategories }: { categories: Category[] }) {
   const [refresh, setRefresh] = useState(0)
-  const [categories, setCategories] = useState(initialCategories)
 
   // Optionally, you can implement a refetch here if needed
 
@@ -34,7 +42,7 @@ export default function CategoryClient({ categories: initialCategories }: { cate
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CategoryList onChange={() => setRefresh(r => r + 1)} key={refresh} categories={categories} />
+          <CategoryList onChange={() => setRefresh(r => r + 1)} key={refresh} categories={initialCategories} />
         </CardContent>
       </Card>
     </div>

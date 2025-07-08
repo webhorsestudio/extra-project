@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { PropertyBasicInfo } from '@/components/admin/properties/PropertyBasicInfo'
@@ -52,7 +50,7 @@ export default function AddPropertyPage() {
     fetchUser()
   }, [router])
 
-  const handleSubmit = async (data: Record<string, any>) => {
+  const handleSubmit = async (data: any) => {
     try {
       setIsSubmitting(true)
       

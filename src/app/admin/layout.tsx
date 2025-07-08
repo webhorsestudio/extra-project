@@ -11,7 +11,7 @@ export default async function AdminRootLayout({
 }) {
   const supabase = await createSupabaseServerClient()
   let profile = null
-  let loading = false
+  const loading = false
   let logoData = { logoUrl: null, logoAltText: null };
   let logoLoading = true;
 
@@ -38,7 +38,7 @@ export default async function AdminRootLayout({
       };
     }
     logoLoading = false;
-  } catch (e) {
+  } catch {
     logoLoading = false;
   }
 

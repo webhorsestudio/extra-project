@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -47,11 +47,7 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
     setDevelopers(initialDevelopers)
   }, [initialDevelopers])
 
-  useEffect(() => {
-    filterDevelopers()
-  }, [developers, searchTerm])
-
-  const filterDevelopers = () => {
+  const filterDevelopers = useCallback(() => {
     if (!searchTerm.trim()) {
       setFilteredDevelopers(developers)
       return
@@ -63,7 +59,11 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
       developer.address?.toLowerCase().includes(searchTerm.toLowerCase())
     )
     setFilteredDevelopers(filtered)
-  }
+  }, [developers, searchTerm])
+
+  useEffect(() => {
+    filterDevelopers()
+  }, [filterDevelopers])
 
   const handleDeveloperAdded = () => {
     fetchDevelopers()
@@ -84,7 +84,7 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
       } else {
         toast.error('Failed to fetch developers')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error fetching developers')
     }
   }
@@ -107,7 +107,7 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
         const data = await res.json()
         toast.error(data.error || 'Failed to delete developer')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error deleting developer')
     } finally {
       setDeletingId(null)
@@ -129,7 +129,7 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
         const data = await res.json()
         toast.error(data.error || 'Failed to update developer status')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error updating developer status')
     }
   }

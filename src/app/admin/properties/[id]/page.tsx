@@ -1,28 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Button } from '@/components/ui/button'
-import { Form } from '@/components/ui/form'
-import { PropertyBasicInfo } from '@/components/admin/properties/PropertyBasicInfo'
-import PropertyLocation from '@/components/admin/properties/PropertyLocation'
-import { PropertyImages } from '@/components/admin/properties/PropertyImages'
-import { PropertyAmenities } from '@/components/admin/properties/PropertyAmenities'
-import { PropertyCategories } from '@/components/admin/properties/PropertyCategories'
-import { BHKConfigurations } from '@/components/admin/properties/BHKConfigurations'
-import { Property } from '@/types/property'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Save, X, Home, MapPin, Image, Dumbbell, Tag, Settings } from 'lucide-react'
-import { useHydration } from '@/hooks/use-hydration'
-import { HydrationSuppressor } from '@/components/HydrationSuppressor'
-import { toast } from '@/components/ui/use-toast'
-import { supabase } from '@/lib/supabaseClient'
 import { useProperty } from '@/hooks/useProperty'
 import { PropertyForm } from '@/components/admin/properties/PropertyForm'
 import { updatePropertyAmenityRelations, updatePropertyCategoryRelations } from '@/lib/property-relationships'
+import { toast } from '@/components/ui/use-toast'
+import { supabase } from '@/lib/supabaseClient'
 
 // Form schema definition
 const formSchema = z.object({
@@ -62,7 +47,7 @@ interface PageProps {
 }
 
 export default function EditPropertyPage({ params }: PageProps) {
-  const resolvedParams = typeof (params as any).then === 'function' ? React.use(params) : params;
+  const resolvedParams = typeof (params as Promise<{ id: string }>) === 'object' && typeof (params as Promise<{ id: string }>).then === 'function' ? React.use(params as Promise<{ id: string }>) : params;
   const id = resolvedParams.id;
   const router = useRouter()
 

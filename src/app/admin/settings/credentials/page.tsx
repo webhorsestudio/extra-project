@@ -16,14 +16,6 @@ import {
   EyeOff, 
   CheckCircle, 
   AlertCircle, 
-  Clock, 
-  Settings,
-  Globe,
-  Palette,
-  Phone,
-  FileText,
-  ImageIcon,
-  ArrowRight,
   Database,
   Shield,
   XCircle
@@ -39,13 +31,12 @@ export default function CredentialsPage() {
     canConnect: false,
     connectionError: null as string | null
   })
-  const [isTesting, setIsTesting] = useState(false)
   const [showKeys, setShowKeys] = useState(false)
 
   useEffect(() => {
     checkAuth()
     checkConfig()
-  }, [])
+  }, [checkAuth])
 
   const checkAuth = async () => {
     const { data: { user }, error } = await supabase.auth.getUser()

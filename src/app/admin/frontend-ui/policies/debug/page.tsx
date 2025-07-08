@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function PoliciesDebugPage() {
-  const [apiResponse, setApiResponse] = useState<any>(null)
+  const [apiResponse, setApiResponse] = useState<unknown>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -50,14 +50,22 @@ export default function PoliciesDebugPage() {
             </div>
           )}
 
-          {apiResponse && (
-            <div className="space-y-4">
-              <h3 className="font-medium">API Response:</h3>
-              <pre className="p-4 bg-gray-50 border rounded-md overflow-auto text-sm">
-                {JSON.stringify(apiResponse, null, 2)}
-              </pre>
-            </div>
-          )}
+          {apiResponse && (() => {
+            let displayString: string
+            if (typeof apiResponse === 'string') {
+              displayString = apiResponse
+            } else {
+              displayString = JSON.stringify(apiResponse, null, 2)
+            }
+            return (
+              <div className="space-y-4">
+                <h3 className="font-medium">API Response:</h3>
+                <pre className="p-4 bg-gray-50 border rounded-md overflow-auto text-sm">
+                  {displayString}
+                </pre>
+              </div>
+            )
+          })()}
         </CardContent>
       </Card>
     </div>

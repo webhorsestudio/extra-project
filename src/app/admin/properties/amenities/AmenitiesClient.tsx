@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -43,11 +43,7 @@ export default function AmenitiesClient({ amenities: initialAmenities }: Ameniti
     setAmenities(initialAmenities)
   }, [initialAmenities])
 
-  useEffect(() => {
-    filterAmenities()
-  }, [amenities, searchTerm])
-
-  const filterAmenities = () => {
+  const filterAmenities = useCallback(() => {
     if (!searchTerm.trim()) {
       setFilteredAmenities(amenities)
       return
@@ -57,7 +53,11 @@ export default function AmenitiesClient({ amenities: initialAmenities }: Ameniti
       amenity.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     setFilteredAmenities(filtered)
-  }
+  }, [amenities, searchTerm])
+
+  useEffect(() => {
+    filterAmenities()
+  }, [filterAmenities])
 
   const handleAmenityAdded = () => {
     fetchAmenities()
@@ -88,7 +88,7 @@ export default function AmenitiesClient({ amenities: initialAmenities }: Ameniti
         const data = await res.json()
         toast.error(data.error || 'Failed to delete amenity')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error deleting amenity')
     } finally {
       setDeletingId(null)
@@ -115,7 +115,7 @@ export default function AmenitiesClient({ amenities: initialAmenities }: Ameniti
         const data = await res.json()
         toast.error(data.error || 'Failed to update amenity')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error updating amenity')
     }
   }
@@ -129,7 +129,7 @@ export default function AmenitiesClient({ amenities: initialAmenities }: Ameniti
       } else {
         toast.error('Failed to fetch amenities')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error fetching amenities')
     }
   }

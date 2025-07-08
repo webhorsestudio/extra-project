@@ -28,12 +28,10 @@ import {
   Filter, 
   Mail, 
   Calendar,
-  User,
   Phone,
   Building,
   MessageSquare,
   Eye,
-  Clock,
   Trash2
 } from 'lucide-react'
 import { InquiryStatusBadge } from '@/components/admin/inquiries/InquiryStatusBadge'
@@ -55,32 +53,6 @@ export default function InquiriesClient({ initialInquiries }: InquiriesClientPro
   const { toast } = useToast()
   const pendingDeleteId = useRef<string | null>(null)
 
-  // Fetch inquiries from API for client-side updates
-  const fetchInquiries = useCallback(async () => {
-    try {
-      const params = new URLSearchParams({
-        search: searchTerm,
-        status: statusFilter,
-        type: typeFilter
-      })
-      
-      const response = await fetch(`/api/admin/inquiries?${params}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch inquiries: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      setInquiries(data.inquiries || [])
-    } catch (error) {
-      console.error('Error fetching inquiries:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch inquiries',
-        variant: 'destructive',
-      })
-    }
-  }, [searchTerm, statusFilter, typeFilter, toast])
-
   const handleStatusUpdate = async (inquiryId: string, newStatus: string) => {
     try {
       const response = await fetch(`/api/admin/inquiries/${inquiryId}/status`, {
@@ -98,7 +70,7 @@ export default function InquiriesClient({ initialInquiries }: InquiriesClientPro
       // Update local state
       setInquiries(prev => prev.map(inquiry => 
         inquiry.id === inquiryId 
-          ? { ...inquiry, status: newStatus }
+          ? { ...inquiry, status: newStatus as Inquiry['status'] }
           : inquiry
       ))
 

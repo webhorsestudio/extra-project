@@ -3,6 +3,16 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 import FAQCategoriesClient from '@/components/admin/faqs/FAQCategoriesClient'
 
+type FaqCategoryRaw = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  faqs?: { count: number }[];
+  created_at: string;
+  updated_at: string;
+};
+
 export default async function FAQCategoriesPage() {
   // Create server client for authentication
   const supabase = await createSupabaseServerClient()
@@ -39,9 +49,14 @@ export default async function FAQCategoriesPage() {
   }
 
   // Transform the data to include FAQ count
-  const transformedCategories = (categories || []).map((cat: any) => ({
-    ...cat,
-    faq_count: cat.faqs?.[0]?.count || 0
+  const transformedCategories = (categories || []).map((cat: FaqCategoryRaw) => ({
+    id: cat.id,
+    name: cat.name,
+    slug: cat.slug,
+    description: cat.description,
+    faq_count: cat.faqs?.[0]?.count || 0,
+    created_at: cat.created_at,
+    updated_at: cat.updated_at
   }))
 
   return (
