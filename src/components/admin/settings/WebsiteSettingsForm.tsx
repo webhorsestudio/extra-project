@@ -232,7 +232,7 @@ export function WebsiteSettingsForm({ settings }: Props) {
     try {
       new URL(string)
       return true
-    } catch (_) {
+    } catch (_unused) {
       return false
     }
   }
@@ -251,7 +251,7 @@ export function WebsiteSettingsForm({ settings }: Props) {
                 Basic Information
               </CardTitle>
               <CardDescription className="text-gray-600">
-                Configure your website's core identity and metadata
+                Configure your website&apos;s core identity and metadata
               </CardDescription>
             </div>
           </div>

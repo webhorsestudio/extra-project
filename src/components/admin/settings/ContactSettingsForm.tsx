@@ -10,11 +10,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
-import { Phone, Mail, MapPin, Clock, Save, Building } from 'lucide-react'
+import { Phone, Mail, MapPin, Globe } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Globe } from 'lucide-react'
-import { supabase } from '@/lib/supabaseClient'
 
 type Props = {
   settings: {
@@ -22,7 +19,7 @@ type Props = {
     contact_phone?: string
     contact_address?: string
     contact_website?: string
-    [key: string]: any // Allow additional properties
+    [key: string]: string | undefined // Allow additional string properties
   }
 }
 
@@ -73,7 +70,7 @@ export function ContactSettingsForm({ settings }: Props) {
     return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''))
   }
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: ContactFormData) => {
     try {
       console.log('Starting contact settings update...')
       setIsLoading(true)
@@ -224,7 +221,7 @@ export function ContactSettingsForm({ settings }: Props) {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="contact_address" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              <Building className="h-4 w-4 text-purple-500" />
+              <MapPin className="h-4 w-4 text-purple-500" />
               Business Address
             </Label>
             <Textarea

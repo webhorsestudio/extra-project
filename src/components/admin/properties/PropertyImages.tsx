@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ImageUploader } from './ImageUploader'
 import { ImageGallery } from './ImageGallery'

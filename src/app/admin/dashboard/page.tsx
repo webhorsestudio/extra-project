@@ -40,7 +40,7 @@ export default async function DashboardPage() {
     href: string
     variant?: 'default' | 'primary'
   }) => (
-    <Card className="group hover:shadow-md transition-all duration-200 cursor-pointer">
+    <Card className="group hover:shadow-md transition-all duration-200 cursor-pointer" onClick={() => window.location.href = href}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-2">

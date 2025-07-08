@@ -40,7 +40,6 @@ export function ValidationModal({
   onNavigateToTab,
   errors
 }: ValidationModalProps) {
-  const [selectedTab, setSelectedTab] = useState<string | null>(null)
 
   // Group errors by tab
   const errorsByTab = errors.reduce((acc: Record<string, FieldError[]>, error: FieldError) => {
@@ -52,7 +51,6 @@ export function ValidationModal({
   }, {} as Record<string, FieldError[]>)
 
   const handleTabClick = (tab: string) => {
-    setSelectedTab(tab)
     onNavigateToTab(tab)
     onClose()
   }

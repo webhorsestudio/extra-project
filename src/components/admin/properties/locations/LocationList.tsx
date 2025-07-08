@@ -107,7 +107,7 @@ export function LocationList({ refreshTrigger, onEditLocation }: LocationListPro
 
   useEffect(() => {
     fetchLocations()
-  }, [refreshTrigger])
+  }, [refreshTrigger, fetchLocations])
 
   useEffect(() => {
     let filtered = locations
@@ -439,7 +439,7 @@ export function LocationList({ refreshTrigger, onEditLocation }: LocationListPro
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Delete Location</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete "{location.name}"? This action cannot be undone.
+                                  Are you sure you want to delete &quot;{location.name}&quot;? This action cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -539,7 +539,7 @@ export function LocationList({ refreshTrigger, onEditLocation }: LocationListPro
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Delete Location</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete "{location.name}"? This action cannot be undone.
+                                  Are you sure you want to delete &quot;{location.name}&quot;? This action cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>

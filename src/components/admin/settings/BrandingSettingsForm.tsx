@@ -1,18 +1,13 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
 import { Upload, Save, Download, AlertCircle, Palette, Image as ImageIcon, Monitor, Smartphone, X, CheckCircle, Globe, Eye } from 'lucide-react'
 import { uploadFile } from '@/lib/uploadFile'
-import { supabase } from '@/lib/supabaseClient'
 
 type Props = {
   settings: {
@@ -22,7 +17,7 @@ type Props = {
     favicon_storage_path?: string
     logo_alt_text?: string
     favicon_alt_text?: string
-    [key: string]: any // Allow additional properties
+    [key: string]: string | undefined // Allow additional string properties
   }
 }
 

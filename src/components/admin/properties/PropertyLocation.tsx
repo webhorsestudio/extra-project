@@ -70,7 +70,7 @@ export default function PropertyLocation({
   const [isGeocoding, setIsGeocoding] = useState(false)
 
   // New: Fetch locations
-  const { locations, loading: locationsLoading, error: locationsError } = useLocations()
+  const { locations, loading: locationsLoading } = useLocations()
 
   // New: Watch location_id
   const locationIdValue = form.watch('location_id')

@@ -3,9 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { 
   Select,
   SelectContent,
@@ -29,7 +27,6 @@ import {
   Mail,
   Calendar,
 } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
 import { User, UserFilters } from '@/types/user'
 import { RoleBadge } from './RoleBadge'
 import { DeleteUserDialog } from './DeleteUserDialog'
@@ -50,8 +47,6 @@ export default function UserList() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [showInviteForm, setShowInviteForm] = useState(false)
-  
-  const { toast } = useToast()
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true)
@@ -74,7 +69,7 @@ export default function UserList() {
       const text = await response.text()
       if (!text || text.trim() === '') { setUsers([]); return }
       let result
-      try { result = JSON.parse(text) } catch (parseError) { setUsers([]); return }
+      try { result = JSON.parse(text) } catch (_parseError) { setUsers([]); return }
       if (!result || typeof result !== 'object') { setUsers([]); return }
       if (result.error) { setUsers([]); return }
       const transformedUsers: User[] = result.users?.map((user: unknown) => ({
@@ -86,7 +81,7 @@ export default function UserList() {
         updated_at: (user as { updated_at: string }).updated_at
       })) || []
       setUsers(transformedUsers)
-    } catch (error) {
+    } catch (_error) {
       setUsers([])
     } finally {
       setIsLoading(false)

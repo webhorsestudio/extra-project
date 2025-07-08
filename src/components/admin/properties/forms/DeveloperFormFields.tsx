@@ -4,10 +4,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload, X, Building, Globe, MapPin, Phone, Mail, Clock } from 'lucide-react'
+import { X, Building, Globe, MapPin, Phone, Mail, Clock } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
-import { useToast } from '@/components/ui/use-toast'
 
 interface DeveloperFormFieldsProps {
   formData: {
@@ -22,7 +20,18 @@ interface DeveloperFormFieldsProps {
       office_hours: string
     }
   }
-  onFormDataChange: (data: any) => void
+  onFormDataChange: (data: {
+    name: string
+    website: string
+    address: string
+    logo_url: string
+    logo_storage_path: string
+    contact_info: {
+      phone: string
+      email: string
+      office_hours: string
+    }
+  }) => void
   isLoading?: boolean
   isUploading?: boolean
   onFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -39,7 +48,6 @@ export function DeveloperFormFields({
   onRemoveFile,
   previewUrl
 }: DeveloperFormFieldsProps) {
-  const { toast } = useToast()
 
   const handleInputChange = (field: string, value: string) => {
     if (field.includes('.')) {

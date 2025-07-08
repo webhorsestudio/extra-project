@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload, X, MapPin, Save, Edit, ArrowLeft } from 'lucide-react'
+import { Upload, X, Save, Edit, ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -126,7 +126,7 @@ export function AddLocationForm({ onLocationAdded, editingLocation, onCancelEdit
       const fileName = `location-${Date.now()}.${fileExt}`
 
       // Try to upload to Supabase Storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('location-images')
         .upload(fileName, file, {
           cacheControl: '3600',
@@ -226,7 +226,7 @@ export function AddLocationForm({ onLocationAdded, editingLocation, onCancelEdit
       }
 
       let response: Response
-      let result: any
+      let result: { error?: string; [key: string]: unknown }
 
       if (editingLocation) {
         // Update existing location

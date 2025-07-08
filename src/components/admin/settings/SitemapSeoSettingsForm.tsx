@@ -25,7 +25,6 @@ import {
   Loader2,
   Play
 } from 'lucide-react'
-import { supabase } from '@/lib/supabaseClient'
 
 type Props = {
   settings: {
@@ -37,7 +36,7 @@ type Props = {
     sitemap_include_properties?: boolean
     sitemap_include_users?: boolean
     sitemap_include_blog?: boolean
-    [key: string]: any // Allow additional properties
+    [key: string]: string | boolean | undefined // Allow additional properties
   }
 }
 
@@ -126,7 +125,7 @@ export function SitemapSeoSettingsForm({ settings }: Props) {
     }
   }
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: typeof formData) => {
     try {
       console.log('Starting SEO settings update...')
       setIsLoading(true)

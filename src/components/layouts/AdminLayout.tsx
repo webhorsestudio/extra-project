@@ -4,12 +4,6 @@ import { useState, useEffect } from 'react'
 import { AdminSidebar } from '@/components/admin/layout/AdminSidebar'
 import { AdminHeader } from '@/components/admin/layout/AdminHeader'
 import { AdminLayoutSkeleton } from '@/components/admin/layout/AdminLayoutSkeleton'
-import { supabase } from '@/lib/supabaseClient'
-
-interface LogoData {
-  logoUrl: string | null
-  logoAltText: string | null
-}
 
 interface AdminLayoutProps {
   children: React.ReactNode;

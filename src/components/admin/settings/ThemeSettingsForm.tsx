@@ -1,15 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
 import { useToast } from '@/components/ui/use-toast'
@@ -17,14 +13,10 @@ import {
   Palette, 
   Type, 
   Eye, 
-  Moon, 
-  Sun, 
-  Save,
   Sparkles,
   Monitor,
   Smartphone
 } from 'lucide-react'
-import { supabase } from '@/lib/supabaseClient'
 
 type Props = {
   settings: {
@@ -34,7 +26,7 @@ type Props = {
     enable_dark_mode?: boolean
     enable_animations?: boolean
     enable_shadows?: boolean
-    [key: string]: any // Allow additional properties
+    [key: string]: string | boolean | undefined // Allow additional properties
   }
 }
 

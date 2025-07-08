@@ -5,10 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/components/ui/use-toast'
 import { Form } from '@/components/ui/form'
@@ -23,13 +20,6 @@ import { BHKConfigurations } from '@/components/admin/properties/BHKConfiguratio
 import { 
   Home, 
   MapPin, 
-  DollarSign, 
-  Bed, 
-  Bath, 
-  Square, 
-  Car,
-  Upload,
-  Save,
   Plus,
   Trash2,
   Eye,
@@ -38,9 +28,10 @@ import {
   Dumbbell,
   Tag,
   Settings,
+  Save,
   Image as ImageIcon
 } from 'lucide-react'
-import { supabase } from '@/lib/supabaseClient'
+
 import { Property } from '@/types/property'
 import { ValidationModal } from '@/components/admin/properties/ValidationModal'
 import { mapFormErrorsToTabErrors } from '@/lib/form-validation'
@@ -184,7 +175,7 @@ export function PropertyForm({
   };
 
   // Main form submission handler
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: z.infer<typeof formSchema>) => {
     // Trigger validation to ensure we have the latest state
     const isValid = await form.trigger();
     

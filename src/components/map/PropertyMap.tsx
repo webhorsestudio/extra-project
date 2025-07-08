@@ -26,7 +26,7 @@ export default function PropertyMap({ markerPosition, onMapClick }: PropertyMapP
         console.warn('Leaflet CSS failed to load, using fallback')
         return null
       })
-    ]).then(([L, _]) => {
+    ]).then(([L, _css]) => {
       // Fix for default marker icon
       const icon = L.icon({
         iconUrl: '/images/marker-icon.png',

@@ -30,7 +30,6 @@ export function RequiredFieldsModal({
   onNavigateToTab,
   errors
 }: RequiredFieldsModalProps) {
-  const [selectedTab, setSelectedTab] = useState<string | null>(null)
 
   // Group errors by tab
   const errorsByTab = errors.reduce((acc: Record<string, FieldError[]>, error: FieldError) => {

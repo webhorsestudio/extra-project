@@ -2,9 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Property, Amenity, PropertyCategory } from '@/types/property'
-import { CheckCircle, XCircle, Plus, Tag } from 'lucide-react'
+import { CheckCircle, Plus, Tag } from 'lucide-react'
 
 interface PropertyRelationshipsProps {
   property: Property
