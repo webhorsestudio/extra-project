@@ -14,9 +14,7 @@ import { PropertyAmenities } from '@/components/admin/properties/PropertyAmeniti
 import { PropertyCategories } from '@/components/admin/properties/PropertyCategories'
 import { BHKConfigurations } from '@/components/admin/properties/BHKConfigurations'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Save, X, Home, MapPin, Image, Dumbbell, Tag, Settings } from 'lucide-react'
-import { useHydration } from '@/hooks/use-hydration'
-import { HydrationSuppressor } from '@/components/HydrationSuppressor'
+import { Save, X, Home, MapPin, Image, Dumbbell } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 import { supabase } from '@/lib/supabaseClient'
 import { PropertyForm } from '@/components/admin/properties/PropertyForm'
@@ -33,7 +31,7 @@ type User = {
 export default function AddPropertyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [user, setUser] = useState<User | null>(null)
-  const [userName, setUserName] = useState<string>('')
+
   const router = useRouter()
 
   useEffect(() => {
@@ -46,17 +44,15 @@ export default function AddPropertyPage() {
           .select('full_name')
           .eq('id', user.id)
           .single()
-        if (profile) {
-          setUserName(profile.full_name)
-        }
+
       } else {
         router.push('/users/login')
       }
     }
     fetchUser()
-  }, [supabase, router])
+  }, [router])
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Record<string, any>) => {
     try {
       setIsSubmitting(true)
       
@@ -98,7 +94,7 @@ export default function AddPropertyPage() {
       }
       
       // Clean and prepare BHK configurations
-      const bhkConfigs = data.bhk_configurations.map((config: any) => ({
+      const bhkConfigs = data.bhk_configurations.map((config: Record<string, any>) => ({
         bhk: parseInt(config.bhk) || 1,
         price: parseFloat(config.price) || 0,
         area: parseFloat(config.area) || 0,
@@ -110,7 +106,7 @@ export default function AddPropertyPage() {
         property_id: property.id,
       }))
       
-      const { data: bhkData, error: bhkError } = await supabase
+      const { error: bhkError } = await supabase
         .from('property_configurations')
         .insert(bhkConfigs)
         .select()
@@ -121,7 +117,7 @@ export default function AddPropertyPage() {
 
       // Upload temporary images if any
       if (data.tempImages && data.tempImages.length > 0) {
-        const uploadPromises = data.tempImages.map(async (file: File, index: number) => {
+        const uploadPromises = data.tempImages.map(async (file: File) => {
           try {
             // Create unique filename
             const fileExt = file.name.split('.').pop()
@@ -160,9 +156,9 @@ export default function AddPropertyPage() {
             }
 
             return imageData
-          } catch (error) {
-            throw error
-          }
+                  } catch {
+          throw new Error('Image upload failed')
+        }
         })
 
         try {

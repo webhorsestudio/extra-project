@@ -5,7 +5,7 @@ import { checkAdminAuth } from '@/lib/admin-data'
 export async function GET(request: NextRequest) {
   try {
     // Check admin authentication using the improved function
-    const { user, profile, error: authError } = await checkAdminAuth()
+    const { user, error: authError } = await checkAdminAuth()
     
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
