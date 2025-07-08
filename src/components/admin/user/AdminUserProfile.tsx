@@ -9,11 +9,17 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from 'next/navigation'
+
+interface User {
+  id: string
+  email: string
+  created_at?: string
+  updated_at?: string
+}
 
 interface UserProfile {
   id: string
@@ -26,7 +32,7 @@ interface UserProfile {
 }
 
 interface AdminUserProfileProps {
-  user: any
+  user: User
   profile: UserProfile | null
   loading: boolean
 }

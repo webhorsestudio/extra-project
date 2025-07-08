@@ -1,9 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,7 +9,8 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
-import { Upload, Save, Download, AlertCircle, FileText, Image as ImageIcon, ExternalLink, CheckCircle, Link, Facebook, Twitter, Instagram, Linkedin, Youtube, Music } from 'lucide-react'
+import { Upload, ExternalLink, CheckCircle, Link, Facebook, Twitter, Instagram, Linkedin, Youtube, Music } from 'lucide-react'
+import Image from 'next/image'
 import { FaWhatsapp } from 'react-icons/fa'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -246,7 +244,7 @@ export function WebsiteSettingsForm({ settings }: Props) {
         <CardHeader className="pb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg">
-              <ImageIcon className="h-5 w-5 text-blue-600" />
+              <Upload className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <CardTitle className="text-xl font-semibold text-gray-900">
@@ -390,9 +388,11 @@ export function WebsiteSettingsForm({ settings }: Props) {
                     </div>
                     {formData.default_og_image_url && (
                       <div className="relative">
-                        <img
+                        <Image
                           src={formData.default_og_image_url}
                           alt="OG Image Preview"
+                          width={400}
+                          height={300}
                           className="w-full max-w-md h-auto rounded-lg border"
                         />
                       </div>
@@ -417,12 +417,14 @@ export function WebsiteSettingsForm({ settings }: Props) {
 
                 {formData.default_og_image_url && !formData.default_og_image_storage_path && (
                   <div className="relative">
-                    <img
+                    <Image
                       src={formData.default_og_image_url}
                       alt="OG Image Preview"
+                      width={400}
+                      height={300}
                       className="w-full max-w-md h-auto rounded-lg border"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none'
+                      onError={() => {
+                        // Handle error if needed
                       }}
                     />
                   </div>

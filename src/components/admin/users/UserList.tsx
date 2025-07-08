@@ -25,21 +25,10 @@ import {
   Users, 
   Plus, 
   Search, 
-  Filter, 
-  MoreHorizontal,
-  Eye,
   Edit,
-  Trash2,
-  UserCheck,
-  UserX,
   Mail,
-  Phone,
   Calendar,
-  Shield,
-  Crown,
-  User as UserIcon
 } from 'lucide-react'
-import { supabase } from '@/lib/supabaseClient'
 import { useToast } from '@/components/ui/use-toast'
 import { User, UserFilters } from '@/types/user'
 import { RoleBadge } from './RoleBadge'
@@ -88,13 +77,13 @@ export default function UserList() {
       try { result = JSON.parse(text) } catch (parseError) { setUsers([]); return }
       if (!result || typeof result !== 'object') { setUsers([]); return }
       if (result.error) { setUsers([]); return }
-      const transformedUsers: User[] = result.users?.map((user: any) => ({
-        id: user.id,
-        email: user.email,
-        full_name: user.full_name,
-        role: user.role,
-        created_at: user.created_at,
-        updated_at: user.updated_at
+      const transformedUsers: User[] = result.users?.map((user: unknown) => ({
+        id: (user as { id: string }).id,
+        email: (user as { email: string }).email,
+        full_name: (user as { full_name?: string }).full_name,
+        role: (user as { role: string }).role,
+        created_at: (user as { created_at: string }).created_at,
+        updated_at: (user as { updated_at: string }).updated_at
       })) || []
       setUsers(transformedUsers)
     } catch (error) {
@@ -201,7 +190,7 @@ export default function UserList() {
           />
         </div>
         <div className="flex gap-2">
-          <Select value={filters.role} onValueChange={(value) => setFilters(prev => ({ ...prev, role: value as any }))}>
+          <Select value={filters.role} onValueChange={(value) => setFilters(prev => ({ ...prev, role: value as UserFilters['role'] }))}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>

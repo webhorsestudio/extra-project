@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
 import { CreateUserData } from '@/types/user'
-import { UserPlus, Mail, Lock, User, X } from 'lucide-react'
+import { UserPlus, Mail, Lock, User } from 'lucide-react'
 
 interface InviteUserProps {
   isOpen: boolean
@@ -165,7 +165,7 @@ export function InviteUser({ isOpen, onClose, onUserCreated }: InviteUserProps) 
             <Label htmlFor="role">Role</Label>
             <Select 
               value={formData.role} 
-              onValueChange={(value) => handleInputChange('role', value as any)}
+              onValueChange={(value) => handleInputChange('role', value as CreateUserData['role'])}
               disabled={isLoading}
             >
               <SelectTrigger>

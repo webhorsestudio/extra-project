@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
 import { User, UpdateUserData } from '@/types/user'
-import { User as UserIcon, Save, X, KeyRound } from 'lucide-react'
+import { User as UserIcon, X, KeyRound } from 'lucide-react'
 
 interface UserFormProps {
   user: User | null
@@ -151,7 +150,11 @@ export function UserForm({ user, isOpen, onClose, onSave }: UserFormProps) {
               <Label htmlFor="role">Role</Label>
               <Select
                 value={formData.role || 'customer'}
-                onValueChange={(value) => handleInputChange('role', value as any)}
+                onValueChange={(value) => {
+                  if (value) {
+                    handleInputChange('role', value)
+                  }
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />
