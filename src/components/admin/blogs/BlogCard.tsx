@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Calendar, Tag, MoreHorizontal, Pencil, Trash, Eye, Image as ImageIcon } from 'lucide-react'
+import { Calendar, Tag, MoreHorizontal, Pencil, Trash } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import {
   AlertDialog,
@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import Image from 'next/image'
 
 interface Blog {
   id: string
@@ -99,9 +100,10 @@ export function BlogCard({ blog, onDelete }: BlogCardProps) {
         {/* Featured Image */}
         {blog.featured_image && (
           <div className="relative h-48 overflow-hidden">
-            <img
+            <Image
               src={blog.featured_image}
               alt={blog.title}
+              fill
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
             />
             <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
@@ -181,7 +183,7 @@ export function BlogCard({ blog, onDelete }: BlogCardProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Blog Post</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{blog.title}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{blog.title}&quot;? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

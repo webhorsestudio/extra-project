@@ -21,20 +21,18 @@ import {
   Save, 
   X, 
   Upload, 
-  Image as ImageIcon,
-  FileText,
-  Tag,
   Calendar,
   CheckCircle,
   ArrowLeft
 } from 'lucide-react'
+import Image from 'next/image'
 import { RichEditor } from './RichEditor'
 
 interface Blog {
   id?: string
   title: string
   slug: string
-  content: any
+  content: Record<string, unknown>
   excerpt: string
   category_id: string
   status: 'draft' | 'published'
@@ -285,9 +283,11 @@ export function BlogForm({ blog, categories }: BlogFormProps) {
             {formData.featured_image ? (
               <div className="space-y-4">
                 <div className="relative">
-                  <img
+                  <Image
                     src={formData.featured_image}
                     alt="Featured"
+                    width={400}
+                    height={192}
                     className="w-full max-w-md h-48 object-cover rounded-lg border"
                   />
                   <Button

@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label'
 import { 
   Save, 
   X, 
-  Tag,
   Hash,
   FileText,
   Sparkles,

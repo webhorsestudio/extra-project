@@ -19,7 +19,7 @@ import {
   Image as ImageIcon,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import { supabase } from '@/lib/supabaseClient'
 import { isJsonContent } from '@/lib/content-utils'
@@ -35,20 +35,12 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const { toast } = useToast()
 
   // Convert HTML to JSON for TipTap
-  const getInitialContent = () => {
-    if (!content) return ''
-    try {
-      // If content is already JSON, parse it
-      if (isJsonContent(content)) {
-        return JSON.parse(content)
-      }
-      // If content is HTML, return it as is (TipTap will parse it)
-      return content
-    } catch {
-      // If parsing fails, treat as HTML
+  const getInitialContent = useCallback(() => {
+    if (content && content.trim() !== '') {
       return content
     }
-  }
+    return '<p></p>'
+  }, [content])
 
   const editor = useEditor({
     extensions: [
@@ -73,7 +65,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
       const initialContent = getInitialContent()
       editor.commands.setContent(initialContent)
     }
-  }, [editor, content])
+  }, [editor, content, getInitialContent])
 
   const handleImageUpload = async (file: File) => {
     try {

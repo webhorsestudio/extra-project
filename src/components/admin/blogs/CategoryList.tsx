@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { 
   Table, 
@@ -76,9 +75,9 @@ export function CategoryList({ initialCategories }: CategoryListProps) {
     if (!initialCategories || initialCategories.length === 0) {
       fetchCategories()
     }
-  }, [initialCategories])
+  }, [initialCategories, fetchCategories])
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/blog-categories')
       if (!response.ok) {
@@ -94,7 +93,7 @@ export function CategoryList({ initialCategories }: CategoryListProps) {
         variant: 'destructive',
       })
     }
-  }
+  }, [toast])
 
   const filteredCategories = useMemo(() => {
     return categories.filter(category =>
@@ -309,7 +308,7 @@ export function CategoryList({ initialCategories }: CategoryListProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Category</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{deletingCategory?.name}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{deletingCategory?.name}&quot;? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

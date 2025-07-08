@@ -38,7 +38,7 @@ export function AdminLoginHelper() {
         // Refresh the page to update the admin layout
         window.location.reload()
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Login Error',
         description: 'An unexpected error occurred',
@@ -73,7 +73,7 @@ export function AdminLoginHelper() {
           window.location.reload()
           return
         }
-      } catch (error) {
+      } catch {
         continue
       }
     }

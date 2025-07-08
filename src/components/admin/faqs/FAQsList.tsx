@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -37,7 +37,6 @@ import {
   Eye,
   EyeOff,
   Copy,
-  ExternalLink
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { AddFAQForm } from './AddFAQForm'
@@ -71,7 +70,7 @@ export default function FAQsList() {
   const [statusFilter, setStatusFilter] = useState('all')
   const { toast } = useToast()
 
-  const fetchFAQs = async () => {
+  const fetchFAQs = useCallback(async () => {
     try {
       setIsLoading(true)
       
@@ -98,11 +97,11 @@ export default function FAQsList() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [categoryFilter, statusFilter, toast])
 
   useEffect(() => {
     fetchFAQs()
-  }, [categoryFilter, statusFilter])
+  }, [fetchFAQs])
 
   const handleEdit = (faq: FAQ) => {
     setEditingFAQ(faq)

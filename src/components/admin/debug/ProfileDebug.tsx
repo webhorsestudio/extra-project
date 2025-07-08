@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -55,9 +55,9 @@ export function ProfileDebug() {
       setDebugInfo({
         step: 'Profile fetch completed',
         user: {
-          id: user.id,
-          email: user.email,
-          role: user.role
+          id: user.id || '',
+          email: user.email || '',
+          role: user.role || undefined
         },
         profile: profile,
         profileError: profileError?.message,

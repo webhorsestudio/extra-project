@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -37,7 +37,6 @@ import {
   Eye,
   EyeOff,
   Copy,
-  ExternalLink
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { AddFAQForm } from './AddFAQForm'
@@ -82,7 +81,7 @@ export default function FAQsClient({ initialFaqs }: FAQsClientProps) {
     }
   }, [initialFaqs])
 
-  const fetchFAQs = async () => {
+  const fetchFAQs = useCallback(async () => {
     try {
       setIsLoading(true)
       
@@ -109,14 +108,14 @@ export default function FAQsClient({ initialFaqs }: FAQsClientProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [categoryFilter, statusFilter, toast])
 
   // Refetch when filters change
   useEffect(() => {
     if (initialFaqs && initialFaqs.length > 0) {
       fetchFAQs()
     }
-  }, [categoryFilter, statusFilter, initialFaqs])
+  }, [fetchFAQs, initialFaqs])
 
   const handleEdit = (faq: FAQ) => {
     setEditingFAQ(faq)

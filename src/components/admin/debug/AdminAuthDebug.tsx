@@ -6,8 +6,22 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 
+interface DebugInfo {
+  user: {
+    id: string
+    email: string
+    created_at: string
+    email_confirmed_at: string | null
+  } | null
+  profile: Record<string, unknown> | null
+  authError: string | null
+  profileError: string | null
+  loading: boolean
+  session: unknown
+}
+
 export function AdminAuthDebug() {
-  const [debugInfo, setDebugInfo] = useState<any>({
+  const [debugInfo, setDebugInfo] = useState<DebugInfo>({
     user: null,
     profile: null,
     authError: null,
@@ -77,16 +91,16 @@ export function AdminAuthDebug() {
       setDebugInfo({
         loading: false,
         user: {
-          id: user.id,
-          email: user.email,
-          created_at: user.created_at,
-          email_confirmed_at: user.email_confirmed_at
+          id: user.id || '',
+          email: user.email || '',
+          created_at: user.created_at || '',
+          email_confirmed_at: user.email_confirmed_at || null
         },
         profile: profile,
         session: {
-          access_token: session?.access_token ? 'Present' : 'Missing',
-          refresh_token: session?.refresh_token ? 'Present' : 'Missing',
-          expires_at: session?.expires_at
+          access_token: session?.access_token || null,
+          refresh_token: session?.refresh_token || null,
+          expires_at: session?.expires_at || null
         },
         authError: null,
         profileError: profileError?.message || null
