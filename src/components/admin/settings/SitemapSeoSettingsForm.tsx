@@ -42,7 +42,6 @@ type Props = {
 }
 
 const scheduleOptions = [
-  { value: 'hourly', label: 'Hourly', description: 'Generate every hour' },
   { value: 'daily', label: 'Daily', description: 'Generate once per day' },
   { value: 'weekly', label: 'Weekly', description: 'Generate once per week' },
   { value: 'monthly', label: 'Monthly', description: 'Generate once per month' },
