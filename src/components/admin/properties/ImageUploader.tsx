@@ -7,8 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { ImagePlus, X, Upload, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 import Image from "next/image"
 import { toast } from "sonner"
-import { Progress } from '@/components/ui/progress'
-import { useToast } from '@/components/ui/use-toast'
 import { supabase } from '@/lib/supabaseClient'
 
 interface ImageUploaderProps {
@@ -66,7 +64,7 @@ export function ImageUploader({
         .getPublicUrl(filePath)
 
       // Insert into property_images table
-      const { data: imageData, error: dbError } = await supabase
+      const { data: _imageData, error: dbError } = await supabase
         .from('property_images')
         .insert([{ 
           property_id: propertyId, 
@@ -135,7 +133,7 @@ export function ImageUploader({
         setUploadProgress({})
       }
     },
-    [maxFiles, onImagesChange, propertyId, supabase]
+    [maxFiles, onImagesChange, propertyId, uploadFileToSupabase]
   )
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({

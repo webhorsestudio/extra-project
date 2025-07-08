@@ -105,8 +105,8 @@ export function EditDeveloperForm({ developer, open, onOpenChange, onDeveloperUp
       
       const data = await res.json()
       return { url: data.url, path: data.path }
-    } catch (error) {
-      toast({ title: 'Upload Error', description: error instanceof Error ? error.message : 'Failed to upload logo', variant: 'destructive' })
+    } catch (_error) {
+      toast({ title: 'Upload Error', description: _error instanceof Error ? _error.message : 'Failed to upload logo', variant: 'destructive' })
       return null
     } finally {
       setIsUploading(false)

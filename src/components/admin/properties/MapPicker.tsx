@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { MapPin, Navigation, Crosshair } from 'lucide-react'
 
 // Fix for default marker icon issue with webpack
-delete (L.Icon.Default.prototype as any)._getIconUrl
+delete (L.Icon.Default.prototype as unknown)._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: '/images/marker-icon-2x.png',
   iconUrl: '/images/marker-icon.png',
@@ -77,7 +77,7 @@ export default function MapPicker({
         onPositionChange?.(newPosition)
         setIsLoading(false)
       },
-      (err) => {
+      (_err) => {
         setError('Unable to get current location')
         setIsLoading(false)
       },

@@ -3,24 +3,17 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   TrendingUp,
-  TrendingDown,
   Eye,
   Heart,
   Star,
   Calendar,
-  AlertCircle,
   CheckCircle,
-  Clock,
   Target,
-  BarChart3,
   ArrowUpRight,
   ArrowDownRight,
-  Plus,
-  Edit,
-  Users,
-  DollarSign
+  Plus
 } from 'lucide-react'
-import { formatIndianPrice, formatIndianNumber } from '@/lib/utils'
+import { formatIndianNumber } from '@/lib/utils'
 
 interface Property {
   id: string

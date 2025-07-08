@@ -58,7 +58,7 @@ export default function PropertiesFiltersBar({
     minPrice || 
     maxPrice
 
-  const removeFilter = (filterType: string, value: string) => {
+  const removeFilter = (filterType: string, _value: string) => {
     switch (filterType) {
       case 'search':
         setSearchTerm('')

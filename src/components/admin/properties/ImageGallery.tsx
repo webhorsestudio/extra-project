@@ -10,13 +10,12 @@ import { PropertyImage } from '@/hooks/usePropertyImages'
 import { useToast } from '@/components/ui/use-toast'
 
 interface ImageGalleryProps {
-  propertyId: string
   images: PropertyImage[]
   onImagesChange: (images: PropertyImage[]) => void
   onDeleteImage?: (imageId: string) => Promise<void>
 }
 
-export function ImageGallery({ propertyId, images, onImagesChange, onDeleteImage }: ImageGalleryProps) {
+export function ImageGallery({ images, onImagesChange, onDeleteImage }: ImageGalleryProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const { toast } = useToast()

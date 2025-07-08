@@ -14,17 +14,10 @@ import {
   Trash2,
   MoreVertical,
   MapPin,
-  DollarSign,
-  Bed,
-  Bath,
-  Square,
   Calendar,
   CheckCircle,
-  Clock,
   Building2,
-  Heart,
-  Users,
-  TrendingUp
+  Heart
 } from 'lucide-react'
 import { formatIndianPrice, formatIndianNumber } from '@/lib/utils'
 import Link from 'next/link'
@@ -293,17 +286,21 @@ export default function PropertyCard({
           {/* Property Details */}
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
-              <Bed className="h-4 w-4" />
-              <span>{property.bedrooms}</span>
+              <Calendar className="h-4 w-4" />
+              <span>{property.created_at ? formatDate(property.created_at) : 'N/A'}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Bath className="h-4 w-4" />
-              <span>{property.bathrooms}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Square className="h-4 w-4" />
-              <span>{formatIndianNumber(property.area)} sq ft</span>
-            </div>
+            {property.view_count !== undefined && (
+              <div className="flex items-center gap-1">
+                <Eye className="h-3 w-3" />
+                <span>{property.view_count}</span>
+              </div>
+            )}
+            {property.favorite_count !== undefined && (
+              <div className="flex items-center gap-1">
+                <Heart className="h-3 w-3" />
+                <span>{property.favorite_count}</span>
+              </div>
+            )}
           </div>
 
           {/* Collection and Status */}

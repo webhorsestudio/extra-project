@@ -1,7 +1,6 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Dumbbell, Wifi, Car, Waves, Dumbbell as GymIcon, Trees, Shield, ArrowUpDown, Flower2, Car as ParkingIcon } from 'lucide-react';
 
 interface PropertyAmenitiesDisplayProps {

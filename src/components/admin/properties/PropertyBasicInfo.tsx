@@ -23,7 +23,7 @@ import { Home, Shield } from 'lucide-react'
 import { PropertyPostedBySelector } from './PropertyPostedBySelector'
 
 export function PropertyBasicInfo() {
-  const { control, getValues, watch, setValue } = useFormContext()
+  const { control, watch, setValue } = useFormContext()
   const hasRera = watch('has_rera')
   const postedBy = watch('posted_by')
   const developerId = watch('developer_id')

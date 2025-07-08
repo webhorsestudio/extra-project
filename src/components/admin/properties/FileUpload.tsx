@@ -4,13 +4,11 @@ import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload, X, FileText, Image as ImageIcon } from 'lucide-react'
+import { Upload } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
-import { Progress } from '@/components/ui/progress'
 import { toast } from 'sonner'
 import { File as FileIcon, Trash2, Download, Eye } from 'lucide-react'
+import Image from 'next/image'
 
 interface FileUploadProps {
   name: string
@@ -102,9 +100,11 @@ export function FileUpload({ name, label, accept, bucket }: FileUploadProps) {
         <div className="space-y-2">
           {isImage ? (
             <div className="relative group">
-              <img 
+              <Image 
                 src={fileUrl} 
                 alt={label}
+                width={80}
+                height={80}
                 className="w-full h-20 object-cover rounded border"
               />
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center">
@@ -197,7 +197,6 @@ export function FileUpload({ name, label, accept, bucket }: FileUploadProps) {
           </div>
           {isUploading && (
             <div className="space-y-1">
-              <Progress value={progress} className="w-full h-1" />
               <p className="text-xs text-gray-500 text-center">Uploading... {progress}%</p>
             </div>
           )}

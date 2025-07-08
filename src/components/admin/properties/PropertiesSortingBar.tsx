@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ArrowUpDown, ArrowUp, ArrowDown, SortAsc, SortDesc } from 'lucide-react'
+import { ArrowUpDown, ArrowUp, ArrowDown, SortAsc } from 'lucide-react'
 
 interface PropertiesSortingBarProps {
   sortBy: string

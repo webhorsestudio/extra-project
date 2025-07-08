@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { 
   Home, Building2, Star, Heart, MapPin, Users, Calendar, 
-  Tag, DollarSign, Car, Trees, Sun, Moon, Cloud, 
+  Tag, Car, Trees, Sun, Moon, Cloud, 
   Wifi, Battery, Camera, Phone, Mail, MessageSquare,
   Settings, User, Lock, Unlock, Eye, EyeOff, 
   Plus, Minus, Check, X, ArrowRight, ArrowLeft,

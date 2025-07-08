@@ -15,8 +15,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  SortAsc,
-  SortDesc
+  SortAsc
 } from 'lucide-react'
 import React from 'react'
 
@@ -133,7 +132,7 @@ export default function PropertiesTabs({
     minPrice || 
     maxPrice
 
-  const removeFilter = (filterType: string, value: string) => {
+  const removeFilter = (filterType: string, _value: string) => {
     switch (filterType) {
       case 'search':
         setSearchTerm('')
@@ -367,7 +366,7 @@ export default function PropertiesTabs({
                 
                 {searchTerm && (
                   <Badge variant="secondary" className="flex items-center gap-1">
-                    Search: "{searchTerm}"
+                    Search: &quot;{searchTerm}&quot;
                     <Button
                       variant="ghost"
                       size="sm"

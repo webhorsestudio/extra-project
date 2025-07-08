@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Trash2, Home, DollarSign, Square, Bed, Bath, AlertCircle, FileText, Calendar } from 'lucide-react'
+import { Plus, Trash2, Home, DollarSign, Square, Bed, Bath, AlertCircle, Calendar } from 'lucide-react'
 import { FileUpload } from './FileUpload'
 import { formatIndianPrice } from '@/lib/utils'
 
@@ -87,7 +87,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
           <div className="text-center py-8 text-muted-foreground">
             <Home className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="font-medium">No configurations added yet</p>
-            <p className="text-sm mt-1">Click "Add Configuration" to set pricing and room details</p>
+            <p className="text-sm mt-1">Click &quot;Add Configuration&quot; to set pricing and room details</p>
             <div className="mt-4 p-3 bg-muted rounded-md text-xs">
               <p className="font-medium mb-1">Each configuration includes:</p>
               <ul className="text-left space-y-1">
@@ -141,211 +141,89 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                       control={control}
                       name={`${name}.${index}.bhk`}
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <Home className="h-4 w-4" />
-                            BHK *
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min={1}
-                              {...field}
-                              value={field.value || ''}
-                              onChange={(e) => {
-                                const value = e.target.value === '' ? '' : parseInt(e.target.value)
-                                field.onChange(value)
-                              }}
-                              placeholder="e.g., 2"
-                              className="transition-all focus:ring-2 focus:ring-primary/20"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormControl>
+                          <FormLabel>BHK</FormLabel>
+                          <Input {...field} />
+                        </FormControl>
                       )}
                     />
-
                     <FormField
                       control={control}
                       name={`${name}.${index}.price`}
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <DollarSign className="h-4 w-4" />
-                            Price (₹)
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min={0}
-                              {...field}
-                              value={field.value || ''}
-                              onChange={(e) => {
-                                const value = e.target.value === '' ? '' : parseFloat(e.target.value)
-                                field.onChange(value)
-                              }}
-                              placeholder="0"
-                              className="transition-all focus:ring-2 focus:ring-primary/20"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormControl>
+                          <FormLabel>Price</FormLabel>
+                          <Input {...field} />
+                        </FormControl>
                       )}
                     />
-
                     <FormField
                       control={control}
                       name={`${name}.${index}.area`}
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <Square className="h-4 w-4" />
-                            Area (sq.ft) *
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min={0}
-                              {...field}
-                              value={field.value || ''}
-                              onChange={(e) => {
-                                const value = e.target.value === '' ? '' : parseFloat(e.target.value)
-                                field.onChange(value)
-                              }}
-                              placeholder="0"
-                              className="transition-all focus:ring-2 focus:ring-primary/20"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormControl>
+                          <FormLabel>Area</FormLabel>
+                          <Input {...field} />
+                        </FormControl>
                       )}
                     />
-
                     <FormField
                       control={control}
                       name={`${name}.${index}.bedrooms`}
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <Bed className="h-4 w-4" />
-                            Bedrooms *
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min={0}
-                              {...field}
-                              value={field.value || ''}
-                              onChange={(e) => {
-                                const value = e.target.value === '' ? '' : parseInt(e.target.value)
-                                field.onChange(value)
-                              }}
-                              placeholder="0"
-                              className="transition-all focus:ring-2 focus:ring-primary/20"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormControl>
+                          <FormLabel>Bedrooms</FormLabel>
+                          <Input {...field} />
+                        </FormControl>
                       )}
                     />
-
                     <FormField
                       control={control}
                       name={`${name}.${index}.bathrooms`}
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <Bath className="h-4 w-4" />
-                            Bathrooms *
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min={0}
-                              {...field}
-                              value={field.value || ''}
-                              onChange={(e) => {
-                                const value = e.target.value === '' ? '' : parseInt(e.target.value)
-                                field.onChange(value)
-                              }}
-                              placeholder="0"
-                              className="transition-all focus:ring-2 focus:ring-primary/20"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormControl>
+                          <FormLabel>Bathrooms</FormLabel>
+                          <Input {...field} />
+                        </FormControl>
                       )}
                     />
-                  </div>
-                  
-                  {/* Ready By Date - Compact */}
-                  <div className="mt-4">
                     <FormField
                       control={control}
                       name={`${name}.${index}.ready_by`}
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
-                            Ready By (YYYY-MM)
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              {...field}
-                              placeholder="e.g., 2025-12"
-                              className="transition-all focus:ring-2 focus:ring-primary/20"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormControl>
+                          <FormLabel>Ready By</FormLabel>
+                          <Input {...field} />
+                        </FormControl>
                       )}
                     />
-                  </div>
-                  
-                  {/* File Upload Section - Compact */}
-                  <div className="mt-4 grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2 p-2 border rounded-md bg-gray-50/30">
-                      <label className="text-xs font-medium text-gray-700">Floor Plan (Image or PDF)</label>
-                      <FileUpload
-                        name={`${name}.${index}.floor_plan_url`}
-                        label=""
-                        accept="image/*,.pdf"
-                        bucket="property-files"
-                      />
-                    </div>
-                    <div className="space-y-2 p-2 border rounded-md bg-gray-50/30">
-                      <label className="text-xs font-medium text-gray-700">Brochure (Image or PDF)</label>
-                      <FileUpload
-                        name={`${name}.${index}.brochure_url`}
-                        label=""
-                        accept="image/*,.pdf"
-                        bucket="property-files"
-                      />
-                    </div>
+                    <FormField
+                      control={control}
+                      name={`${name}.${index}.floor_plan_url`}
+                      render={({ field }) => (
+                        <FormControl>
+                          <FormLabel>Floor Plan URL</FormLabel>
+                          <Input {...field} />
+                        </FormControl>
+                      )}
+                    />
+                    <FormField
+                      control={control}
+                      name={`${name}.${index}.brochure_url`}
+                      render={({ field }) => (
+                        <FormControl>
+                          <FormLabel>Brochure URL</FormLabel>
+                          <Input {...field} />
+                        </FormControl>
+                      )}
+                    />
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         )}
-        
-        {configurations.length > 0 && (
-          <div className="mt-4 pt-4 border-t">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">Total Configurations:</span>
-                <Badge variant="secondary">{configurations.length}</Badge>
-              </div>
-              {configurations.length > 0 && (
-                <div className="text-xs text-muted-foreground">
-                  Each configuration can have different pricing and room details
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   )
-} 
+}

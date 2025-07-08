@@ -19,17 +19,13 @@ import { PropertyCategories } from '@/components/admin/properties/PropertyCatego
 import { BHKConfigurations } from '@/components/admin/properties/BHKConfigurations'
 import { 
   Home, 
-  MapPin, 
-  Plus,
-  Trash2,
-  Eye,
-  Edit,
+  MapPin,
   X,
+  Save,
+  Image as ImageIcon,
   Dumbbell,
   Tag,
-  Settings,
-  Save,
-  Image as ImageIcon
+  Settings
 } from 'lucide-react'
 
 import { Property } from '@/types/property'

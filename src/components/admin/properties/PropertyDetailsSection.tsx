@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { MapPin, Home, Ruler, Calendar, DollarSign, Users, Car, Building2, Globe, Phone, Mail, ExternalLink } from 'lucide-react';
+import { MapPin, Home, Ruler, DollarSign } from 'lucide-react';
 import { Property } from '@/types/property';
 
 interface PropertyDetailsSectionProps {
@@ -241,7 +241,7 @@ export default function PropertyDetailsSection({ property }: PropertyDetailsSect
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
+            <Home className="h-5 w-5" />
             Description & Details
           </CardTitle>
         </CardHeader>

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload, X, Save } from 'lucide-react'
+import { X } from 'lucide-react'
 import Image from 'next/image'
 import { Amenity } from '@/types/amenity'
 
@@ -77,7 +77,7 @@ export function EditAmenityForm({ onAmenityUpdated, open, onOpenChange, amenity 
       const fileExt = file.name.split('.').pop()
       const fileName = `amenity-${Date.now()}.${fileExt}`
       
-      const { data, error } = await supabase.storage
+      const { data: _data, error } = await supabase.storage
         .from('amenity-images')
         .upload(fileName, file, { cacheControl: '3600', upsert: false })
       
