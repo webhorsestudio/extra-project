@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { Separator } from '@/components/ui/separator'
 import { 
   Link, 
   Plus, 
@@ -34,7 +32,7 @@ interface FooterColumn {
 
 export default function FooterLinksTab() {
   const { toast } = useToast()
-  const [content, setContent] = useState<any>(null)
+  const [content, setContent] = useState<unknown>(null)
   const [columns, setColumns] = useState<FooterColumn[]>([])
   const [policyLinks, setPolicyLinks] = useState<FooterLink[]>([])
   const [loading, setLoading] = useState(true)
@@ -54,32 +52,33 @@ export default function FooterLinksTab() {
         
         // Parse navigation columns from JSON
         if (data.content?.navigation_columns) {
-          const parsedColumns = data.content.navigation_columns.map((col: any, index: number) => ({
+          const parsedColumns = data.content.navigation_columns.map((col: Record<string, unknown>, index: number) => ({
             id: index.toString(),
-            title: col.title || 'New Column',
+            title: typeof col.title === 'string' ? col.title : 'New Column',
             isActive: col.isActive !== false,
-            links: col.links?.map((link: any, linkIndex: number) => ({
+            links: Array.isArray(col.links) ? col.links.map((link: Record<string, unknown>, linkIndex: number) => ({
               id: `${index}-${linkIndex}`,
-              label: link.label || 'New Link',
-              href: link.href || '#',
+              label: typeof link.label === 'string' ? link.label : 'New Link',
+              href: typeof link.href === 'string' ? link.href : '#',
               isActive: link.isActive !== false
-            })) || []
+            })) : []
           }))
           setColumns(parsedColumns)
         }
         
         // Parse policy links from JSON
         if (data.content?.policy_links) {
-          const parsedPolicyLinks = data.content.policy_links.map((link: any, index: number) => ({
+          const parsedPolicyLinks = data.content.policy_links.map((link: Record<string, unknown>, index: number) => ({
             id: index.toString(),
-            label: link.label || 'New Policy',
-            href: link.href || '/policy',
+            label: typeof link.label === 'string' ? link.label : 'New Policy',
+            href: typeof link.href === 'string' ? link.href : '/policy',
             isActive: link.isActive !== false
           }))
           setPolicyLinks(parsedPolicyLinks)
         }
-      } catch (err: any) {
-        setError(err.message)
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
+        setError(errorMessage)
       } finally {
         setLoading(false)
       }
@@ -116,7 +115,7 @@ export default function FooterLinksTab() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...content,
+          ...(content as Record<string, unknown>),
           navigation_columns: navigationColumns,
           policy_links: policyLinksData
         }),
@@ -125,9 +124,10 @@ export default function FooterLinksTab() {
       if (!res.ok) throw new Error(data.error || 'Failed to save footer links')
       setContent(data.content)
       toast({ title: 'Success', description: 'Footer links saved.' })
-    } catch (err: any) {
-      setError(err.message)
-      toast({ title: 'Error', description: err.message, variant: 'destructive' })
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
+      setError(errorMessage)
+      toast({ title: 'Error', description: errorMessage, variant: 'destructive' })
     } finally {
       setSaving(false)
     }
@@ -248,7 +248,7 @@ export default function FooterLinksTab() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {columns.map((column, columnIndex) => (
+          {columns.map((column) => (
             <div key={column.id} className="border rounded-lg p-4 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">

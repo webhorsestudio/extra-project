@@ -24,6 +24,14 @@ export default async function AdminRootLayout({
     redirect('/users/login')
   }
 
+  // Transform user to ensure email is always present
+  const transformedUser = {
+    id: user.id,
+    email: user.email || 'admin@example.com', // Fallback email
+    created_at: user.created_at,
+    updated_at: user.updated_at
+  }
+
   profile = adminProfile
 
   try {
@@ -45,7 +53,7 @@ export default async function AdminRootLayout({
   const navigationItems = getAdminNavigationItems(profile);
 
   return (
-    <AdminLayout user={user} profile={profile} loading={loading} logoData={logoData} logoLoading={logoLoading} navigationItems={navigationItems}>
+    <AdminLayout user={transformedUser} profile={profile} loading={loading} logoData={logoData} logoLoading={logoLoading} navigationItems={navigationItems}>
       {children}
     </AdminLayout>
   )

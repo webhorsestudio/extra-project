@@ -25,19 +25,10 @@ import {
   Loader2,
   Play
 } from 'lucide-react'
+import { Settings as SettingsType } from '@/lib/settings'
 
 type Props = {
-  settings: {
-    google_analytics_id?: string
-    google_tag_manager_id?: string
-    robots_txt?: string
-    sitemap_schedule?: string
-    sitemap_enabled?: boolean
-    sitemap_include_properties?: boolean
-    sitemap_include_users?: boolean
-    sitemap_include_blog?: boolean
-    [key: string]: string | boolean | undefined // Allow additional properties
-  }
+  settings: SettingsType
 }
 
 const scheduleOptions = [

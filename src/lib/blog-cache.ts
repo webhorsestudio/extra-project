@@ -1,7 +1,7 @@
 import { getLatestBlogs } from './data'
 
 // Simple in-memory cache for blog data
-const blogCache = new Map<string, { data: any[], timestamp: number }>()
+const blogCache = new Map<string, { data: Record<string, unknown>[], timestamp: number }>()
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
 export async function getCachedBlogs(limit = 3) {

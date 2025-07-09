@@ -1,14 +1,30 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { ArrowLeft, Search, Filter, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Search, Filter } from 'lucide-react';
 import BlogCard from '@/components/mobile/BlogCard';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
 
-interface MobileBlogsPageClientProps {
-  blogs: any[];
+interface Category {
+  name: string;
 }
+
+interface Blog {
+  id: string;
+  title: string;
+  excerpt: string;
+  created_at: string;
+  featured_image?: string;
+  categories?: Category[];
+}
+
+interface MobileBlogsPageClientProps {
+  blogs: Blog[];
+}
+
+// For normalization: categories may come from DB as { id?: string; name: string }
+type BlogCategoryRaw = { id?: string; name: string };
 
 export default function MobileBlogsPageClient({ blogs }: MobileBlogsPageClientProps) {
   const router = useRouter();
@@ -21,7 +37,7 @@ export default function MobileBlogsPageClient({ blogs }: MobileBlogsPageClientPr
     const categorySet = new Set<string>();
     blogs.forEach(blog => {
       if (blog.categories && Array.isArray(blog.categories)) {
-        blog.categories.forEach((cat: any) => {
+        blog.categories.forEach((cat: Category) => {
           if (cat.name) categorySet.add(cat.name);
         });
       }
@@ -37,19 +53,24 @@ export default function MobileBlogsPageClient({ blogs }: MobileBlogsPageClientPr
         blog.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesCategory = selectedCategory === 'all' || 
-        (blog.categories && blog.categories.some((cat: any) => cat.name === selectedCategory));
+        (blog.categories && blog.categories.some((cat: Category) => cat.name === selectedCategory));
       
       return matchesSearch && matchesCategory;
     });
   }, [blogs, searchQuery, selectedCategory]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+  // Normalize filteredBlogs for BlogCard
+  const normalizedFilteredBlogs = useMemo(() =>
+    filteredBlogs.map(blog => ({
+      ...blog,
+      featured_image: blog.featured_image ?? null,
+      categories: blog.categories?.map((cat: BlogCategoryRaw) => ({
+        id: cat.id ?? cat.name,
+        name: cat.name,
+      })) ?? [],
+    })),
+    [filteredBlogs]
+  );
 
   const handleBack = () => {
     router.push('/m');
@@ -141,12 +162,12 @@ export default function MobileBlogsPageClient({ blogs }: MobileBlogsPageClientPr
             <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
               <span>{filteredBlogs.length} of {blogs.length} blogs</span>
               {searchQuery && (
-                <span>Searching for "{searchQuery}"</span>
+                <span>Searching for &quot;{searchQuery}&quot;</span>
               )}
             </div>
 
             {/* Blog Cards */}
-            {filteredBlogs.map((blog) => (
+            {normalizedFilteredBlogs.map((blog) => (
               <BlogCard key={blog.id} blog={blog} />
             ))}
           </div>

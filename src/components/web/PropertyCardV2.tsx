@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Heart, Send, Bed, Ruler, Calendar, ChevronLeft, ChevronRight, X, Copy, MessageCircle, Loader2, Sparkles } from 'lucide-react';
-import type { Property } from '@/types/property';
+import type { Property, BHKConfiguration } from '@/types/property';
 import { useToast } from '@/components/ui/use-toast';
+import Image from 'next/image'
 
 interface PropertyCardV2Props {
   property: Property;
@@ -26,7 +27,7 @@ const CollectionBadge = ({ collection }: { collection?: string }) => (
 );
 
 // Personalization Badge
-const PersonalizationBadge = ({ score, reason }: { score?: number; reason?: string }) => {
+const PersonalizationBadge = ({ score }: { score?: number; reason?: string }) => {
   if (!score || score < 0.7) return null;
 
   return (
@@ -76,10 +77,12 @@ const ShareDialog = ({ open, onClose, property }: { open: boolean; onClose: () =
         </div>
         {/* Property Info */}
         <div className="flex items-center gap-3 mb-6">
-          <img
+          <Image
             src={property.property_images?.[0]?.image_url || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80'}
             alt={property.title}
             className="w-14 h-14 rounded-lg object-cover border"
+            width={56}
+            height={56}
           />
           <div>
             <div className="font-semibold text-base line-clamp-1">{property.title}</div>
@@ -138,7 +141,7 @@ const FavoriteButton = ({ propertyId, initialIsFavorited, onToast, onUnfavorite,
         const data = await res.json();
         onToast({ title: 'Error', description: data.error || 'Failed to update wishlist.' });
       }
-    } catch (e) {
+    } catch {
       onToast({ title: 'Error', description: 'Failed to update wishlist.' });
     } finally {
       setLoading(false);
@@ -159,10 +162,12 @@ const FavoriteButton = ({ propertyId, initialIsFavorited, onToast, onUnfavorite,
 
 // Image Slide
 const PropertyImageSlide = ({ src, alt }: { src: string; alt: string }) => (
-  <img
+  <Image
     src={src}
     alt={alt}
     className="object-cover w-full h-full transition-all duration-300"
+    fill
+    style={{ objectFit: 'cover' }}
     draggable={false}
   />
 );
@@ -266,7 +271,7 @@ const TitleRow = ({ title }: { title: string }) => (
 );
 
 // Price and Location Row
-const PriceLocationRow = ({ price, location, locationData }: { price?: number; location?: string; locationData?: { name: string } | null }) => {
+const PriceLocationRow = ({ price, locationData }: { price?: number; location?: string; locationData?: { name: string } | null }) => {
   const formatPrice = (price: number) => {
     if (price >= 10000000) {
       return `₹${(price / 10000000).toFixed(1)} Cr`;
@@ -298,7 +303,7 @@ const PriceLocationRow = ({ price, location, locationData }: { price?: number; l
 };
 
 // Amenities Row
-const AmenitiesRow = ({ config }: { config?: any }) => {
+const AmenitiesRow = ({ config }: { config?: BHKConfiguration }) => {
   const formatReadyByDate = (readyBy?: string) => {
     if (!readyBy) return '—';
     
@@ -313,7 +318,7 @@ const AmenitiesRow = ({ config }: { config?: any }) => {
         });
       }
       return readyBy; // Fallback to original format if parsing fails
-    } catch (error) {
+    } catch {
       return readyBy; // Fallback to original format if parsing fails
     }
   };
@@ -346,7 +351,7 @@ const PropertyCardContent = ({ property, contentMargin = "mt-8" }: PropertyCardC
   return (
     <div className={`p-4 pb-5 flex-grow flex flex-col ${contentMargin}`}>
       <TitleRow title={property.title} />
-      <PriceLocationRow price={config?.price} location={property.location} locationData={property.location_data} />
+      <PriceLocationRow price={config?.price} locationData={property.location_data} />
       <AmenitiesRow config={config} />
     </div>
   );

@@ -64,7 +64,7 @@ export function ImageUploader({
         .getPublicUrl(filePath)
 
       // Insert into property_images table
-      const { data: _imageData, error: dbError } = await supabase
+      const { error: dbError } = await supabase
         .from('property_images')
         .insert([{ 
           property_id: propertyId, 

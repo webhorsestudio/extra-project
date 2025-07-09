@@ -92,8 +92,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </div>
       </ServerLayout>
     )
-  } catch (error) {
-    console.error('Blog page error:', error)
+  } catch (_error) {
+    console.error('Blog page error:', _error)
     return notFound()
   }
 }
@@ -120,7 +120,7 @@ export async function generateMetadata({ params }: BlogPageProps) {
         images: blog.featured_image ? [blog.featured_image] : [],
       },
     }
-  } catch (error) {
+  } catch {
     return {
       title: 'Blog',
       description: 'Blog post'

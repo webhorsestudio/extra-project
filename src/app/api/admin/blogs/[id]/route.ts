@@ -3,9 +3,10 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createSupabaseAdminClient()
     
     const { data, error } = await supabase
@@ -14,7 +15,7 @@ export async function GET(
         *,
         category:blog_categories(name)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -31,16 +32,17 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createSupabaseAdminClient()
     const updateData = await req.json()
 
     const { data, error } = await supabase
       .from('blogs')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select('*')
       .single()
 
@@ -58,15 +60,16 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createSupabaseAdminClient()
     
     const { error } = await supabase
       .from('blogs')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (error) {
       console.error('Error deleting blog:', error)

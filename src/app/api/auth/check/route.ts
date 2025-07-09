@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createSupabaseApiClient } from '@/lib/supabase/api'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createSupabaseApiClient()
     const { data: { user }, error } = await supabase.auth.getUser()
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
         email: user.email
       }
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { authenticated: false, error: 'Internal server error' },
       { status: 500 }

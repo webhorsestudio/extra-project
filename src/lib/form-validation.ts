@@ -51,15 +51,15 @@ const fieldDisplayNames: Record<string, string> = {
 /**
  * Convert form validation errors to tab-organized field errors
  */
-export function mapFormErrorsToTabErrors(errors: FieldErrors<any>): FieldError[] {
+export function mapFormErrorsToTabErrors<T extends Record<string, unknown>>(errors: FieldErrors<T>): FieldError[] {
   const fieldErrors: FieldError[] = []
 
   // Helper function to process nested errors
-  const processErrors = (errors: any, prefix = '') => {
+  const processErrors = (errors: Record<string, unknown>, prefix = '') => {
     Object.entries(errors).forEach(([field, error]) => {
       const fullFieldName = prefix ? `${prefix}.${field}` : field
       
-      if (error && typeof error === 'object') {
+      if (error && typeof error === 'object' && error !== null) {
         if ('message' in error && error.message) {
           // This is a field error
           const tabMapping = fieldToTabMap[fullFieldName]
@@ -73,7 +73,7 @@ export function mapFormErrorsToTabErrors(errors: FieldErrors<any>): FieldError[]
           }
         } else {
           // This might be a nested object (like bhk_configurations array)
-          processErrors(error, fullFieldName)
+          processErrors(error as Record<string, unknown>, fullFieldName)
         }
       }
     })
@@ -93,7 +93,7 @@ export function getFieldDisplayName(field: string): string {
 /**
  * Check if form has validation errors
  */
-export function hasFormErrors(errors: FieldErrors<any>): boolean {
+export function hasFormErrors<T extends Record<string, unknown>>(errors: FieldErrors<T>): boolean {
   return Object.keys(errors).length > 0
 }
 

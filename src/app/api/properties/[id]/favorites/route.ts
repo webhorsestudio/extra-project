@@ -3,27 +3,28 @@ import { createSupabaseApiClient } from '@/lib/supabase/api'
 
 export async function GET(
   request: NextRequest,
-  ctx: { params: { id: string } }
+  ctx: { params: Promise<{ id: string }> }
 ) {
-  // @ts-expect-error Next.js dynamic route params can be a Promise in some environments
-  const params = typeof ctx.params.then === 'function' ? await ctx.params : ctx.params;
+  const params = await ctx.params;
   try {
     const supabase = await createSupabaseApiClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const { data, error } = await supabase
+    const result = await supabase
       .from('property_favorites')
       .select('id')
       .eq('property_id', params.id)
       .eq('user_id', user.id)
       .single()
-    if (error && error.code !== 'PGRST116') { // PGRST116: No rows found
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    if (result.error && result.error.code !== 'PGRST116') { // PGRST116: No rows found
+      return NextResponse.json({ error: result.error.message }, { status: 500 })
     }
-    return NextResponse.json({ isFavorited: !!data })
-  } catch (error) {
+    
+    return NextResponse.json({ isFavorited: !!result.data })
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -33,10 +34,9 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  ctx: { params: { id: string } }
+  ctx: { params: Promise<{ id: string }> }
 ) {
-  // @ts-expect-error Next.js dynamic route params can be a Promise in some environments
-  const params = typeof ctx.params.then === 'function' ? await ctx.params : ctx.params;
+  const params = await ctx.params;
   try {
     const supabase = await createSupabaseApiClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -52,7 +52,7 @@ export async function POST(
     if (existing) {
       return NextResponse.json({ error: 'Property already favorited' }, { status: 400 })
     }
-    const { data, error } = await supabase
+    const insertResult = await supabase
       .from('property_favorites')
       .insert({
         property_id: params.id,
@@ -60,11 +60,13 @@ export async function POST(
       })
       .select()
       .single()
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    if (insertResult.error) {
+      return NextResponse.json({ error: insertResult.error.message }, { status: 500 })
     }
-    return NextResponse.json(data)
-  } catch (error) {
+    
+    return NextResponse.json(insertResult.data)
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -74,26 +76,27 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  ctx: { params: { id: string } }
+  ctx: { params: Promise<{ id: string }> }
 ) {
-  // @ts-expect-error Next.js dynamic route params can be a Promise in some environments
-  const params = typeof ctx.params.then === 'function' ? await ctx.params : ctx.params;
+  const params = await ctx.params;
   try {
     const supabase = await createSupabaseApiClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const { error } = await supabase
+    const deleteResult = await supabase
       .from('property_favorites')
       .delete()
       .eq('property_id', params.id)
       .eq('user_id', user.id)
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    if (deleteResult.error) {
+      return NextResponse.json({ error: deleteResult.error.message }, { status: 500 })
     }
+    
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

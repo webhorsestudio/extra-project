@@ -18,9 +18,8 @@ export function useAmenities() {
         const errorData = await res.json()
         setError(errorData.error || 'Failed to fetch amenities')
       }
-    } catch (err) {
-      setError('Error fetching amenities')
-    } finally {
+    } catch {
+      setError('Failed to fetch amenities')
       setLoading(false)
     }
   }

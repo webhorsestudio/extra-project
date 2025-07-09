@@ -27,7 +27,9 @@ import {
   Heart,
   Users,
   CheckCircle,
-  RefreshCw
+  RefreshCw,
+  DollarSign,
+  Target
 } from 'lucide-react'
 import Image from 'next/image'
 import { formatIndianPrice, formatIndianNumber } from '@/lib/utils'

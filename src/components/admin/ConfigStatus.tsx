@@ -37,7 +37,7 @@ export function ConfigStatus() {
   const testConnection = async () => {
     setIsTesting(true)
     try {
-      const { data: _, error } = await supabase
+      const { error } = await supabase
         .from('blog_categories')
         .select('count')
         .limit(1)

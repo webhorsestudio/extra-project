@@ -15,7 +15,7 @@ interface MobileTermsClientProps {
     content_updated_at?: string
     updated_at?: string
   } | null
-  error?: any
+  error?: unknown
 }
 
 export default function MobileTermsClient({ policy, error }: MobileTermsClientProps) {
@@ -86,7 +86,7 @@ export default function MobileTermsClient({ policy, error }: MobileTermsClientPr
               <div className="flex items-center text-gray-300 text-xs">
                 <Calendar className="w-4 h-4 mr-2" />
                 <span>
-                  Last updated: {new Date(policy.content_updated_at || policy.updated_at).toLocaleDateString()}
+                  Last updated: {new Date(policy.content_updated_at || policy.updated_at || Date.now()).toLocaleDateString()}
                 </span>
               </div>
             </CardHeader>

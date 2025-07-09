@@ -1,7 +1,21 @@
 import Image from 'next/image'
 import { Calendar } from 'lucide-react'
 
-export default function BlogHeader({ blog }: { blog: any }) {
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface Blog {
+  id: string;
+  title: string;
+  excerpt: string;
+  featured_image: string | null;
+  created_at?: string;
+  categories?: Category[];
+}
+
+export default function BlogHeader({ blog }: { blog: Blog }) {
   return (
     <header className="relative">
       {blog.featured_image && (
@@ -21,15 +35,15 @@ export default function BlogHeader({ blog }: { blog: any }) {
         <div className="flex items-center gap-4 text-gray-500 text-sm mb-4">
           <span className="flex items-center gap-1">
             <Calendar className="h-4 w-4" />
-            {new Date(blog.created_at).toLocaleDateString('en-US', {
+            {blog.created_at ? new Date(blog.created_at).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
-            })}
+            }) : 'No date available'}
           </span>
           {blog.categories && blog.categories.length > 0 && (
             <span className="text-blue-600 font-medium">
-              {blog.categories.map((cat: any) => cat.name).join(', ')}
+              {blog.categories.map((cat: Category) => cat.name).join(', ')}
             </span>
           )}
         </div>

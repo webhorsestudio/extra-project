@@ -10,18 +10,6 @@ import {
   Phone, 
   MoreHorizontal 
 } from 'lucide-react'
-import { BrandingData } from '@/lib/branding'
-
-interface User {
-  name?: string
-  avatar?: string | null
-  role?: string
-}
-
-interface MobileNavbarProps {
-  brandingData?: BrandingData
-  user?: User | null
-}
 
 const navItems = [
   {
@@ -51,7 +39,7 @@ const navItems = [
   },
 ]
 
-export default function MobileNavbar({ brandingData, user }: MobileNavbarProps) {
+export default function MobileNavbar() {
   const pathname = usePathname()
 
   return (

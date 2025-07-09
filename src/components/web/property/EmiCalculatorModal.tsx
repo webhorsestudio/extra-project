@@ -24,7 +24,16 @@ function EmiCalculatorHeader() {
   );
 }
 
-function EmiCalculatorForm({ amount, setAmount, interest, setInterest, tenure, setTenure }: any) {
+interface EmiCalculatorFormProps {
+  amount: number;
+  setAmount: (amount: number) => void;
+  interest: number;
+  setInterest: (interest: number) => void;
+  tenure: number;
+  setTenure: (tenure: number) => void;
+}
+
+function EmiCalculatorForm({ amount, setAmount, interest, setInterest, tenure, setTenure }: EmiCalculatorFormProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
       <div>

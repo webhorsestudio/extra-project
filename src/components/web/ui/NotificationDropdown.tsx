@@ -6,6 +6,7 @@ import { Bell, X, CheckCircle, AlertCircle, Info, Clock, Inbox } from 'lucide-re
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import type { NotificationData } from '@/lib/notifications-data-client'
 
 interface NotificationDropdownProps {
   className?: string
@@ -13,7 +14,7 @@ interface NotificationDropdownProps {
 
 export default function NotificationDropdown({ className }: NotificationDropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [notifications, setNotifications] = useState<any[]>([]) // Empty for now
+  const [notifications] = useState<NotificationData[]>([]) // Empty for now
   const buttonRef = useRef<HTMLButtonElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -124,11 +125,11 @@ export default function NotificationDropdown({ className }: NotificationDropdown
                   No notifications yet
                 </h4>
                 <p className="text-xs text-gray-500 mb-4">
-                  We'll notify you when something important happens
+                  We&apos;ll notify you when something important happens
                 </p>
                 <div className="flex items-center justify-center text-xs text-gray-400 mb-4">
                   <Clock className="w-3 h-3 mr-1" />
-                  <span>You're all caught up!</span>
+                  <span>You&apos;re all caught up!</span>
                 </div>
                 <Link href="/notifications">
                   <Button
@@ -165,9 +166,9 @@ export default function NotificationDropdown({ className }: NotificationDropdown
                         </p>
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-gray-400">
-                            {notification.time}
+                            {notification.created_at}
                           </span>
-                          {!notification.read && (
+                          {notification.status === 'unread' && (
                             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                           )}
                         </div>

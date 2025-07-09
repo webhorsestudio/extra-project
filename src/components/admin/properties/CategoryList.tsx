@@ -14,7 +14,16 @@ import { useCategories } from '@/hooks/useCategories'
 
 interface CategoryListProps {
   onChange?: () => void
-  categories?: any[]
+  categories?: unknown[]
+}
+
+type Category = {
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at?: string;
+  icon?: string;
+  [key: string]: unknown;
 }
 
 export default function CategoryList({ onChange, categories: categoriesProp }: CategoryListProps) {
@@ -32,7 +41,7 @@ export default function CategoryList({ onChange, categories: categoriesProp }: C
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [showAddForm, setShowAddForm] = useState(false)
+
 
   const handleDelete = async (id: string) => {
     setDeleting(id)
@@ -47,21 +56,18 @@ export default function CategoryList({ onChange, categories: categoriesProp }: C
 
   // Filter and search logic
   const filteredCategories = useMemo(() => {
-    return categories.filter(cat => {
-      const matchesSearch = cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+    return (categories as Category[]).filter((cat) => {
+      const name = typeof cat.name === 'string' ? cat.name : ''
+      const is_active = typeof cat.is_active === 'boolean' ? cat.is_active : false
+      const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesStatus = statusFilter === 'all' || 
-        (statusFilter === 'active' && cat.is_active) || 
-        (statusFilter === 'inactive' && !cat.is_active)
+        (statusFilter === 'active' && is_active) || 
+        (statusFilter === 'inactive' && !is_active)
       return matchesSearch && matchesStatus
     })
   }, [categories, searchTerm, statusFilter])
 
-  const stats = useMemo(() => {
-    const total = categories.length
-    const active = categories.filter(cat => cat.is_active).length
-    const inactive = total - active
-    return { total, active, inactive }
-  }, [categories])
+
 
   if (loading) {
     return (
@@ -220,10 +226,14 @@ export default function CategoryList({ onChange, categories: categoriesProp }: C
             ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" 
             : "space-y-3"
           }>
-            {filteredCategories.map(cat => {
-          let LucideIcon: any = null;
+            {(filteredCategories as Category[]).map((cat) => {
+          let LucideIcon: unknown = null;
+          let Icon: React.ComponentType<{ className?: string }> | null = null;
           if (typeof cat.icon === 'string' && cat.icon in LucideIcons) {
-            LucideIcon = (LucideIcons as any)[cat.icon];
+            LucideIcon = (LucideIcons as Record<string, unknown>)[cat.icon];
+            if (typeof LucideIcon === 'function') {
+              Icon = LucideIcon as React.ComponentType<{ className?: string }>;
+            }
           }
               
               return viewMode === 'grid' ? (
@@ -231,8 +241,8 @@ export default function CategoryList({ onChange, categories: categoriesProp }: C
                   <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                       <div className="p-2 bg-muted rounded-lg group-hover:bg-primary/10 transition-colors">
-                        {LucideIcon ? (
-                          <LucideIcon className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                        {Icon ? (
+                          <Icon className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                         ) : (
                           <div className="h-6 w-6 bg-muted-foreground/20 rounded" />
                         )}
@@ -302,7 +312,7 @@ export default function CategoryList({ onChange, categories: categoriesProp }: C
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Delete Category</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete "{cat.name}"? This action cannot be undone.
+                                  Are you sure you want to delete &quot;{cat.name}&quot;? This action cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -327,8 +337,8 @@ export default function CategoryList({ onChange, categories: categoriesProp }: C
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
                       <div className="p-2 bg-muted rounded-lg group-hover:bg-primary/10 transition-colors">
-                        {LucideIcon ? (
-                          <LucideIcon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                        {Icon ? (
+                          <Icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                         ) : (
                           <div className="h-5 w-5 bg-muted-foreground/20 rounded" />
                         )}
@@ -394,7 +404,7 @@ export default function CategoryList({ onChange, categories: categoriesProp }: C
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete Category</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete "{cat.name}"? This action cannot be undone.
+                            Are you sure you want to delete &quot;{cat.name}&quot;? This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

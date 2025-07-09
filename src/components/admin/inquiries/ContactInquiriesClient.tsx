@@ -14,23 +14,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { 
-  Search, 
-  Filter, 
-  Mail, 
-  Calendar,
+  Search,
+  Mail,
   User,
-  Phone,
-  MessageSquare,
+  Calendar,
   Eye,
-  Clock,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
   Trash2
 } from 'lucide-react'
-import { InquiryStatusBadge } from './InquiryStatusBadge'
-import { InquiryDetail } from './InquiryDetail'
-import { Inquiry } from '@/lib/admin-data'
 import { 
   Table, 
   TableBody, 
@@ -77,7 +67,7 @@ export default function ContactInquiriesClient({
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
-  const [detailOpen, setDetailOpen] = useState(false)
+
   const { toast } = useToast()
 
   // Fetch contact inquiries from API
@@ -119,40 +109,7 @@ export default function ContactInquiriesClient({
     fetchContactInquiries()
   }, [fetchContactInquiries])
 
-  const handleStatusUpdate = async (inquiryId: string, newStatus: string) => {
-    try {
-      const response = await fetch(`/api/admin/inquiries/${inquiryId}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
 
-      if (!response.ok) {
-        throw new Error('Failed to update status')
-      }
-
-      // Update local state
-      setInquiries(prev => prev.map(inquiry => 
-        inquiry.id === inquiryId 
-          ? { ...inquiry, status: newStatus as ContactInquiry['status'] }
-          : inquiry
-      ))
-
-      toast({
-        title: 'Status Updated',
-        description: 'Contact inquiry status has been updated successfully.',
-      })
-    } catch (error) {
-      console.error('Error updating contact inquiry status:', error)
-      toast({
-        title: 'Update Failed',
-        description: 'Failed to update contact inquiry status. Please try again.',
-        variant: 'destructive',
-      })
-    }
-  }
 
   const openInquiryDetail = (inquiry: ContactInquiry) => {
     setSelectedInquiry(inquiry)
@@ -194,35 +151,7 @@ export default function ContactInquiriesClient({
     }
   }
 
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case 'urgent':
-        return <AlertCircle className="h-4 w-4 text-red-500" />
-      case 'high':
-        return <AlertCircle className="h-4 w-4 text-orange-500" />
-      case 'normal':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'low':
-        return <XCircle className="h-4 w-4 text-gray-500" />
-      default:
-        return <CheckCircle className="h-4 w-4 text-green-500" />
-    }
-  }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent':
-        return 'bg-red-100 text-red-800'
-      case 'high':
-        return 'bg-orange-100 text-orange-800'
-      case 'normal':
-        return 'bg-green-100 text-green-800'
-      case 'low':
-        return 'bg-gray-100 text-gray-800'
-      default:
-        return 'bg-green-100 text-green-800'
-    }
-  }
 
   // Filter inquiries based on search and filters (only contact type)
   const filteredInquiries = inquiries.filter(inquiry => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image'
 
 export default function PropertyGalleryHeader() {
   // Hardcoded data for now
@@ -14,14 +15,14 @@ export default function PropertyGalleryHeader() {
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Left: Main Image */}
       <div className="relative w-full lg:w-2/3 aspect-[16/9] rounded-xl overflow-hidden shadow">
-        <img src={mainImage} alt="Main" className="object-cover w-full h-full" />
+        <Image src={mainImage} alt="Main" className="object-cover w-full h-full" fill style={{ objectFit: 'cover' }} />
       </div>
       {/* Right: Gallery Thumbnails */}
       <div className="w-full lg:w-1/3 flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3 h-full">
           {gallery.slice(1, 4).map((img, i) => (
             <div key={i} className="aspect-[16/9] rounded-xl overflow-hidden shadow">
-              <img src={img} alt={`Gallery ${i + 1}`} className="object-cover w-full h-full" />
+              <Image src={img} alt={`Gallery ${i + 1}`} className="object-cover w-full h-full" fill style={{ objectFit: 'cover' }} />
             </div>
           ))}
         </div>

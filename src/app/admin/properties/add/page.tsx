@@ -2,21 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Form } from '@/components/ui/form'
-import { PropertyBasicInfo } from '@/components/admin/properties/PropertyBasicInfo'
-import PropertyLocation from '@/components/admin/properties/PropertyLocation'
-import { PropertyImages } from '@/components/admin/properties/PropertyImages'
-import { PropertyAmenities } from '@/components/admin/properties/PropertyAmenities'
-import { PropertyCategories } from '@/components/admin/properties/PropertyCategories'
-import { BHKConfigurations } from '@/components/admin/properties/BHKConfigurations'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Save, X, Home, MapPin, Image, Dumbbell } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 import { supabase } from '@/lib/supabaseClient'
 import { PropertyForm } from '@/components/admin/properties/PropertyForm'
 import { createPropertyAmenityRelations, createPropertyCategoryRelations } from '@/lib/property-relationships'
+import * as z from 'zod'
+import { formSchema } from '@/components/admin/properties/PropertyForm'
 
 type User = {
   id: string
@@ -25,6 +16,8 @@ type User = {
     full_name?: string
   }
 }
+
+type PropertyFormData = z.infer<typeof formSchema> & { tempImages?: File[] }
 
 export default function AddPropertyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -37,12 +30,6 @@ export default function AddPropertyPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single()
-
       } else {
         router.push('/users/login')
       }
@@ -50,7 +37,7 @@ export default function AddPropertyPage() {
     fetchUser()
   }, [router])
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: PropertyFormData) => {
     try {
       setIsSubmitting(true)
       
@@ -74,8 +61,6 @@ export default function AddPropertyPage() {
         latitude: data.latitude || null,
         longitude: data.longitude || null,
         rera_number: data.has_rera && data.rera_number ? data.rera_number : null,
-        parking: data.parking || false,
-        parking_spots: data.parking_spots || null,
         created_by: user.id,
         posted_by: data.posted_by,
         developer_id: data.developer_id || null,
@@ -92,12 +77,12 @@ export default function AddPropertyPage() {
       }
       
       // Clean and prepare BHK configurations
-      const bhkConfigs = data.bhk_configurations.map((config: Record<string, any>) => ({
-        bhk: parseInt(config.bhk) || 1,
-        price: parseFloat(config.price) || 0,
-        area: parseFloat(config.area) || 0,
-        bedrooms: parseInt(config.bedrooms) || 1,
-        bathrooms: parseInt(config.bathrooms) || 1,
+      const bhkConfigs = data.bhk_configurations.map((config) => ({
+        bhk: config.bhk,
+        price: config.price || 0,
+        area: config.area,
+        bedrooms: config.bedrooms,
+        bathrooms: config.bathrooms,
         floor_plan_url: config.floor_plan_url && config.floor_plan_url.trim() !== '' ? config.floor_plan_url : null,
         brochure_url: config.brochure_url && config.brochure_url.trim() !== '' ? config.brochure_url : null,
         ready_by: config.ready_by && config.ready_by.trim() !== '' ? config.ready_by : null,
@@ -161,7 +146,7 @@ export default function AddPropertyPage() {
 
         try {
           await Promise.all(uploadPromises)
-        } catch (error) {
+        } catch {
           // Don't throw here, property was created successfully
           toast({
             title: 'Warning',
@@ -204,8 +189,17 @@ export default function AddPropertyPage() {
       router.push('/admin/properties')
       router.refresh()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 
-                          ((error as any)?.message || (error as any)?.details || 'Failed to add property')
+      let errorMessage = 'Failed to add property'
+      
+      if (error instanceof Error) {
+        errorMessage = error.message
+      } else if (typeof error === 'object' && error !== null) {
+        if ('message' in error && typeof error.message === 'string') {
+          errorMessage = error.message
+        } else if ('details' in error && typeof error.details === 'string') {
+          errorMessage = error.details
+        }
+      }
 
       toast({
         title: 'Error',

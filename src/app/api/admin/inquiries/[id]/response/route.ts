@@ -13,7 +13,7 @@ export async function PATCH(
 
     const supabase = await createSupabaseAdminClient()
     
-    const updateData: any = {}
+    const updateData: { response_notes?: string; response_method?: string; responded_at?: string } = {}
     
     if (response_notes !== undefined) {
       updateData.response_notes = response_notes

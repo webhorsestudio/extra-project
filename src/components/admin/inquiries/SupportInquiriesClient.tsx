@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   Select,
@@ -15,19 +15,12 @@ import {
 } from '@/components/ui/select'
 import { 
   Search, 
-  Filter, 
   Mail, 
   Calendar,
   User,
-  Phone,
   Eye,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
   HelpCircle
 } from 'lucide-react'
-import { InquiryStatusBadge } from './InquiryStatusBadge'
-import { InquiryDetail } from './InquiryDetail'
 import { Inquiry } from '@/lib/admin-data'
 import { 
   Table, 
@@ -90,53 +83,14 @@ export default function SupportInquiriesClient({ initialInquiries }: SupportInqu
     }
   }, [initialInquiries])
 
-  const handleStatusUpdate = async (inquiryId: string, newStatus: string) => {
-    try {
-      const response = await fetch(`/api/admin/inquiries/${inquiryId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      })
 
-      if (!response.ok) throw new Error('Failed to update status')
-
-      toast({
-        title: 'Status Updated',
-        description: 'Support ticket status has been updated successfully.',
-      })
-    } catch (error) {
-      toast({
-        title: 'Update Failed',
-        description: 'Failed to update support ticket status.',
-        variant: 'destructive',
-      })
-    }
-  }
 
   const openInquiryDetail = (inquiry: Inquiry) => {
     setSelectedInquiry(inquiry)
     setDetailOpen(true)
   }
 
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return <AlertCircle className="h-4 w-4 text-red-500" />
-      case 'high': return <AlertCircle className="h-4 w-4 text-orange-500" />
-      case 'normal': return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'low': return <XCircle className="h-4 w-4 text-gray-500" />
-      default: return <CheckCircle className="h-4 w-4 text-green-500" />
-    }
-  }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-orange-100 text-orange-800'
-      case 'normal': return 'bg-green-100 text-green-800'
-      case 'low': return 'bg-gray-100 text-gray-800'
-      default: return 'bg-green-100 text-green-800'
-    }
-  }
 
   const filteredInquiries = inquiries.filter(inquiry => {
     if (inquiry.inquiry_type !== 'support') return false

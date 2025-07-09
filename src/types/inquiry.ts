@@ -34,11 +34,15 @@ export interface Inquiry {
 export interface Property {
   id: string
   title: string
-  slug: string
+  slug?: string
 }
 
 export interface InquiryWithProperty extends Inquiry {
   property?: Property
+  assigned_user?: {
+    id: string
+    full_name: string
+  }
 }
 
 export type InquiryStatus = 'unread' | 'read' | 'in_progress' | 'resolved' | 'closed' | 'spam'

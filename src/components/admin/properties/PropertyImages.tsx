@@ -197,7 +197,6 @@ export function PropertyImages({
             
             <ImageGallery
               key={`gallery-${propertyId}-${displayImages.length}`}
-              propertyId={propertyId}
               images={displayImages}
               onImagesChange={handleGalleryChange}
               onDeleteImage={handleDeleteImage}

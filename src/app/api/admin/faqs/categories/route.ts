@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 import { createSupabaseApiClient } from '@/lib/supabase/api'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('Admin FAQ Categories API: Starting request')
     

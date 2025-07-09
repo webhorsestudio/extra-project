@@ -1,5 +1,4 @@
 'use client'
-import { useEffect, useState } from 'react'
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram, FaYoutube, FaWhatsapp } from 'react-icons/fa'
 
 interface FooterSocialIconsProps {

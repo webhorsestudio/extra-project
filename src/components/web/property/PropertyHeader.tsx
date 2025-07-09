@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heart, Send } from 'lucide-react';
+import Image from 'next/image'
 
 export default function PropertyHeader() {
   // Hardcoded data for now
@@ -13,7 +14,7 @@ export default function PropertyHeader() {
       <div>
         <div className="flex items-center gap-3 mb-1">
           <span className="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded shadow">{badge}</span>
-          <img src={logo} alt="Logo" className="h-8 w-auto bg-white rounded shadow p-1" />
+          <Image src={logo} alt="Logo" className="h-8 w-auto bg-white rounded shadow p-1" width={32} height={32} />
         </div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{title}</h1>
         <div className="text-gray-500 text-base mt-1">{subtitle}</div>

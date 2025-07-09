@@ -252,7 +252,12 @@ export default function CategoryForm({
   onOpenChange: controlledOnOpenChange,
 }: {
   mode?: 'add' | 'edit',
-  initialData?: any,
+  initialData?: {
+    id: string
+    name: string
+    icon: string
+    is_active: boolean
+  },
   onSuccess?: () => void,
   trigger?: React.ReactNode,
   open?: boolean,

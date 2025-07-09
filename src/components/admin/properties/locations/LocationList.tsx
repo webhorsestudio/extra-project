@@ -1,28 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+
 import { 
   MapPin, 
-  Plus, 
   Search, 
-  Filter, 
   MoreHorizontal,
-  Eye,
   Edit,
   Trash2,
   UserCheck,
   UserX,
-  Mail,
-  Phone,
-  Calendar,
-  Shield,
-  Crown,
-  User
+  Calendar
 } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
 import { useToast } from '@/components/ui/use-toast'
@@ -81,7 +73,7 @@ export function LocationList({ refreshTrigger, onEditLocation }: LocationListPro
   
   const { toast } = useToast()
 
-  const fetchLocations = async () => {
+  const fetchLocations = useCallback(async () => {
     try {
       setLoading(true)
       
@@ -103,7 +95,7 @@ export function LocationList({ refreshTrigger, onEditLocation }: LocationListPro
     } finally {
       setLoading(false)
     }
-  }
+  }, [toast])
 
   useEffect(() => {
     fetchLocations()

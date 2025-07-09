@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import type { User } from '@supabase/supabase-js'
 
 interface UserProfile {
   id: string
@@ -14,7 +15,7 @@ interface UserProfile {
 }
 
 interface AdminAuthState {
-  user: any
+  user: User | null
   profile: UserProfile | null
   loading: boolean
   error: string | null
@@ -202,7 +203,7 @@ export function useAdminAuth() {
       clearTimeout(loadingTimeout)
       authListener?.subscription?.unsubscribe()
     }
-  }, [])
+  }, [state.loading])
 
   const signOut = async () => {
     await supabase.auth.signOut()
@@ -242,7 +243,7 @@ export function useAdminAuth() {
           error: 'Admin access required'
         })
       }
-    } catch (error) {
+    } catch {
       setState({
         user: null,
         profile: null,

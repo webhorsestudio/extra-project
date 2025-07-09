@@ -22,6 +22,6 @@ export default async function MobilePrivacyPage() {
   }
 
   return (
-    <MobilePrivacyClient policy={processedPolicy} error={error} />
+    <MobilePrivacyClient policy={processedPolicy} error={error?.message || null} />
   )
 } 

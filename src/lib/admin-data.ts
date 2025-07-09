@@ -1,5 +1,4 @@
 import { createSupabaseAdminClient, createSupabaseAdminUserClient } from './supabase/admin'
-import { redirect } from 'next/navigation'
 
 export interface DashboardStats {
   totalUsers: number
@@ -8,9 +7,9 @@ export interface DashboardStats {
   monthlyUsers: number
   monthlyProperties: number
   monthlyInquiries: number
-  recentUsers: any[]
-  recentProperties: any[]
-  recentInquiries: any[]
+  recentUsers: Record<string, unknown>[]
+  recentProperties: Record<string, unknown>[]
+  recentInquiries: Record<string, unknown>[]
 }
 
 export interface Inquiry {

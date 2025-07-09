@@ -3,7 +3,7 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 import { createSupabaseApiClient } from '@/lib/supabase/api'
 
 // GET: Fetch active footer styling
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Auth check
     const supabase = await createSupabaseApiClient()
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     return NextResponse.json({ styling: styling || null })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -68,7 +68,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     return NextResponse.json({ styling: data })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 } 

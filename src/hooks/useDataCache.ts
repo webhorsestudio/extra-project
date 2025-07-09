@@ -132,7 +132,7 @@ export function useDataCache<T>(
 }
 
 // Global cache for cross-component data sharing
-const globalCache = new Map<string, { data: any; timestamp: number; ttl: number }>()
+const globalCache = new Map<string, { data: unknown; timestamp: number; ttl: number }>()
 
 export function useGlobalDataCache<T>(
   key: string,
@@ -152,7 +152,7 @@ export function useGlobalDataCache<T>(
   const getCachedData = useCallback((): T | null => {
     const entry = globalCache.get(key)
     if (entry && Date.now() - entry.timestamp < entry.ttl) {
-      return entry.data
+      return entry.data as T
     }
     
     // Remove expired entry

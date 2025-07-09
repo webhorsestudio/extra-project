@@ -25,7 +25,6 @@ interface EnquiryModalProps {
 export function EnquiryModal({ 
   trigger, 
   companyName = 'Extra Realty',
-  contactEmail = '',
   contactPhone = '',
   whatsappUrl = ''
 }: EnquiryModalProps) {
@@ -90,9 +89,10 @@ export function EnquiryModal({
         setMessage(`I'd like to have more information about properties for sale in Mumbai`);
       }, 2000);
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Mobile enquiry submission error:', err);
-      setError(err.message || 'Failed to submit enquiry. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to submit enquiry. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

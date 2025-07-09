@@ -4,18 +4,17 @@ import { createSupabaseApiClient } from '@/lib/supabase/api'
 import { jsonToHtml } from '@/lib/content-utils'
 
 interface PolicyPageProps {
-  params: {
-    type: string
-  }
+  params: Promise<{ type: string }>
 }
 
 export async function generateMetadata({ params }: PolicyPageProps): Promise<Metadata> {
+  const { type } = await params;
   const supabase = await createSupabaseApiClient()
   
   const { data: policy } = await supabase
     .from('policies')
     .select('name, description')
-    .eq('policy_type', params.type)
+    .eq('policy_type', type)
     .eq('is_active', true)
     .single()
 
@@ -33,12 +32,13 @@ export async function generateMetadata({ params }: PolicyPageProps): Promise<Met
 }
 
 export default async function PolicyPage({ params }: PolicyPageProps) {
+  const { type } = await params;
   const supabase = await createSupabaseApiClient()
   
   const { data: policy, error } = await supabase
     .from('policies')
     .select('*')
-    .eq('policy_type', params.type)
+    .eq('policy_type', type)
     .eq('is_active', true)
     .single()
 

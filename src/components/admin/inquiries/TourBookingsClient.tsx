@@ -35,13 +35,11 @@ import {
   Phone, 
   Calendar,
   Clock,
-  MapPin,
-  Home,
   Video,
   Building,
   MessageSquare
 } from 'lucide-react'
-import { TourBooking, InquiryStatus, InquiryPriority, TourStatus } from '@/types/inquiry'
+import { TourBooking, InquiryStatus, TourStatus } from '@/types/inquiry'
 import { format } from 'date-fns'
 
 interface TourBookingsClientProps {

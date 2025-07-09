@@ -1,6 +1,5 @@
 import React from 'react'
 import ServerLayout from '@/components/web/ServerLayout'
-import { Button } from '@/components/ui/button'
 import { getWebsiteInfo } from '@/lib/data'
 import ContactForm from '@/components/web/ContactForm'
 

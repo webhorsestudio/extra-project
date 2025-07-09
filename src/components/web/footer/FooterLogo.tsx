@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 interface FooterLogoProps {
   logoUrl?: string | null
@@ -22,6 +22,7 @@ export default function FooterLogo({
   companyName = 'Extra Realty'
 }: FooterLogoProps) {
   const [logoUrl, setLogoUrl] = useState<string | null>(propLogoUrl || null)
+  const prevBlobUrl = useRef<string | null>(null)
 
   useEffect(() => {
     // If prop logoUrl is provided, use it
@@ -40,14 +41,18 @@ export default function FooterLogo({
           if (contentType && contentType.includes('svg')) {
             const svg = await res.text()
             const blob = new Blob([svg], { type: 'image/svg+xml' })
-            setLogoUrl(URL.createObjectURL(blob))
+            const blobUrl = URL.createObjectURL(blob)
+            setLogoUrl(blobUrl)
+            prevBlobUrl.current = blobUrl
           } else {
             // Otherwise, assume it's an image
             const blob = await res.blob()
-            setLogoUrl(URL.createObjectURL(blob))
+            const blobUrl = URL.createObjectURL(blob)
+            setLogoUrl(blobUrl)
+            prevBlobUrl.current = blobUrl
           }
         }
-      } catch (e) {
+      } catch {
         setLogoUrl(null)
       }
     }
@@ -58,8 +63,8 @@ export default function FooterLogo({
     
     // Cleanup blob URL on unmount
     return () => {
-      if (logoUrl && logoUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(logoUrl)
+      if (prevBlobUrl.current && prevBlobUrl.current.startsWith('blob:')) {
+        URL.revokeObjectURL(prevBlobUrl.current)
       }
     }
   }, [propLogoUrl])

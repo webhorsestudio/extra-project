@@ -11,7 +11,7 @@ import { Upload, Trash2, Image as ImageIcon, Loader2, Save } from 'lucide-react'
 
 export default function FooterLogoTab() {
   const { toast } = useToast()
-  const [logo, setLogo] = useState<any>(null)
+  const [logo, setLogo] = useState<unknown>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -39,20 +39,22 @@ export default function FooterLogoTab() {
         setLogo(data.logo)
         
         if (data.logo) {
+          const logoData = data.logo as Record<string, unknown>
           setLogoSettings({
-            showLogo: data.logo.show_logo ?? true,
-            altText: data.logo.logo_alt_text || 'Footer Logo',
-            width: data.logo.logo_width || 180,
-            height: data.logo.logo_height || 56,
-            linkToHome: data.logo.link_to_home ?? true
+            showLogo: logoData.show_logo !== false,
+            altText: typeof logoData.logo_alt_text === 'string' ? logoData.logo_alt_text : 'Footer Logo',
+            width: typeof logoData.logo_width === 'number' ? logoData.logo_width : 180,
+            height: typeof logoData.logo_height === 'number' ? logoData.logo_height : 56,
+            linkToHome: logoData.link_to_home !== false
           })
           
-          if (data.logo.logo_url) {
-            setLogoPreview(data.logo.logo_url)
+          if (typeof logoData.logo_url === 'string' && logoData.logo_url) {
+            setLogoPreview(logoData.logo_url)
           }
         }
-      } catch (err: any) {
-        setError(err.message)
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
+        setError(errorMessage)
       } finally {
         setLoading(false)
       }
@@ -127,10 +129,11 @@ export default function FooterLogoTab() {
         title: 'Success',
         description: 'Footer logo uploaded successfully',
       })
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
       toast({
         title: 'Error',
-        description: err.message,
+        description: errorMessage,
         variant: 'destructive'
       })
     } finally {
@@ -146,7 +149,7 @@ export default function FooterLogoTab() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...logo,
+          ...(logo as Record<string, unknown>),
           show_logo: logoSettings.showLogo,
           logo_alt_text: logoSettings.altText,
           logo_width: logoSettings.width,
@@ -158,9 +161,10 @@ export default function FooterLogoTab() {
       if (!res.ok) throw new Error(data.error || 'Failed to save logo settings')
       setLogo(data.logo)
       toast({ title: 'Success', description: 'Logo settings saved.' })
-    } catch (err: any) {
-      setError(err.message)
-      toast({ title: 'Error', description: err.message, variant: 'destructive' })
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
+      setError(errorMessage)
+      toast({ title: 'Error', description: errorMessage, variant: 'destructive' })
     } finally {
       setSaving(false)
     }
@@ -172,7 +176,7 @@ export default function FooterLogoTab() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...logo,
+          ...(logo as Record<string, unknown>),
           logo_url: null,
           logo_storage_path: null,
           logo_filename: null,
@@ -190,10 +194,11 @@ export default function FooterLogoTab() {
         title: 'Logo removed',
         description: 'Footer logo has been removed',
       })
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
       toast({
         title: 'Error',
-        description: err.message,
+        description: errorMessage,
         variant: 'destructive'
       })
     }

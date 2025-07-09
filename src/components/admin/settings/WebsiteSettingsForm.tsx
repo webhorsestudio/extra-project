@@ -232,7 +232,7 @@ export function WebsiteSettingsForm({ settings }: Props) {
     try {
       new URL(string)
       return true
-    } catch (_unused) {
+    } catch {
       return false
     }
   }

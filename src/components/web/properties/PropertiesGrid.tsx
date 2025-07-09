@@ -8,7 +8,7 @@ import PropertyMapView from './PropertyMapView';
 import type { Property } from '@/types/property';
 
 interface PropertiesGridProps {
-  initialProperties: any[];
+  initialProperties: Property[];
   initialFilters: {
     location?: string;
     min_price?: number;

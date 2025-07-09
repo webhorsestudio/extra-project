@@ -7,7 +7,7 @@ import { ThemeSettingsForm } from '@/components/admin/settings/ThemeSettingsForm
 
 export const metadata: Metadata = {
   title: 'Theme Settings - Admin',
-  description: 'Customize your website\'s colors, typography, and visual preferences',
+  description: 'Customize your website&apos;s colors, typography, and visual preferences',
 }
 
 export default async function ThemeSettingsPage() {
@@ -65,7 +65,7 @@ export default async function ThemeSettingsPage() {
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Theme Settings</h1>
             <p className="text-muted-foreground">
-              Customize your website's colors, typography, and visual preferences.
+              Customize your website&apos;s colors, typography, and visual preferences.
             </p>
           </div>
           <ThemeSettingsForm settings={settings} />

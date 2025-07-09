@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,11 +14,10 @@ import {
   FileText, 
   Calendar,
   Eye,
-  MoreHorizontal,
   RefreshCw
 } from 'lucide-react'
 import { DeletePageDialog } from './DeletePageDialog'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 interface Page {
   id: string

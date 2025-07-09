@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -25,13 +25,10 @@ import {
   User, 
   Mail, 
   Phone, 
-  Calendar, 
   Building, 
   MessageSquare, 
-  ExternalLink,
   CheckCircle,
   Eye,
-  Clock,
   AlertCircle,
   XCircle,
   FileText,
@@ -39,37 +36,10 @@ import {
   Share2
 } from 'lucide-react'
 import { InquiryStatusBadge } from './InquiryStatusBadge'
-
-interface Inquiry {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  message: string
-  inquiry_type: 'property' | 'contact' | 'support' | 'other'
-  property_id?: string
-  status: 'unread' | 'read' | 'in_progress' | 'resolved' | 'closed' | 'spam'
-  subject?: string
-  priority: 'low' | 'normal' | 'high' | 'urgent'
-  source: 'website' | 'phone' | 'email' | 'social' | 'referral'
-  assigned_to?: string
-  response_notes?: string
-  responded_at?: string
-  response_method?: 'email' | 'phone' | 'sms' | 'whatsapp' | 'in_person'
-  created_at: string
-  updated_at: string
-  property?: {
-    id: string
-    title: string
-  }
-  assigned_user?: {
-    id: string
-    full_name: string
-  }
-}
+import type { InquiryWithProperty } from '@/types/inquiry'
 
 interface InquiryDetailProps {
-  inquiry: Inquiry | null
+  inquiry: InquiryWithProperty | null
   open: boolean
   onOpenChange: (open: boolean) => void
   onStatusUpdate: (inquiryId: string, newStatus: string) => Promise<void>

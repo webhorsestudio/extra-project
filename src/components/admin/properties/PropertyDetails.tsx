@@ -1,5 +1,12 @@
 import { useFormContext } from 'react-hook-form'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
 
 const AMENITIES_OPTIONS = [
   { id: 'gym', label: 'Gym' },

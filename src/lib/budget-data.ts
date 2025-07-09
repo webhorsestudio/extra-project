@@ -25,7 +25,7 @@ export async function getBudgetDataClient(): Promise<BudgetData> {
 
     const data = await response.json()
     return data.budget
-  } catch (error) {
+  } catch {
     // Return default values if there's an error
     return {
       minPrice: 0,

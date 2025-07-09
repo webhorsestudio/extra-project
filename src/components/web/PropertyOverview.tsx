@@ -1,28 +1,12 @@
 import { Badge } from "@/components/ui/badge"
 import { Property } from "@/types/property"
-import { MapPin, Building } from "lucide-react"
+import { MapPin } from "lucide-react"
 
 interface PropertyOverviewProps {
   property: Pick<Property, 'title' | 'location' | 'property_type' | 'property_configurations' | 'description' | 'amenities'>
 }
 
 export default function PropertyOverview({ property }: PropertyOverviewProps) {
-  const getPriceRange = () => {
-    if (!property.property_configurations || property.property_configurations.length === 0) {
-      return "N/A"
-    }
-    const prices = property.property_configurations.map(c => c.price).filter(p => p > 0);
-    if (prices.length === 0) return "N/A"
-
-    const minPrice = Math.min(...prices)
-    const maxPrice = Math.max(...prices)
-
-    if (minPrice === maxPrice) {
-      return `$${minPrice.toLocaleString()}`
-    }
-    return `$${minPrice.toLocaleString()} - $${maxPrice.toLocaleString()}`
-  }
-
   return (
     <div className="space-y-6">
       <div>

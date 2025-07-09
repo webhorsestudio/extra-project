@@ -1,6 +1,5 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
 import MobileBlogPageClient from './MobileBlogPageClient'
 import { editorjsToHtml } from '@/lib/editorjsToHtml'
 
@@ -25,8 +24,8 @@ async function getBlog(id: string) {
     }
 
     return data
-  } catch (error) {
-    console.error('Blog fetch exception:', error)
+  } catch {
+    console.error('Blog fetch exception:')
     return null
   }
 }
@@ -49,8 +48,8 @@ async function getRelatedBlogs(currentBlogId: string) {
     }
 
     return data || []
-  } catch (error) {
-    console.error('Related blogs fetch exception:', error)
+  } catch {
+    console.error('Related blogs fetch exception:')
     return []
   }
 }
@@ -73,8 +72,8 @@ export default async function MobileBlogPage({ params }: BlogPageProps) {
         content={editorjsToHtml(blog.content)}
       />
     )
-  } catch (error) {
-    console.error('Mobile blog page error:', error)
+  } catch {
+    console.error('Mobile blog page error:')
     return notFound()
   }
 }
@@ -101,7 +100,7 @@ export async function generateMetadata({ params }: BlogPageProps) {
         images: blog.featured_image ? [blog.featured_image] : [],
       },
     }
-  } catch (error) {
+  } catch {
     return {
       title: 'Blog',
       description: 'Blog post'

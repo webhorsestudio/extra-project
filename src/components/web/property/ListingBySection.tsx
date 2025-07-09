@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { Property } from '@/types/property';
+import Image from 'next/image';
 
 interface ListingBySectionProps {
   property: Property;
@@ -67,7 +67,7 @@ export default function ListingBySection({ property }: ListingBySectionProps) {
       <div className="flex items-center gap-6">
         <div className="flex-shrink-0">
           {developer?.logo_url ? (
-            <img
+            <Image
               src={developer.logo_url}
               alt={`${developer.name} Logo`}
               width={70}

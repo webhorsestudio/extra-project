@@ -1,14 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
 import { 
   Key, 
   Copy, 
@@ -33,17 +30,17 @@ export default function CredentialsPage() {
   })
   const [showKeys, setShowKeys] = useState(false)
 
-  useEffect(() => {
-    checkAuth()
-    checkConfig()
-  }, [checkAuth])
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const { data: { user }, error } = await supabase.auth.getUser()
     if (error || !user) {
       router.push('/users/login')
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    checkAuth()
+    checkConfig()
+  }, [checkAuth])
 
   const checkConfig = () => {
     const hasUrl = !!process.env.NEXT_PUBLIC_SUPABASE_URL

@@ -5,7 +5,7 @@ interface CategoryBarErrorFallbackProps {
   resetError: () => void
 }
 
-export default function CategoryBarErrorFallback({ error, resetError }: CategoryBarErrorFallbackProps) {
+export default function CategoryBarErrorFallback({ resetError }: CategoryBarErrorFallbackProps) {
   return (
     <div className="bg-gray-50 border-b border-gray-200 py-4">
       <div className="container mx-auto px-6 lg:px-8">

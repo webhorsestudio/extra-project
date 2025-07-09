@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Property } from '@/types/property';
-import { X, ChevronLeft, ChevronRight, Calendar, Video, Building } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Video, Building } from 'lucide-react';
 
 interface WebEnquiryModalProps {
   open: boolean;
@@ -11,41 +11,14 @@ interface WebEnquiryModalProps {
 }
 
 export default function WebEnquiryModal({ open, type, property, onClose }: WebEnquiryModalProps) {
-  // Reset form state when modal opens with different type
-  React.useEffect(() => {
-    if (open) {
-      // Reset forms when modal opens
-      setContactForm({
-        name: '',
-        email: '',
-        phone: '',
-        config: configState,
-        message: '',
-      });
-      setTourForm({
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        time: '',
-        siteVisit: false,
-        videoChat: false,
-      });
-      setContactMessage('');
-      setContactMessageType('');
-      setTourMessage('');
-      setTourMessageType('');
-      setTourValidationErrors([]);
-      setDateOffset(0);
-    }
-  }, [open, type]);
-  
-  // Contact form state
+  // Contact form state - config options and state must be declared before useEffect
   const configOptions = property.property_configurations?.map(config => `${config.bhk}BHK`) || ['3BHK', '4BHK'];
   const configState = configOptions.reduce((acc, config) => {
     acc[config] = false;
     return acc;
   }, {} as Record<string, boolean>);
+
+  // Contact form state
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
@@ -73,6 +46,35 @@ export default function WebEnquiryModal({ open, type, property, onClose }: WebEn
   const [tourValidationErrors, setTourValidationErrors] = useState<string[]>([]);
   const [dateOffset, setDateOffset] = useState(0);
 
+  // Reset form state when modal opens with different type
+  React.useEffect(() => {
+    if (open) {
+      // Reset forms when modal opens
+      setContactForm({
+        name: '',
+        email: '',
+        phone: '',
+        config: configState,
+        message: '',
+      });
+      setTourForm({
+        name: '',
+        email: '',
+        phone: '',
+        date: '',
+        time: '',
+        siteVisit: false,
+        videoChat: false,
+      });
+      setContactMessage('');
+      setContactMessageType('');
+      setTourMessage('');
+      setTourMessageType('');
+      setTourValidationErrors([]);
+      setDateOffset(0);
+    }
+  }, [open, type, configState]);
+  
   // Generate dates for navigation (14 days starting from tomorrow)
   const generateDates = (offset: number = 0) => {
     const dates = [];
@@ -116,12 +118,25 @@ export default function WebEnquiryModal({ open, type, property, onClose }: WebEn
   ];
 
   // Handlers for contact form
-  const handleContactChange = (field: string, value: any) => {
+  const handleContactChange = (field: string, value: unknown) => {
     if (field === 'config') {
-      setContactForm((prev) => ({
-        ...prev,
-        config: { ...prev.config, ...value },
-      }));
+      setContactForm((prev) => {
+        let newConfig: Record<string, boolean> = {};
+        if (
+          prev.config && typeof prev.config === 'object' && !Array.isArray(prev.config) &&
+          value && typeof value === 'object' && !Array.isArray(value)
+        ) {
+          newConfig = Object.assign({}, prev.config, value as object) as Record<string, boolean>;
+        } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+          newConfig = Object.assign({}, value as object) as Record<string, boolean>;
+        } else {
+          newConfig = {} as Record<string, boolean>;
+        }
+        return {
+          ...prev,
+          config: newConfig,
+        };
+      });
     } else {
       setContactForm((prev) => ({ ...prev, [field]: value }));
     }
@@ -156,7 +171,7 @@ export default function WebEnquiryModal({ open, type, property, onClose }: WebEn
   };
 
   // Handlers for tour form
-  const handleTourChange = (field: string, value: any) => {
+  const handleTourChange = (field: string, value: unknown) => {
     setTourForm((prev) => ({ ...prev, [field]: value }));
     if (tourValidationErrors.length > 0) setTourValidationErrors([]);
   };

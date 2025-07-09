@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/components/ui/use-toast'
 import { supabase } from '@/lib/supabaseClient'
-import { Heart, Home, Search, User, LogOut, Star, Eye } from 'lucide-react'
+import { Heart, Search, User, LogOut, Star, Eye } from 'lucide-react'
 
 interface CustomerProfile {
   id: string
@@ -197,21 +197,21 @@ export default function CustomerDashboard() {
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Added "Sunset Villa" to favorites</p>
+                    <p className="text-sm font-medium">Added &quot;Sunset Villa&quot; to favorites</p>
                     <p className="text-xs text-muted-foreground">2 hours ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Sent inquiry for "Ocean View"</p>
+                    <p className="text-sm font-medium">Sent inquiry for &quot;Ocean View&quot;</p>
                     <p className="text-xs text-muted-foreground">1 day ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Viewed "Mountain Lodge"</p>
+                    <p className="text-sm font-medium">Viewed &quot;Mountain Lodge&quot;</p>
                     <p className="text-xs text-muted-foreground">2 days ago</p>
                   </div>
                 </div>

@@ -20,8 +20,8 @@ import {
 } from 'lucide-react'
 
 interface TiptapEditorProps {
-  content: any
-  onChange: (content: any) => void
+  content: Record<string, unknown>
+  onChange: (content: Record<string, unknown>) => void
 }
 
 export function TiptapEditor({ content, onChange }: TiptapEditorProps) {

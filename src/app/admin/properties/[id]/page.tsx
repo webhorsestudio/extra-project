@@ -8,8 +8,10 @@ import { PropertyForm } from '@/components/admin/properties/PropertyForm'
 import { updatePropertyAmenityRelations, updatePropertyCategoryRelations } from '@/lib/property-relationships'
 import { toast } from '@/components/ui/use-toast'
 import { supabase } from '@/lib/supabaseClient'
+import { use } from 'react';
 
-// Form schema definition
+// Form schema definition - used for type inference and validation
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
@@ -42,17 +44,12 @@ const formSchema = z.object({
   developer_id: z.string().optional(),
 })
 
-interface PageProps {
-  params: { id: string } | Promise<{ id: string }>
-}
-
-export default function EditPropertyPage({ params }: PageProps) {
-  const resolvedParams = typeof (params as Promise<{ id: string }>) === 'object' && typeof (params as Promise<{ id: string }>).then === 'function' ? React.use(params as Promise<{ id: string }>) : params;
-  const id = resolvedParams.id;
+export default function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter()
 
   // Fetch property data
-  const { property, isLoading: isPropertyLoading, updateProperty, updateAmenities, updateCategories } = useProperty(id)
+  const { property, isLoading: isPropertyLoading, updateProperty } = useProperty(id)
 
   const handleUpdateProperty = async (values: z.infer<typeof formSchema>) => {
     if (!property) return
@@ -161,7 +158,7 @@ export default function EditPropertyPage({ params }: PageProps) {
         property_id: property.id,
       }))
       
-      const { data: insertData, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('property_configurations')
         .insert(newConfigs)
         .select()

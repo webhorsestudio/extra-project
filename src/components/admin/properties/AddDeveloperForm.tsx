@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+
 import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -140,7 +140,7 @@ export function AddDeveloperForm({ onDeveloperAdded, open, onOpenChange }: AddDe
         }
       })
       removeSelectedFile()
-    } catch (error) {
+    } catch {
       setIsLoading(false)
       toast({ title: 'Error', description: 'Network or server error', variant: 'destructive' })
       return

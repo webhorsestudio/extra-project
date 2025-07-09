@@ -176,7 +176,7 @@ export function EditDeveloperForm({ developer, open, onOpenChange, onDeveloperUp
       onDeveloperUpdated()
       onOpenChange(false)
       setSelectedFile(null)
-    } catch (error) {
+    } catch {
       setIsLoading(false)
       toast({ title: 'Error', description: 'Network or server error', variant: 'destructive' })
       return

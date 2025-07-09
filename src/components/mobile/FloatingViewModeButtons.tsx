@@ -12,7 +12,7 @@ interface FloatingViewModeButtonsProps {
   footerVisible: boolean;
 }
 
-function FloatingButton({ icon: Icon, active, onClick, label }: { icon: any; active: boolean; onClick: () => void; label: string }) {
+function FloatingButton({ icon: Icon, active, onClick, label }: { icon: React.ComponentType<{ className?: string }>; active: boolean; onClick: () => void; label: string }) {
   return (
     <button
       onClick={onClick}

@@ -3,15 +3,16 @@ import { createSupabaseApiClient } from '@/lib/supabase/api'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createSupabaseApiClient()
+    const { id } = await params
     
     const { count, error } = await supabase
       .from('properties')
       .select('*', { count: 'exact', head: true })
-      .eq('location_id', params.id)
+      .eq('location_id', id)
       .eq('status', 'active')
 
     if (error) {

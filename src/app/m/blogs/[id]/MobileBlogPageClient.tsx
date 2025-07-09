@@ -2,16 +2,40 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Calendar, Share2, Facebook, Twitter, Linkedin, Copy, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, Share2, Facebook, Twitter, Linkedin, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
 import BlogCard from '@/components/mobile/BlogCard';
-import { shareProperty, shareToWhatsApp, copyToClipboard, generatePropertyShareData } from '@/lib/utils/share';
+import { shareProperty, copyToClipboard } from '@/lib/utils/share';
+import Image from 'next/image';
+
+interface BlogCategory {
+  id: string;
+  name: string;
+}
+
+// Raw blog data from database (matches Supabase schema)
+interface RawBlog {
+  id: string;
+  title: string;
+  excerpt: string;
+  created_at: string;
+  featured_image: string | null;
+  categories?: BlogCategory[];
+}
+
+// Normalized blog data for BlogCard component
+interface NormalizedBlog {
+  id: string;
+  title: string;
+  excerpt: string;
+  created_at: string;
+  featured_image: string | null;
+  categories?: BlogCategory[];
+}
 
 interface MobileBlogPageClientProps {
-  blog: any;
-  relatedBlogs: any[];
+  blog: RawBlog;
+  relatedBlogs: RawBlog[];
   content: string;
 }
 
@@ -21,8 +45,13 @@ export default function MobileBlogPageClient({
   content 
 }: MobileBlogPageClientProps) {
   const router = useRouter();
-  const { toast } = useToast();
   const [copied, setCopied] = useState(false);
+
+  // Normalize related blogs data
+  const normalizedRelatedBlogs: NormalizedBlog[] = relatedBlogs.map(relatedBlog => ({
+    ...relatedBlog,
+    featured_image: relatedBlog.featured_image ?? null,
+  }));
 
   const handleBack = () => {
     router.push('/m/blogs');
@@ -99,10 +128,11 @@ export default function MobileBlogPageClient({
         {/* Featured Image */}
         {blog.featured_image && (
           <div className="relative w-full h-64 overflow-hidden">
-            <img
+            <Image
               src={blog.featured_image}
               alt={blog.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
           </div>
@@ -124,7 +154,7 @@ export default function MobileBlogPageClient({
               </span>
               {blog.categories && blog.categories.length > 0 && (
                 <span className="text-blue-600 font-medium">
-                  {blog.categories.map((cat: any) => cat.name).join(', ')}
+                  {blog.categories.map((cat: BlogCategory) => cat.name).join(', ')}
                 </span>
               )}
             </div>
@@ -141,7 +171,6 @@ export default function MobileBlogPageClient({
         {/* Blog Content */}
         <div className="bg-white/90 backdrop-blur-md border-gray-200/50 rounded-2xl shadow-lg mx-2 p-6">
           <div className="prose prose-sm max-w-none text-gray-900">
-            {/* eslint-disable-next-line react/no-danger */}
             <div dangerouslySetInnerHTML={{ __html: content }} />
           </div>
         </div>
@@ -180,11 +209,11 @@ export default function MobileBlogPageClient({
         </div>
 
         {/* Related Posts */}
-        {relatedBlogs.length > 0 && (
+        {normalizedRelatedBlogs.length > 0 && (
           <div className="bg-white/90 backdrop-blur-md border-gray-200/50 rounded-2xl shadow-lg mx-2 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Related Posts</h3>
             <div className="space-y-4">
-              {relatedBlogs.map((relatedBlog) => (
+              {normalizedRelatedBlogs.map((relatedBlog: NormalizedBlog) => (
                 <BlogCard key={relatedBlog.id} blog={relatedBlog} />
               ))}
             </div>

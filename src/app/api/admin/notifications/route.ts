@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     // Get creator information separately if needed
     const creatorIds = notifications?.map(n => n.created_by).filter(Boolean) || []
-    let creators: any[] = []
+    let creators: { id: string; full_name: string }[] = []
     
     if (creatorIds.length > 0) {
       const { data: profiles } = await supabase

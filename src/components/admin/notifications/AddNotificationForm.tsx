@@ -124,7 +124,7 @@ export function AddNotificationForm({ onSuccess, onCancel }: AddNotificationForm
           <Label htmlFor="type">Type *</Label>
           <Select
             value={watch('type')}
-            onValueChange={(value) => setValue('type', value as any)}
+            onValueChange={(value) => setValue('type', value as 'info' | 'warning' | 'error' | 'success')}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select notification type" />
@@ -143,7 +143,7 @@ export function AddNotificationForm({ onSuccess, onCancel }: AddNotificationForm
           <Label htmlFor="category">Category *</Label>
           <Select
             value={watch('category')}
-            onValueChange={(value) => setValue('category', value as any)}
+            onValueChange={(value) => setValue('category', value as 'system' | 'user' | 'property' | 'inquiry')}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select notification category" />

@@ -3,17 +3,18 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('Admin notification API: Fetching notification:', params.id)
+    const { id } = await params;
+    console.log('Admin notification API: Fetching notification:', id)
     
     const supabase = await createSupabaseAdminClient()
     
     const { data: notification, error } = await supabase
       .from('notifications')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -39,10 +40,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('Admin notification API: Updating notification:', params.id)
+    const { id } = await params;
+    console.log('Admin notification API: Updating notification:', id)
     
     const supabase = await createSupabaseAdminClient()
     const body = await request.json()
@@ -61,7 +63,7 @@ export async function PUT(
     const { data: notification, error } = await supabase
       .from('notifications')
       .update({ status })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 
@@ -91,10 +93,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('Admin notification API: Deleting notification:', params.id)
+    const { id } = await params;
+    console.log('Admin notification API: Deleting notification:', id)
     
     const supabase = await createSupabaseAdminClient()
     
@@ -102,7 +105,7 @@ export async function DELETE(
     const { data: existingNotification, error: fetchError } = await supabase
       .from('notifications')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (fetchError) {
@@ -118,7 +121,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('notifications')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (error) {
       console.error('Admin notification API: Error deleting notification:', error)

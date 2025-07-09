@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Calendar, ArrowRight, Clock } from 'lucide-react';
+import { Calendar, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+
+interface BlogCategory {
+  id: string;
+  name: string;
+}
 
 interface BlogCardProps {
   blog: {
@@ -11,7 +16,7 @@ interface BlogCardProps {
     excerpt: string;
     featured_image: string | null;
     created_at?: string;
-    categories?: any[];
+    categories?: BlogCategory[];
   };
 }
 
@@ -57,7 +62,7 @@ export default function BlogCard({ blog }: BlogCardProps) {
           {/* Category badges */}
           {blog.categories && blog.categories.length > 0 && (
             <div className="absolute top-3 right-3 flex flex-wrap gap-1">
-              {blog.categories.slice(0, 2).map((cat: any, index: number) => (
+              {blog.categories.slice(0, 2).map((cat: BlogCategory, index: number) => (
                 <Badge
                   key={index}
                   variant="secondary"

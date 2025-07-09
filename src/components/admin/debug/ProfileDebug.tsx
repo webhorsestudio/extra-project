@@ -6,7 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
 export function ProfileDebug() {
-  const [debugInfo, setDebugInfo] = useState<any>(null)
+  const [debugInfo, setDebugInfo] = useState<{
+    step: string
+    error?: string
+    user?: {
+      id: string
+      email: string
+      role?: string
+    }
+    profile?: Record<string, unknown>
+    profileError?: string
+    isAdmin?: boolean
+    adminCheck?: boolean
+    adminCheckError?: string
+  } | null>(null)
   const [loading, setLoading] = useState(false)
 
   const runDebug = async () => {
@@ -22,11 +35,10 @@ export function ProfileDebug() {
       console.log('Auth error:', authError)
 
       if (authError || !user) {
-        setDebugInfo({
-          step: 'Authentication failed',
-          error: authError?.message || 'No user found',
-          user: null
-        })
+              setDebugInfo({
+        step: 'Authentication failed',
+        error: authError?.message || 'No user found'
+      })
         return
       }
 

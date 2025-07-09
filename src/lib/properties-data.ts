@@ -68,12 +68,22 @@ export async function getPropertiesData(filters?: {
   }
 
   // Transform data to match the same structure as featured/latest properties
-  const transformedProperties = (data || []).map((property: any) => ({
-    ...property,
-    price: property.property_configurations?.[0]?.price ?? null,
-    location_data: Array.isArray(property.property_locations) ? property.property_locations[0] : property.property_locations,
-    categories: [] // Initialize empty categories array
-  }))
+  const transformedProperties = (data || []).map((property: Record<string, unknown>) => {
+    const propertyConfigurations = property.property_configurations;
+    const price = Array.isArray(propertyConfigurations) && propertyConfigurations.length > 0 && typeof propertyConfigurations[0] === 'object'
+      ? (propertyConfigurations[0] as { price?: number }).price ?? null
+      : null;
+    const propertyLocations = property.property_locations;
+    const location_data = Array.isArray(propertyLocations) && propertyLocations.length > 0 && typeof propertyLocations[0] === 'object'
+      ? propertyLocations[0]
+      : propertyLocations;
+    return {
+      ...property,
+      price,
+      location_data,
+      categories: [] // Initialize empty categories array
+    };
+  });
 
   // Apply client-side filters
   let filteredProperties = transformedProperties
@@ -95,36 +105,37 @@ export async function getPropertiesData(filters?: {
       
       if (!categoryError && categoryData) {
         // Create a map of property_id to categories
-        const propertyCategoriesMap = new Map()
-        categoryData.forEach((relation: any) => {
-          const propertyId = relation.property_id
-          const category = relation.property_categories
+        const propertyCategoriesMap = new Map();
+        categoryData.forEach((relation: Record<string, unknown>) => {
+          const propertyId = relation.property_id;
+          const category = relation.property_categories;
           
           if (!propertyCategoriesMap.has(propertyId)) {
-            propertyCategoriesMap.set(propertyId, [])
+            propertyCategoriesMap.set(propertyId, []);
           }
           
-          if (category) {
+          if (category && typeof category === 'object') {
+            const cat = category as { name?: string; icon?: string };
             propertyCategoriesMap.get(propertyId).push({
-              name: category.name,
-              icon: category.icon
-            })
+              name: cat.name,
+              icon: cat.icon
+            });
           }
-        })
+        });
         
         // Update properties with their categories
         filteredProperties = filteredProperties.map(property => ({
           ...property,
-          categories: propertyCategoriesMap.get(property.id) || []
-        }))
+          categories: propertyCategoriesMap.get((property as { id?: string }).id as string) || []
+        }));
         
         // Filter by category
         filteredProperties = filteredProperties.filter(property => {
-          return property.categories?.some((cat: any) => cat.name === filters.category)
-        })
+          return property.categories?.some((cat: Record<string, unknown>) => cat.name === filters.category);
+        });
       }
     } catch (error) {
-      console.error('Error in category filtering:', error)
+      console.error('Error in category filtering:', error);
     }
   }
 

@@ -3,7 +3,7 @@ import { createSupabaseApiClient } from '@/lib/supabase/api'
 
 export async function POST(req: NextRequest) {
   try {
-    let formData: any = {}
+    let formData: Record<string, string | File | null> = {}
     
     // Check if the request is FormData or JSON
     const contentType = req.headers.get('content-type') || ''
@@ -58,20 +58,20 @@ export async function POST(req: NextRequest) {
     } = formData
 
     // Validation
-    if (!name?.trim()) {
+    if (!(name as string)?.trim()) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
     }
-    if (!email?.trim()) {
+    if (!(email as string)?.trim()) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
-    if (!message?.trim()) {
+    if (!(message as string)?.trim()) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 })
     }
 
     const supabase = await createSupabaseApiClient()
 
     // Check if inquiries table exists
-    const { data: tableCheck, error: tableError } = await supabase
+    const { error: tableError } = await supabase
       .from('inquiries')
       .select('id')
       .limit(1)
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
         const filePath = `inquiries/${inquiry_type}/${fileName}`
         
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('inquiries')
           .upload(filePath, attachment)
         
@@ -116,11 +116,11 @@ export async function POST(req: NextRequest) {
       .from('inquiries')
       .insert([
         {
-          name: name.trim(),
-          email: email.trim(),
-          phone: phone?.trim() || null,
-          subject: subject?.trim() || null,
-          message: message.trim(),
+          name: (name as string).trim(),
+          email: (email as string).trim(),
+          phone: (phone as string)?.trim() || null,
+          subject: (subject as string)?.trim() || null,
+          message: (message as string).trim(),
           priority,
           category,
           inquiry_type,

@@ -32,11 +32,6 @@ export function KeysAuthGate() {
   const [isTesting, setIsTesting] = useState(false)
   const [showKeys, setShowKeys] = useState(false)
 
-  useEffect(() => {
-    checkAuth()
-    checkConfig()
-  }, [checkAuth])
-
   const checkAuth = async () => {
     try {
       const { data: { user }, error } = await supabase.auth.getUser()
@@ -64,6 +59,11 @@ export function KeysAuthGate() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    checkAuth()
+    checkConfig()
+  }, [])
 
   const checkConfig = () => {
     const hasUrl = !!process.env.NEXT_PUBLIC_SUPABASE_URL

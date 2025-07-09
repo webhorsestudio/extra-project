@@ -4,9 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Heart, Send, Bed, Ruler, Calendar, ChevronLeft, ChevronRight, X, Copy, MessageCircle, Loader2, Sparkles } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import Image from 'next/image'
+import type { Property } from '@/types/property';
 
 interface PropertyCardProps {
-  property: any;
+  property: Property;
   initialIsFavorited?: boolean;
   onUnfavorite?: (propertyId: string) => void;
   showPersonalization?: boolean;
@@ -24,7 +26,7 @@ const CollectionBadge = ({ collection }: { collection?: string }) => (
 );
 
 // Personalization Badge
-const PersonalizationBadge = ({ score, reason }: { score?: number; reason?: string }) => {
+const PersonalizationBadge = ({ score }: { score?: number; reason?: string }) => {
   if (!score || score < 0.7) return null;
 
   return (
@@ -38,11 +40,11 @@ const PersonalizationBadge = ({ score, reason }: { score?: number; reason?: stri
 };
 
 // Share Dialog Components
-const ShareDialog = ({ open, onClose, property }: { open: boolean; onClose: () => void; property: any }) => {
+const ShareDialog = ({ open, onClose, property }: { open: boolean; onClose: () => void; property: Property }) => {
   const { toast } = useToast();
   if (!open) return null;
   
-  const beds = property.bedrooms || property.bhk || '—';
+  const beds = property.bedrooms || property.property_configurations?.[0]?.bedrooms || property.property_configurations?.[0]?.bhk || '—';
   const url = typeof window !== 'undefined' ? window.location.origin + '/m/properties/' + property.id : '';
 
   // Copy to clipboard
@@ -74,10 +76,12 @@ const ShareDialog = ({ open, onClose, property }: { open: boolean; onClose: () =
         </div>
         {/* Property Info */}
         <div className="flex items-center gap-3 mb-6">
-          <img
+          <Image
             src={property.property_images?.[0]?.image_url || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80'}
             alt={property.title}
             className="w-14 h-14 rounded-lg object-cover border"
+            width={56}
+            height={56}
           />
           <div>
             <div className="font-semibold text-base line-clamp-1">{property.title}</div>
@@ -136,7 +140,7 @@ const FavoriteButton = ({ propertyId, initialIsFavorited, onToast, onUnfavorite,
         const data = await res.json();
         onToast({ title: 'Error', description: data.error || 'Failed to update wishlist.' });
       }
-    } catch (e) {
+    } catch {
       onToast({ title: 'Error', description: 'Failed to update wishlist.' });
     } finally {
       setLoading(false);
@@ -157,10 +161,12 @@ const FavoriteButton = ({ propertyId, initialIsFavorited, onToast, onUnfavorite,
 
 // Image Slide
 const PropertyImageSlide = ({ src, alt }: { src: string; alt: string }) => (
-  <img
+  <Image
     src={src}
     alt={alt}
     className="object-cover w-full h-full transition-all duration-300"
+    fill
+    style={{ objectFit: 'cover' }}
     draggable={false}
   />
 );
@@ -259,7 +265,7 @@ const TitleRow = ({ title }: { title: string }) => (
 );
 
 // Price Location Row
-const PriceLocationRow = ({ price, location, locationData }: { price?: number; location?: string; locationData?: { name: string } | null }) => {
+const PriceLocationRow = ({ price, locationData }: { price?: number; locationData?: { name: string } | null }) => {
   const formatPrice = (price: number) => {
     if (price >= 10000000) {
       return `₹${(price / 10000000).toFixed(1)} Cr`;
@@ -291,7 +297,7 @@ const PriceLocationRow = ({ price, location, locationData }: { price?: number; l
 };
 
 // Amenities Row
-const AmenitiesRow = ({ property }: { property: any }) => {
+const AmenitiesRow = ({ property }: { property: Property }) => {
   const formatReadyByDate = (readyBy?: string) => {
     if (!readyBy) return '—';
     
@@ -306,18 +312,20 @@ const AmenitiesRow = ({ property }: { property: any }) => {
         });
       }
       return readyBy; // Fallback to original format if parsing fails
-    } catch (error) {
+    } catch {
       return readyBy; // Fallback to original format if parsing fails
     }
   };
 
-  const beds = property.bedrooms || property.bhk || '—';
+  const beds = property.bedrooms || property.property_configurations?.[0]?.bedrooms || property.property_configurations?.[0]?.bhk || '—';
   const area =
     (property.area !== undefined && property.area !== null)
       ? `${property.area} Sq. Ft.`
       : (property.property_configurations?.[0]?.area !== undefined && property.property_configurations?.[0]?.area !== null)
         ? `${property.property_configurations[0].area} Sq. Ft.`
         : '—';
+
+  const readyBy = property.property_configurations?.[0]?.ready_by;
 
   return (
     <div className="flex items-center justify-between mt-4 text-sm text-gray-700">
@@ -331,7 +339,7 @@ const AmenitiesRow = ({ property }: { property: any }) => {
       </div>
       <div className="flex items-center gap-1">
         <Calendar className="h-5 w-5 mr-1 text-blue-700" />
-        {formatReadyByDate(property.ready_by)}
+        {formatReadyByDate(readyBy)}
       </div>
     </div>
   );
@@ -339,7 +347,7 @@ const AmenitiesRow = ({ property }: { property: any }) => {
 
 // Content Section
 interface PropertyCardContentProps {
-  property: any;
+  property: Property;
   contentMargin?: string;
 }
 const PropertyCardContent = ({ property, contentMargin = "mt-8" }: PropertyCardContentProps) => {
@@ -347,7 +355,7 @@ const PropertyCardContent = ({ property, contentMargin = "mt-8" }: PropertyCardC
     <div className={`p-4 pb-5 flex-grow flex flex-col ${contentMargin}`}>
       <TitleRow title={property.title} />
       <div className="mt-3">
-        <PriceLocationRow price={property.price} location={property.location} locationData={property.location_data} />
+        <PriceLocationRow price={property.price} locationData={property.location_data} />
       </div>
       <AmenitiesRow property={property} />
     </div>
@@ -380,7 +388,7 @@ const PropertyCardImageSection = ({
   personalizationScore,
   personalizationReason 
 }: { 
-  property: any; 
+  property: Property; 
   onShare: () => void; 
   favoriteButton: React.ReactNode;
   showPersonalization?: boolean;

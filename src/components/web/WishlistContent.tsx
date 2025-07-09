@@ -4,8 +4,10 @@ import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PropertyCardV2 from '@/components/web/PropertyCardV2';
+import { Property } from '@/types/property';
+import Link from 'next/link'
 
-export default function WishlistContent({ properties: initialProperties }: { properties: any[] }) {
+export default function WishlistContent({ properties: initialProperties }: { properties: Property[] }) {
   const [properties, setProperties] = useState(initialProperties);
 
   const handleUnfavorite = (propertyId: string) => {
@@ -49,7 +51,7 @@ export default function WishlistContent({ properties: initialProperties }: { pro
               Start exploring properties and save your favorites to your wishlist for easy access later.
             </p>
             <Button size="lg" asChild>
-              <a href="/properties">Browse Properties</a>
+              <Link href="/properties">Browse Properties</Link>
             </Button>
           </div>
         ) : (
@@ -57,8 +59,8 @@ export default function WishlistContent({ properties: initialProperties }: { pro
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties.map((property) => (
               <PropertyCardV2
-                key={property.id}
-                property={property}
+                key={(property as { id: string }).id}
+                property={property as unknown as Property}
                 initialIsFavorited={true}
                 onUnfavorite={handleUnfavorite}
               />

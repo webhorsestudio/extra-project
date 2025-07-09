@@ -3,9 +3,10 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createSupabaseAdminClient()
     
     const { data: category, error } = await supabase
@@ -14,7 +15,7 @@ export async function GET(
         *,
         faqs:faqs(count)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -44,9 +45,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createSupabaseAdminClient()
     const body = await request.json()
     
@@ -61,7 +63,7 @@ export async function PUT(
     }
 
     // Build update object
-    const updateData: any = {}
+    const updateData: Record<string, unknown> = {}
     if (name !== undefined) updateData.name = name.trim()
     if (description !== undefined) updateData.description = description?.trim() || null
 
@@ -74,7 +76,7 @@ export async function PUT(
         .from('faq_categories')
         .select('id')
         .eq('slug', slug)
-        .neq('id', params.id)
+        .neq('id', id)
         .single()
 
       if (existingCategory) {
@@ -90,7 +92,7 @@ export async function PUT(
     const { data: category, error } = await supabase
       .from('faq_categories')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 
@@ -118,16 +120,17 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createSupabaseAdminClient()
     
     // Check if category has FAQs
     const { data: faqs, error: faqsError } = await supabase
       .from('faqs')
       .select('id')
-      .eq('category_id', params.id)
+      .eq('category_id', id)
       .limit(1)
 
     if (faqsError) {
@@ -144,7 +147,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('faq_categories')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })

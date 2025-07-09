@@ -3,7 +3,7 @@ import { getBrandingData } from '@/lib/branding-server'
 import { getLocationsData } from '@/lib/locations-data-server'
 import { getConfigurationData } from '@/lib/configuration-data-server'
 import { getBudgetData } from '@/lib/budget-data-server'
-import { getCategoriesData, CategoryData } from '@/lib/categories-data-server'
+import { getCategoriesData } from '@/lib/categories-data-server'
 import { createSupabaseServerClientSafe } from '@/lib/supabase/server-fallback'
 import ClientLayout from './ClientLayout'
 

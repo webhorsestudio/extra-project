@@ -3,7 +3,7 @@ import { createSupabaseApiClient } from '@/lib/supabase/api'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createSupabaseApiClient()
@@ -11,7 +11,8 @@ export async function GET(
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const { data, error } = await supabase
+    const { id } = await params
+    const result = await supabase
       .from('property_category_relations')
       .select(`
         id,
@@ -24,12 +25,14 @@ export async function GET(
           is_active
         )
       `)
-      .eq('property_id', params.id)
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      .eq('property_id', id)
+    
+    if (result.error) {
+      return NextResponse.json({ error: result.error.message }, { status: 500 })
     }
-    return NextResponse.json(data)
-  } catch (error) {
+    
+    return NextResponse.json(result.data)
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -39,7 +42,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createSupabaseApiClient()
@@ -48,6 +51,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const { category_ids } = await request.json()
+    const { id } = await params
     if (!category_ids || !Array.isArray(category_ids)) {
       return NextResponse.json(
         { error: 'category_ids array is required' },
@@ -57,23 +61,25 @@ export async function POST(
     const { error: deleteError } = await supabase
       .from('property_category_relations')
       .delete()
-      .eq('property_id', params.id)
+      .eq('property_id', id)
     if (deleteError) {
       return NextResponse.json({ error: deleteError.message }, { status: 500 })
     }
     const relations = category_ids.map((category_id: string) => ({
-      property_id: params.id,
+      property_id: id,
       category_id
     }))
-    const { data, error } = await supabase
+    const insertResult = await supabase
       .from('property_category_relations')
       .insert(relations)
       .select()
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    if (insertResult.error) {
+      return NextResponse.json({ error: insertResult.error.message }, { status: 500 })
     }
-    return NextResponse.json(data)
-  } catch (error) {
+    
+    return NextResponse.json(insertResult.data)
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

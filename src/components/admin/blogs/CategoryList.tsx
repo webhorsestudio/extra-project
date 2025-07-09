@@ -70,13 +70,6 @@ export function CategoryList({ initialCategories }: CategoryListProps) {
   const [deletingCategory, setDeletingCategory] = useState<BlogCategory | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  // Only refetch if initial data is empty (fallback)
-  useEffect(() => {
-    if (!initialCategories || initialCategories.length === 0) {
-      fetchCategories()
-    }
-  }, [initialCategories, fetchCategories])
-
   const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/blog-categories')
@@ -94,6 +87,13 @@ export function CategoryList({ initialCategories }: CategoryListProps) {
       })
     }
   }, [toast])
+
+  // Only refetch if initial data is empty (fallback)
+  useEffect(() => {
+    if (!initialCategories || initialCategories.length === 0) {
+      fetchCategories()
+    }
+  }, [initialCategories, fetchCategories])
 
   const filteredCategories = useMemo(() => {
     return categories.filter(category =>

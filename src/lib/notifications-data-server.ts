@@ -18,11 +18,6 @@ export async function getNotificationsData(): Promise<NotificationData[]> {
   try {
     const supabase = await createSupabaseServerClient()
     
-    // Add caching for better performance
-    const cacheOptions = {
-      next: { revalidate: 300 } // Cache for 5 minutes
-    }
-    
     // Fetch notifications for the current user
     const { data: notifications, error } = await supabase
       .from('notifications')
@@ -40,7 +35,7 @@ export async function getNotificationsData(): Promise<NotificationData[]> {
       ?.map(n => n.created_by)
       .filter(Boolean) || []
     
-    let creators: any[] = []
+    let creators: Array<{ id: string; full_name: string }> = []
     if (creatorIds.length > 0) {
       const { data: profiles } = await supabase
         .from('profiles')

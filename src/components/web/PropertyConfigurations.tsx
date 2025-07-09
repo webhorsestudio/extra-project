@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Property, BHKConfiguration } from '@/types/property';
+import Image from 'next/image'
 
 interface PropertyConfigurationsProps {
   property: Property;
@@ -57,7 +58,7 @@ function FloorPlanPreview({ config }: { config: BHKConfiguration | undefined }) 
   if (config?.floor_plan_url) {
     return (
       <div className="bg-gray-100 rounded-xl flex items-center justify-center h-56 md:h-64 w-full mb-6">
-        <img src={config.floor_plan_url} alt="Floor Plan" className="object-contain h-full max-h-60" />
+        <Image src={config.floor_plan_url} alt="Floor Plan" className="object-contain h-full max-h-60" fill style={{ objectFit: 'contain' }} />
       </div>
     );
   }
@@ -114,7 +115,7 @@ export default function PropertyConfigurations({ property }: PropertyConfigurati
     if (bhkConfigs.length > 0) {
       setActiveConfigId(bhkConfigs[0].id || '');
     }
-  }, [activeBhk]);
+  }, [bhkConfigs]);
 
   if (configs.length === 0) {
     return (

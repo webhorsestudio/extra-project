@@ -137,12 +137,7 @@ export interface FooterData {
 // Client-side version (for client components) - NO server imports
 export async function getFooterDataClient(): Promise<FooterData> {
   try {
-    // Get cookies for authentication
-    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-      const [key, value] = cookie.trim().split('=')
-      acc[key] = value
-      return acc
-    }, {} as Record<string, string>)
+
 
     // Fetch all footer data in parallel using fetch (client-safe)
     const [layoutRes, contentRes, stylingRes, logoRes, settingsRes] = await Promise.allSettled([

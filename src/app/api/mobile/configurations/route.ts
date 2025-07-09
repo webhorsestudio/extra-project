@@ -23,29 +23,25 @@ export async function GET() {
     }
 
     // Extract unique BHK options
-    const bhkOptions = [...new Set(configurations?.map((config: any) => config.bhk) || [])]
+    const bhkOptions = [...new Set(configurations?.map((config: Record<string, unknown>) => config.bhk as number) || [])]
       .filter(bhk => bhk && bhk > 0)
       .sort((a, b) => a - b)
       .map(bhk => ({ value: bhk, label: `${bhk} BHK` }))
 
     // Extract unique property types
-    const propertyTypes = [...new Set(configurations?.map((config: any) => config.property_type) || [])]
+    const propertyTypes = [...new Set(configurations?.map((config: Record<string, unknown>) => config.property_type as string) || [])]
       .filter(type => type)
       .sort()
       .map(type => ({ value: type, label: type }))
 
     // Calculate price ranges for budget filter
-    const prices = configurations?.map((config: any) => config.price) || []
+    const prices = configurations?.map((config: Record<string, unknown>) => config.price as number) || []
     const validPrices = prices.filter(price => price && price > 0)
     
     let priceRanges: Array<{ value: string; label: string; min: number; max: number | null }> = []
     if (validPrices.length > 0) {
-      const minPrice = Math.min(...validPrices)
-      const maxPrice = Math.max(...validPrices)
-      
       // Create price range buckets (in Lacs)
-      const minLacs = Math.floor(minPrice / 100000)
-      const maxLacs = Math.ceil(maxPrice / 100000)
+      // Price range buckets are predefined for better UX
       
       priceRanges = [
         { value: '0-50', label: 'Under 50 Lacs', min: 0, max: 5000000 },

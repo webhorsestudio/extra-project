@@ -1,25 +1,33 @@
-import { useFormContext, Control } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
   FormField,
-  FormItem,
   FormLabel,
-  FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Trash2, Home, DollarSign, Square, Bed, Bath, AlertCircle, Calendar } from 'lucide-react'
-import { FileUpload } from './FileUpload'
+import { Plus, Trash2, Home, AlertCircle } from 'lucide-react'
+
 import { formatIndianPrice } from '@/lib/utils'
 
+interface BHKConfiguration {
+  bhk: number
+  price: number
+  area: number
+  bedrooms: number
+  bathrooms: number
+  floor_plan_url: string
+  brochure_url: string
+  ready_by: string
+}
+
 interface BHKConfigurationsProps {
-  control: Control<any>
   name: string
 }
 
-export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
+export function BHKConfigurations({ name }: BHKConfigurationsProps) {
   const form = useFormContext()
 
   const addConfiguration = () => {
@@ -43,7 +51,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
     const currentConfigs = form.getValues(name)
     form.setValue(
       name,
-      currentConfigs.filter((_: any, i: number) => i !== index)
+      currentConfigs.filter((_: unknown, i: number) => i !== index)
     )
   }
 
@@ -104,7 +112,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
           </div>
         ) : (
           <div className="space-y-6">
-            {configurations.map((config: any, index: number) => (
+            {configurations.map((config: BHKConfiguration, index: number) => (
               <Card key={index} className="border-dashed">
                 <CardHeader className="pb-4">
                   <div className="flex justify-between items-center">
@@ -138,7 +146,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                   {/* Basic Fields Grid */}
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 items-end">
                     <FormField
-                      control={control}
+                      control={form.control}
                       name={`${name}.${index}.bhk`}
                       render={({ field }) => (
                         <FormControl>
@@ -148,7 +156,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                       )}
                     />
                     <FormField
-                      control={control}
+                      control={form.control}
                       name={`${name}.${index}.price`}
                       render={({ field }) => (
                         <FormControl>
@@ -158,7 +166,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                       )}
                     />
                     <FormField
-                      control={control}
+                      control={form.control}
                       name={`${name}.${index}.area`}
                       render={({ field }) => (
                         <FormControl>
@@ -168,7 +176,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                       )}
                     />
                     <FormField
-                      control={control}
+                      control={form.control}
                       name={`${name}.${index}.bedrooms`}
                       render={({ field }) => (
                         <FormControl>
@@ -178,7 +186,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                       )}
                     />
                     <FormField
-                      control={control}
+                      control={form.control}
                       name={`${name}.${index}.bathrooms`}
                       render={({ field }) => (
                         <FormControl>
@@ -188,7 +196,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                       )}
                     />
                     <FormField
-                      control={control}
+                      control={form.control}
                       name={`${name}.${index}.ready_by`}
                       render={({ field }) => (
                         <FormControl>
@@ -198,7 +206,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                       )}
                     />
                     <FormField
-                      control={control}
+                      control={form.control}
                       name={`${name}.${index}.floor_plan_url`}
                       render={({ field }) => (
                         <FormControl>
@@ -208,7 +216,7 @@ export function BHKConfigurations({ control, name }: BHKConfigurationsProps) {
                       )}
                     />
                     <FormField
-                      control={control}
+                      control={form.control}
                       name={`${name}.${index}.brochure_url`}
                       render={({ field }) => (
                         <FormControl>

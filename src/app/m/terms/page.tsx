@@ -1,9 +1,8 @@
-import { createSupabaseApiClient } from '@/lib/supabase/api'
-import { jsonToHtml } from '@/lib/content-utils'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 import MobileTermsClient from './MobileTermsClient'
 
 export default async function MobileTermsPage() {
-  const supabase = await createSupabaseApiClient()
+  const supabase = await createSupabaseServerClient()
   
   const { data: policy, error } = await supabase
     .from('policies')

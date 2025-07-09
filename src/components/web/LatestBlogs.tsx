@@ -5,6 +5,16 @@ import BlogErrorFallback from './BlogErrorFallback'
 import BlogSkeleton from './BlogSkeleton'
 import { Suspense } from 'react'
 
+// Comprehensive Blog interface that matches the data structure from getLatestBlogs
+interface Blog {
+  id: string;
+  title: string;
+  excerpt: string;
+  featured_image: string | null;
+  created_at?: string;
+  categories?: Array<{ id: string; name: string }>;
+}
+
 // Separate component for the actual blog content
 async function BlogContent() {
   const blogs = await getCachedBlogs(6) // Fetch more blogs for carousel
@@ -33,7 +43,10 @@ async function BlogContent() {
     )
   }
 
-  return <BlogCarousel blogs={blogs} title="Latest Blogs" titleAlign="left" />
+  // Type assertion to ensure blogs match the Blog interface
+  const typedBlogs: Blog[] = blogs as Blog[]
+
+  return <BlogCarousel blogs={typedBlogs} title="Latest Blogs" titleAlign="left" />
 }
 
 // Loading component for Suspense

@@ -5,7 +5,7 @@ interface HeroSectionErrorFallbackProps {
   resetError: () => void
 }
 
-export default function HeroSectionErrorFallback({ error, resetError }: HeroSectionErrorFallbackProps) {
+export default function HeroSectionErrorFallback({ resetError }: HeroSectionErrorFallbackProps) {
   return (
     <div className="relative bg-white w-screen flex flex-col justify-center items-center p-0 m-0 overflow-hidden py-12">
       <div className="w-screen flex flex-col items-center justify-center">

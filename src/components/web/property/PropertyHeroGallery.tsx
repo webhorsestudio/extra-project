@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Property } from '@/types/property';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { X, ChevronLeft, ChevronRight, Send, Heart, Copy, MessageCircle } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Copy, MessageCircle } from 'lucide-react';
 import FavoriteButton from '@/components/ui/FavoriteButton';
 import { useToast } from '@/components/ui/use-toast';
+import Image from 'next/image'
 
 interface PropertyHeroGalleryProps {
   property: Property;
@@ -61,11 +62,13 @@ function PropertyGalleryTabs({ activeTab, setActiveTab }: { activeTab: number, s
 
 function GalleryImage({ src, alt, onClick, className }: { src: string; alt: string; onClick?: () => void; className?: string }) {
   return (
-    <img
+    <Image
       src={src}
       alt={alt}
       className={cn('object-cover w-full h-full rounded-2xl cursor-pointer transition hover:brightness-90', className)}
       onClick={onClick}
+      fill
+      style={{ objectFit: 'cover' }}
       draggable={false}
     />
   );
@@ -157,10 +160,12 @@ function GalleryModal({ images, open, initialIndex, onClose, property }: { image
         <div className="flex items-center justify-center w-full h-full min-h-[60vh]">
           <div className="bg-white rounded-2xl p-2 md:p-4 shadow-xl max-w-[90vw] max-h-[80vh] flex items-center justify-center">
             {images[current] ? (
-              <img
+              <Image
                 src={images[current]}
                 alt={`Gallery ${current + 1}`}
                 className="object-contain max-h-[70vh] max-w-full rounded-xl"
+                fill
+                style={{ objectFit: 'contain' }}
                 draggable={false}
               />
             ) : (
@@ -210,7 +215,6 @@ export default function PropertyHeroGallery({ property }: PropertyHeroGalleryPro
   const badge = property.property_collection;
 
   const thumbnailCount = 3;
-  const moreCount = realImages.length - thumbnailCount - 1;
 
   // Handler for gallery slot click
   const handleGalleryClick = (i: number) => {
@@ -248,7 +252,6 @@ export default function PropertyHeroGallery({ property }: PropertyHeroGalleryPro
             {gallerySlots.slice(1).map((img, i) => {
               const isLastThumbnail = i === thumbnailCount - 1;
               const showMoreBadge = isLastThumbnail && realImages.length > 4;
-              const moreCount = realImages.length - 4;
               return (
                 <div key={i} className="relative flex-1 aspect-[16/9] lg:aspect-[16/9] rounded-2xl overflow-hidden shadow-lg max-h-[156px] lg:max-h-[156px]">
                   {img ? (
@@ -265,14 +268,16 @@ export default function PropertyHeroGallery({ property }: PropertyHeroGalleryPro
                     <span className="absolute bottom-2 right-2 z-20 flex items-center bg-white rounded-full shadow-lg px-2 py-1 gap-1 border border-gray-200">
                       {/* 5th image thumbnail */}
                       {realImages[4] ? (
-                        <img
+                        <Image
                           src={realImages[4] as string}
                           alt="More images thumbnail"
                           className="w-6 h-6 rounded-full object-cover border border-gray-200"
+                          width={24}
+                          height={24}
                         />
                       ) : null}
                       {/* +N label */}
-                      <span className="text-gray-900 text-xs font-semibold whitespace-nowrap">+{moreCount}</span>
+                      <span className="text-gray-900 text-xs font-semibold whitespace-nowrap">+{realImages.length - 4}</span>
                     </span>
                   )}
                 </div>

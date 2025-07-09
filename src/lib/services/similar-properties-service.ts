@@ -3,6 +3,8 @@ import { Property } from '@/types/property';
 import { similarityEngine, SimilarityScore } from '../similarity-algorithm';
 import { propertyCache } from '../cache/property-cache';
 import { userPreferenceService, PersonalizedRecommendation } from '../personalization/user-preferences';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { CacheStats } from '../cache/property-cache';
 
 export interface EnhancedSimilarPropertiesResult {
   properties: Property[];
@@ -13,7 +15,7 @@ export interface EnhancedSimilarPropertiesResult {
   metadata: {
     totalCandidates: number;
     processingTime: number;
-    cacheStats: any;
+    cacheStats: CacheStats;
   };
 }
 
@@ -103,7 +105,7 @@ export class SimilarPropertiesService {
 
     // Update user preferences if user is logged in
     if (userId) {
-      userPreferenceService.updatePreferences(userId, currentProperty, 'view');
+      userPreferenceService.updatePreferences(userId, currentProperty);
     }
 
     return {
@@ -140,14 +142,17 @@ export class SimilarPropertiesService {
       ];
 
       // Execute all queries and wait for results
-      const results = await Promise.allSettled(queries.map((query: any) => query.then((result: any) => result.data || [])));
+      const results = await Promise.allSettled(queries.map(async (query) => {
+        const result = await query;
+        return result.data || [];
+      }));
       const allProperties = new Map<string, Property>();
 
-      results.forEach((result: any, index) => {
+      results.forEach((result) => {
         if (result.status === 'fulfilled' && Array.isArray(result.value)) {
-          result.value.forEach((property: any) => {
-            if (!allProperties.has(property.id)) {
-              allProperties.set(property.id, property);
+          result.value.forEach((property: Record<string, unknown>) => {
+            if (!allProperties.has(property.id as string)) {
+              allProperties.set(property.id as string, property as unknown as Property);
             }
           });
         }
@@ -163,7 +168,7 @@ export class SimilarPropertiesService {
   /**
    * Build Tier 1 query: Same type + Same location + Similar price
    */
-  private buildTier1Query(supabase: any, currentProperty: Property, limit: number) {
+  private buildTier1Query(supabase: SupabaseClient, currentProperty: Property, limit: number) {
     return supabase
       .from('properties')
       .select(`
@@ -210,7 +215,7 @@ export class SimilarPropertiesService {
   /**
    * Build Tier 2 query: Same type + Same location
    */
-  private buildTier2Query(supabase: any, currentProperty: Property, limit: number) {
+  private buildTier2Query(supabase: SupabaseClient, currentProperty: Property, limit: number) {
     return supabase
       .from('properties')
       .select(`
@@ -257,7 +262,7 @@ export class SimilarPropertiesService {
   /**
    * Build Tier 3 query: Same type only
    */
-  private buildTier3Query(supabase: any, currentProperty: Property, limit: number) {
+  private buildTier3Query(supabase: SupabaseClient, currentProperty: Property, limit: number) {
     return supabase
       .from('properties')
       .select(`
@@ -303,7 +308,7 @@ export class SimilarPropertiesService {
   /**
    * Build Tier 4 query: Same location only
    */
-  private buildTier4Query(supabase: any, currentProperty: Property, limit: number) {
+  private buildTier4Query(supabase: SupabaseClient, currentProperty: Property, limit: number) {
     return supabase
       .from('properties')
       .select(`

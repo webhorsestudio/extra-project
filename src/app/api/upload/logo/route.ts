@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
     
     // Upload file using service role client (bypasses RLS)
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from(bucket)
       .upload(fileName, buffer, {
         cacheControl: '3600',

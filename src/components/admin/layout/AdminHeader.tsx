@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/s
 import { Menu } from 'lucide-react'
 import { AdminNavigation } from '../navigation/AdminNavigation'
 import { AdminUserProfile } from '../user/AdminUserProfile'
+import { navigationItems } from '../navigation/navigationConfig'
 
 interface UserProfile {
   id: string
@@ -17,14 +18,19 @@ interface UserProfile {
 }
 
 interface AdminHeaderProps {
-  user: any
+  user: {
+    id: string
+    email: string
+    created_at?: string
+    updated_at?: string
+  } | null
   profile: UserProfile | null
   loading: boolean
   expandedItems: string[]
   onToggleExpanded: (itemName: string) => void
   isMobileMenuOpen: boolean
   onMobileMenuOpenChange: (open: boolean) => void
-  onSignOut: () => void
+
 }
 
 export function AdminHeader({
@@ -34,8 +40,7 @@ export function AdminHeader({
   expandedItems,
   onToggleExpanded,
   isMobileMenuOpen,
-  onMobileMenuOpenChange,
-  onSignOut
+  onMobileMenuOpenChange
 }: AdminHeaderProps) {
   return (
     <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b bg-background px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -62,6 +67,7 @@ export function AdminHeader({
             onToggleExpanded={onToggleExpanded}
             isMobile={true}
             onMobileItemClick={() => onMobileMenuOpenChange(false)}
+            navigationItems={navigationItems}
           />
         </SheetContent>
       </Sheet>
@@ -70,7 +76,7 @@ export function AdminHeader({
         <div className="flex flex-1"></div>
         <div className="flex items-center gap-x-4 lg:gap-x-6">
           <AdminUserProfile 
-            user={user}
+            user={user || { id: '', email: '' }}
             profile={profile}
             loading={loading}
           />

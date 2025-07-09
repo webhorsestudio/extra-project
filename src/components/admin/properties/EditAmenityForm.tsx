@@ -77,7 +77,7 @@ export function EditAmenityForm({ onAmenityUpdated, open, onOpenChange, amenity 
       const fileExt = file.name.split('.').pop()
       const fileName = `amenity-${Date.now()}.${fileExt}`
       
-      const { data: _data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('amenity-images')
         .upload(fileName, file, { cacheControl: '3600', upsert: false })
       

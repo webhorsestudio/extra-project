@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/components/ui/use-toast'
 import { 
@@ -54,7 +54,7 @@ const POLICY_TYPE_COLORS: Record<string, string> = {
   general: 'bg-gray-100 text-gray-800 border-gray-200'
 }
 
-const POLICY_TYPE_ICONS: Record<string, any> = {
+const POLICY_TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }> | string> = {
   privacy: Shield,
   terms: FileText,
   refund: '↩️',
@@ -75,7 +75,7 @@ export default function PoliciesList() {
   const [viewingContent, setViewingContent] = useState<string | null>(null)
   const [selectedType, setSelectedType] = useState<string>('')
 
-  const fetchPolicies = async () => {
+  const fetchPolicies = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch('/api/admin/policies')
@@ -96,11 +96,11 @@ export default function PoliciesList() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [toast])
 
   useEffect(() => {
     fetchPolicies()
-  }, [])
+  }, [fetchPolicies])
 
   const handleDelete = async (policyId: string) => {
     if (confirmDelete === policyId) {

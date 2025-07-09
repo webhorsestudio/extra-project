@@ -9,11 +9,6 @@ export async function getConfigurationData(): Promise<ConfigurationData> {
   try {
     const supabase = await createSupabaseServerClientSafe()
     
-    // Add caching for better performance
-    const cacheOptions = {
-      next: { revalidate: 3600 } // Cache for 1 hour
-    }
-    
     // Fetch unique property types from properties table
     const { data: properties, error: propertiesError } = await supabase
       .from('properties')

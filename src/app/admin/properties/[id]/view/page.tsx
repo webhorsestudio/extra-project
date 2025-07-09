@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { checkAdminAuth } from '@/lib/admin-data'
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function PropertyViewPage({ params }: PageProps) {

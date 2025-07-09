@@ -11,7 +11,7 @@ interface Property {
   latitude?: number;
   longitude?: number;
   location_data?: { name?: string };
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface PropertyMapProps {

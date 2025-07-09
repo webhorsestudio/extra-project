@@ -33,7 +33,7 @@ export default function BudgetSearchModal({ onClose, onBudgetSelect, budgetData 
           const data = await getBudgetDataClient()
           setLocalBudgetData(data)
           setRange([data.minPrice, data.maxPrice])
-        } catch (error) {
+        } catch {
           // Keep default values
         } finally {
           setIsLoading(false)

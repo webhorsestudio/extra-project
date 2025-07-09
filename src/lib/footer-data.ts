@@ -141,10 +141,7 @@ export async function getFooterData(): Promise<FooterData> {
     const { createSupabaseApiClient } = await import('@/lib/supabase/api')
     const supabase = await createSupabaseApiClient()
     
-    // Add caching headers for better performance
-    const cacheOptions = {
-      next: { revalidate: 3600 } // Cache for 1 hour
-    }
+
     
     // Fetch all footer data in parallel using Supabase directly
     const [layoutRes, contentRes, stylingRes, logoRes, settingsRes] = await Promise.allSettled([

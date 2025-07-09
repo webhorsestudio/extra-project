@@ -2,18 +2,14 @@
 
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   Layout, 
   FileText, 
   Palette, 
   Link, 
   Image,
-  Settings,
-  Save
+  Settings
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
 
 // Import tab components
 import FooterLayoutTab from './FooterLayoutTab'
@@ -24,30 +20,7 @@ import FooterLogoTab from './FooterLogoTab'
 import FooterSettingsTab from './FooterSettingsTab'
 
 export default function FooterDesignTabs() {
-  const { toast } = useToast()
   const [activeTab, setActiveTab] = useState('layout')
-  const [isSaving, setIsSaving] = useState(false)
-
-  const handleSave = async () => {
-    setIsSaving(true)
-    try {
-      // TODO: Implement save functionality
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      
-      toast({
-        title: 'Success',
-        description: 'Footer settings saved successfully',
-      })
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to save footer settings',
-        variant: 'destructive'
-      })
-    } finally {
-      setIsSaving(false)
-    }
-  }
 
   return (
     <div className="space-y-6">

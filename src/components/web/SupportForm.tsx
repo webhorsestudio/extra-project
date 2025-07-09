@@ -90,7 +90,7 @@ export function SupportForm() {
       setSelectedFile(null)
       const fileInput = document.getElementById('file-input') as HTMLInputElement
       if (fileInput) fileInput.value = ''
-    } catch (error) {
+    } catch {
       toast({
         title: 'Submission failed',
         description: 'Please try again later',

@@ -4,15 +4,33 @@ import { useState, useEffect } from 'react'
 import { AdminSidebar } from '@/components/admin/layout/AdminSidebar'
 import { AdminHeader } from '@/components/admin/layout/AdminHeader'
 import { AdminLayoutSkeleton } from '@/components/admin/layout/AdminLayoutSkeleton'
+import { NavigationItem } from '@/components/admin/navigation/navigationConfig'
+
+interface User {
+  id: string
+  email?: string
+  created_at?: string
+  updated_at?: string
+}
+
+interface UserProfile {
+  id: string
+  full_name: string
+  role: string
+  avatar_url?: string
+  avatar_data?: string
+  created_at: string
+  updated_at: string
+}
 
 interface AdminLayoutProps {
   children: React.ReactNode;
-  user: any;
-  profile: any;
+  user: User | null;
+  profile: UserProfile | null;
   loading: boolean;
   logoData: { logoUrl: string | null; logoAltText: string | null };
   logoLoading: boolean;
-  navigationItems: any[];
+  navigationItems: NavigationItem[];
 }
 
 export function AdminLayout({ children, user, profile, loading, logoData, logoLoading, navigationItems }: AdminLayoutProps) {
@@ -33,8 +51,6 @@ export function AdminLayout({ children, user, profile, loading, logoData, logoLo
         : [...prev, itemName]
     )
   }
-
-  const handleSignOut = async () => { /* TODO: implement sign out SSR if needed */ }
 
   if (!isMounted) {
     return <AdminLayoutSkeleton />
@@ -57,14 +73,13 @@ export function AdminLayout({ children, user, profile, loading, logoData, logoLo
         <div className="lg:pl-64 flex flex-col flex-1">
           {/* Header */}
           <AdminHeader
-            user={user}
+            user={user ? { ...user, email: user.email || '' } : null}
             profile={profile}
             loading={loading}
             expandedItems={expandedItems}
             onToggleExpanded={toggleExpanded}
             isMobileMenuOpen={isMobileMenuOpen}
             onMobileMenuOpenChange={setIsMobileMenuOpen}
-            onSignOut={handleSignOut}
           />
 
           {/* Page content */}

@@ -14,6 +14,12 @@ import { useRouter } from 'next/navigation';
 
 const BEDROOM_IMAGE = '/images/bedroom-sofa.webp'; // Updated path
 
+interface BudgetData {
+  minPrice: number;
+  maxPrice: number;
+  step: number;
+}
+
 export default function MobileFilterModal({
   isOpen,
   onClose,
@@ -24,19 +30,16 @@ export default function MobileFilterModal({
   city?: string;
 }) {
   const [activeDropdown, setActiveDropdown] = useState<null | 'location' | 'configuration' | 'budget'>('location');
-  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [selectedLocation] = useState<string | null>(null);
   const [configurationData, setConfigurationData] = useState<{ bhkOptions: number[] }>({ bhkOptions: [0, 2, 3, 4, 5, 6] });
   const [selectedBedroom, setSelectedBedroom] = useState<string>('Any');
-  const [budgetData, setBudgetData] = useState<any>(null);
+  const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
   const [budgetRange, setBudgetRange] = useState<[number, number]>([0, 500000000]);
   const [minBudgetInput, setMinBudgetInput] = useState('');
   const [maxBudgetInput, setMaxBudgetInput] = useState('');
 
   // Location API state
   const [locations, setLocations] = useState<MobileLocationData[]>([]);
-  const [filteredLocations, setFilteredLocations] = useState<MobileLocationData[]>([]);
-  const [locationsLoading, setLocationsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const router = useRouter();
 
@@ -68,49 +71,22 @@ export default function MobileFilterModal({
     }
   }, [isOpen, activeDropdown]);
 
-  // Filter locations based on search query
-  useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setFilteredLocations(locations);
-    } else {
-      const filtered = locations.filter(location =>
-        location.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredLocations(filtered);
-    }
-  }, [searchQuery, locations]);
-
   const fetchLocations = async () => {
     try {
-      setLocationsLoading(true);
       const response = await fetch('/api/mobile/locations');
       if (!response.ok) {
         throw new Error('Failed to fetch locations');
       }
       const data = await response.json();
       setLocations(data.locations || []);
-      setFilteredLocations(data.locations || []);
-    } catch (error) {
+    } catch {
       setLocations([]);
-      setFilteredLocations([]);
-    } finally {
-      setLocationsLoading(false);
     }
   };
 
-  const handleLocationSearch = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const handleLocationSelect = (id: string) => {
-    setSelectedLocation(id);
-    setActiveDropdown('configuration');
-    setSearchQuery('');
-  };
-
   // --- Configuration (Bedrooms) ---
-  let bhkNumbers = configurationData.bhkOptions.filter(opt => opt > 0 && opt < 5);
-  let hasFivePlus = configurationData.bhkOptions.some(opt => opt >= 5);
+  const bhkNumbers = configurationData.bhkOptions.filter(opt => opt > 0 && opt < 5);
+  const hasFivePlus = configurationData.bhkOptions.some(opt => opt >= 5);
   const bedroomOptions = ['Any', ...bhkNumbers.map(opt => opt.toString()), ...(hasFivePlus ? ['5+'] : [])];
 
   const handleBedroomSelect = (option: string) => {
@@ -120,7 +96,7 @@ export default function MobileFilterModal({
 
   // --- Budget ---
   const handleBudgetSlider = (e: React.ChangeEvent<HTMLInputElement>, type: 'min' | 'max') => {
-    let value = Number(e.target.value);
+    const value = Number(e.target.value);
     if (type === 'min') {
       setBudgetRange([value, budgetRange[1]]);
       setMinBudgetInput(value.toString());
@@ -131,7 +107,7 @@ export default function MobileFilterModal({
   };
 
   const handleBudgetInput = (e: React.ChangeEvent<HTMLInputElement>, type: 'min' | 'max') => {
-    let value = Number(e.target.value);
+    const value = Number(e.target.value);
     if (type === 'min') {
       setBudgetRange([value, budgetRange[1]]);
       setMinBudgetInput(e.target.value);
@@ -172,7 +148,7 @@ export default function MobileFilterModal({
               <div className="mt-2 space-y-3 px-2 pb-3 transition-all duration-200">
                 <SearchBar 
                   placeholder="Search for Locations / Developers / Projects" 
-                  onSearch={handleLocationSearch}
+                  onSearch={() => {}} // Placeholder since searchQuery is not used
                 />
                 {/* <LocationGrid
                   locations={filteredLocations}

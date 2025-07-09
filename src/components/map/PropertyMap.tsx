@@ -7,9 +7,16 @@ interface PropertyMapProps {
   onMapClick: (lat: number, lng: number) => void
 }
 
+interface MapClickEvent {
+  latlng: {
+    lat: number
+    lng: number
+  }
+}
+
 export default function PropertyMap({ markerPosition, onMapClick }: PropertyMapProps) {
-  const mapRef = useRef<any>(null)
-  const markerRef = useRef<any>(null)
+  const mapRef = useRef<L.Map | null>(null)
+  const markerRef = useRef<L.Marker | null>(null)
   const [isClient, setIsClient] = useState(false)
 
   // Mumbai coordinates
@@ -19,14 +26,7 @@ export default function PropertyMap({ markerPosition, onMapClick }: PropertyMapP
     setIsClient(true)
     
     // Dynamically import Leaflet
-    Promise.all([
-      import('leaflet'),
-      // Handle CSS import more gracefully
-      import('leaflet/dist/leaflet.css').catch(() => {
-        console.warn('Leaflet CSS failed to load, using fallback')
-        return null
-      })
-    ]).then(([L, _css]) => {
+    import('leaflet').then((L) => {
       // Fix for default marker icon
       const icon = L.icon({
         iconUrl: '/images/marker-icon.png',
@@ -55,7 +55,7 @@ export default function PropertyMap({ markerPosition, onMapClick }: PropertyMapP
         }).addTo(mapRef.current)
 
         // Add click handler
-        mapRef.current.on('click', (e: any) => {
+        mapRef.current.on('click', (e: MapClickEvent) => {
           onMapClick(e.latlng.lat, e.latlng.lng)
         })
       }
@@ -80,7 +80,7 @@ export default function PropertyMap({ markerPosition, onMapClick }: PropertyMapP
         mapRef.current = null
       }
     }
-  }, [markerPosition, onMapClick])
+  }, [markerPosition, onMapClick, defaultPosition])
 
   // Show loading state during SSR
   if (!isClient) {

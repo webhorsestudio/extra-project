@@ -52,13 +52,18 @@ export function DeveloperFormFields({
   const handleInputChange = (field: string, value: string) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.')
-      onFormDataChange({
-        ...formData,
-        [parent]: {
-          ...formData[parent as keyof typeof formData],
-          [child]: value
-        }
-      })
+      const parentValue = formData[parent as keyof typeof formData]
+      
+      // Type guard to ensure parent is an object before spreading
+      if (typeof parentValue === 'object' && parentValue !== null) {
+        onFormDataChange({
+          ...formData,
+          [parent]: {
+            ...parentValue,
+            [child]: value
+          }
+        })
+      }
     } else {
       onFormDataChange({
         ...formData,

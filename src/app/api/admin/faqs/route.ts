@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
 
     // Get creator information separately
     const creatorIds = faqs?.map(f => f.created_by).filter(Boolean) || []
-    let creators: any[] = []
+    let creators: Array<{ id: string; full_name: string }> = []
     
     if (creatorIds.length > 0) {
       const { data: profiles } = await adminSupabase

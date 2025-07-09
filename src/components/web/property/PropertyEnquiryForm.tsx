@@ -86,11 +86,11 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
   ];
 
   // Handlers for contact form
-  const handleContactChange = (field: string, value: any) => {
+  const handleContactChange = (field: string, value: string | boolean | Record<string, boolean>) => {
     if (field === 'config') {
       setContactForm((prev) => ({
         ...prev,
-        config: { ...prev.config, ...value },
+        config: { ...prev.config, ...(value as Record<string, boolean>) },
       }));
     } else {
       setContactForm((prev) => ({ ...prev, [field]: value }));
@@ -122,7 +122,7 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
   };
 
   // Handlers for tour form
-  const handleTourChange = (field: string, value: any) => {
+  const handleTourChange = (field: string, value: string | boolean) => {
     setTourForm((prev) => ({ ...prev, [field]: value }));
     if (tourValidationErrors.length > 0) setTourValidationErrors([]);
   };

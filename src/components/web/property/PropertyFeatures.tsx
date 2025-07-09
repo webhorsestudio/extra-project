@@ -1,10 +1,10 @@
 'use client';
 import React, { useState } from 'react';
 import * as LucideIconsImport from 'lucide-react';
-import { Home, Heart, Star, Users, Wifi, Building, Car, Trees, Shield, Zap, Sun, Wine } from 'lucide-react';
 import { Property } from '@/types/property';
+import Image from 'next/image'
 
-const LucideIcons = LucideIconsImport as Record<string, any>;
+const LucideIcons = LucideIconsImport as unknown as Record<string, React.ComponentType<{ className?: string }>>;
 
 interface PropertyFeaturesProps {
   property: Property;
@@ -34,10 +34,12 @@ function FeaturesTabNav({ activeTab, setActiveTab }: { activeTab: string; setAct
 function FeatureCard({ title, image }: { title: string; image: string }) {
   return (
     <div className="flex items-center bg-white rounded-xl border border-[#FFD700]/40 shadow-sm p-4 gap-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-150 max-w-md mb-4">
-      <img
+      <Image
         src={image}
         alt={title}
         className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-gray-200"
+        width={48}
+        height={48}
       />
       <div className="font-medium text-base text-[#1a2236]">{title}</div>
     </div>
@@ -76,17 +78,17 @@ export default function PropertyFeatures({ property }: PropertyFeaturesProps) {
 
   // Use real amenities data
   const amenities = property.amenities && property.amenities.length > 0
-    ? property.amenities.map((amenity: any) => ({
-        title: amenity.name,
-        image: amenity.image_url || getAmenityImage(amenity.name),
+    ? property.amenities.map((amenity: string) => ({
+        title: amenity,
+        image: getAmenityImage(amenity),
       }))
     : [];
 
   // Use real categories data
   const categories = property.categories && property.categories.length > 0
-    ? property.categories.map((category: any) => ({
-        title: category.name,
-        icon: category.icon,
+    ? property.categories.map((category: string) => ({
+        title: category,
+        icon: 'Home',
       }))
     : [];
 

@@ -15,11 +15,6 @@ export async function getBudgetData(): Promise<BudgetData> {
   try {
     const supabase = await createSupabaseServerClientSafe()
     
-    // Add caching for better performance
-    const cacheOptions = {
-      next: { revalidate: 3600 } // Cache for 1 hour
-    }
-    
     // Fetch price data from property_configurations table
     const { data: configurations, error: configurationsError } = await supabase
       .from('property_configurations')

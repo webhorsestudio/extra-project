@@ -8,9 +8,9 @@ export interface TipTapNode {
   text?: string
   marks?: Array<{
     type: string
-    attrs?: Record<string, any>
+    attrs?: Record<string, unknown>
   }>
-  attrs?: Record<string, any>
+  attrs?: Record<string, unknown>
 }
 
 /**
@@ -48,17 +48,16 @@ export function validateTipTapContent(content: string | TipTapNode): TipTapNode 
   if (!jsonContent.type) return null
 
   // Clean null/undefined values from content arrays
-  const cleanNode = (node: any): any => {
+  const cleanNode = (node: unknown): TipTapNode | null => {
     if (!node) return null
-    if (typeof node === 'string') return node
-    if (typeof node !== 'object') return node
+    if (typeof node !== 'object') return null
 
-    const cleaned: any = { ...node }
+    const cleaned = { ...node } as TipTapNode
     
     if (cleaned.content && Array.isArray(cleaned.content)) {
       cleaned.content = cleaned.content
         .map(cleanNode)
-        .filter((item: any) => item !== null && item !== undefined)
+        .filter((item): item is TipTapNode => item !== null && item !== undefined)
     }
 
     return cleaned

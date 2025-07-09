@@ -8,15 +8,11 @@ export const createSupabaseServerClientFallback = () => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(_name: string) {
-          // Return undefined for cookies in fallback mode
-          // This means authentication won't work, but the app won't crash
-          return undefined
-        },
-        set(_name: string, _value: string, _options: unknown) {
+        get: () => undefined,
+        set: () => {
           // No-op in fallback mode
         },
-        remove(_name: string, _options: unknown) {
+        remove: () => {
           // No-op in fallback mode
         },
       },

@@ -7,7 +7,7 @@ import { WebsiteSettingsForm } from '@/components/admin/settings/WebsiteSettings
 
 export const metadata: Metadata = {
   title: 'Website Info Settings - Admin',
-  description: 'Configure your website\'s basic information, metadata, and social media profiles',
+  description: 'Configure your website&apos;s basic information, metadata, and social media profiles',
 }
 
 export default async function WebsiteSettingsPage() {
@@ -71,6 +71,7 @@ export default async function WebsiteSettingsPage() {
     linkedin_url: settings.linkedin_url || '',
     youtube_url: settings.youtube_url || '',
     tiktok_url: settings.tiktok_url || '',
+    whatsapp_url: settings.whatsapp_url || '',
   }
 
   return (
@@ -80,7 +81,7 @@ export default async function WebsiteSettingsPage() {
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Website Info Settings</h1>
             <p className="text-muted-foreground">
-              Configure your website's basic information, metadata, and social media profiles.
+              Configure your website&apos;s basic information, metadata, and social media profiles.
             </p>
           </div>
           <WebsiteSettingsForm settings={settingsWithDefaults} />

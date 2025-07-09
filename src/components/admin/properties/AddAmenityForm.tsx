@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload, X, Save } from 'lucide-react'
+import { X } from 'lucide-react'
 import Image from 'next/image'
 import { AmenityFormData } from '@/types/amenity'
 
@@ -62,7 +62,7 @@ export function AddAmenityForm({ onAmenityAdded, open, onOpenChange }: AddAmenit
       if (authError || !user) throw new Error('Authentication required')
       const fileExt = file.name.split('.').pop()
       const fileName = `amenity-${Date.now()}.${fileExt}`
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('amenity-images')
         .upload(fileName, file, { cacheControl: '3600', upsert: false })
       if (error) throw new Error(error.message)
@@ -104,7 +104,7 @@ export function AddAmenityForm({ onAmenityAdded, open, onOpenChange }: AddAmenit
       toast({ title: 'Amenity added', variant: 'default' })
       onAmenityAdded()
       onOpenChange(false)
-    } catch (error) {
+    } catch {
       setIsLoading(false)
       toast({ title: 'Error', description: 'Network or server error', variant: 'destructive' })
       return

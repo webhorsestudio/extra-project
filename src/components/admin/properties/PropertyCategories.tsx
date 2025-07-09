@@ -1,3 +1,4 @@
+import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
@@ -15,7 +16,7 @@ import { Tag, Loader2 } from 'lucide-react'
 import { useCategories } from '@/hooks/useCategories'
 
 // Safe icon mapping - only include icons we know work
-const SAFE_ICON_MAP: Record<string, () => JSX.Element> = {
+const SAFE_ICON_MAP: Record<string, () => React.ReactElement> = {
   // Original Icons
   Home: () => <Tag className="h-4 w-4 text-muted-foreground" />,
   Building2: () => <Tag className="h-4 w-4 text-muted-foreground" />,

@@ -23,7 +23,7 @@ export interface CacheStats {
 }
 
 class PropertyCache {
-  private cache = new Map<string, CacheItem<any>>();
+  private cache = new Map<string, CacheItem<unknown>>();
   private config: CacheConfig;
   private stats = {
     hits: 0,
@@ -65,7 +65,7 @@ class PropertyCache {
     item.lastAccessed = Date.now();
     this.stats.hits++;
 
-    return item.data;
+    return item.data as T;
   }
 
   /**
@@ -120,7 +120,7 @@ class PropertyCache {
   /**
    * Check if item is expired
    */
-  private isExpired(item: CacheItem<any>): boolean {
+  private isExpired(item: CacheItem<unknown>): boolean {
     const now = Date.now();
     return (now - item.timestamp) / 1000 > item.ttl;
   }
@@ -157,7 +157,6 @@ class PropertyCache {
    * Clean up expired items
    */
   private cleanup(): void {
-    const now = Date.now();
     for (const [key, item] of this.cache.entries()) {
       if (this.isExpired(item)) {
         this.cache.delete(key);
@@ -243,7 +242,7 @@ export class PropertyCacheService {
   /**
    * Cache user preferences
    */
-  cacheUserPreferences(userId: string, preferences: any): void {
+  cacheUserPreferences(userId: string, preferences: Record<string, unknown>): void {
     const key = CacheKeys.userPreferences(userId);
     this.cache.set(key, preferences, 3600); // 1 hour
   }
@@ -251,9 +250,9 @@ export class PropertyCacheService {
   /**
    * Get cached user preferences
    */
-  getCachedUserPreferences(userId: string): any {
+  getCachedUserPreferences(userId: string): Record<string, unknown> | null {
     const key = CacheKeys.userPreferences(userId);
-    return this.cache.get(key);
+    return this.cache.get<Record<string, unknown>>(key);
   }
 
   /**

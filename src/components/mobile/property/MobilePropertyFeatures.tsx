@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import * as LucideIconsImport from 'lucide-react';
-import { Home, Heart, Star, Users, Wifi, Building, Car, Trees, Shield, Zap, Sun, Wine } from 'lucide-react';
 import { Property } from '@/types/property';
 
-const LucideIcons = LucideIconsImport as Record<string, any>;
+const LucideIcons = LucideIconsImport as unknown as Record<string, React.ComponentType<{ className?: string }>>;
 
 interface MobilePropertyFeaturesProps {
   property: Property;
@@ -35,9 +35,11 @@ function FeaturesTabNav({ activeTab, setActiveTab }: { activeTab: string; setAct
 function FeatureCard({ title, image }: { title: string; image: string }) {
   return (
     <div className="flex items-center bg-white rounded-xl border border-[#FFD700]/40 shadow-sm p-3 gap-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-150 mb-3">
-      <img
+      <Image
         src={image}
         alt={title}
+        width={40}
+        height={40}
         className="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-gray-200"
       />
       <div className="font-medium text-sm text-[#1a2236]">{title}</div>
@@ -77,17 +79,17 @@ export default function MobilePropertyFeatures({ property }: MobilePropertyFeatu
 
   // Use real amenities data (same as web layout)
   const amenities = property.amenities && property.amenities.length > 0
-    ? property.amenities.map((amenity: any) => ({
-        title: amenity.name,
-        image: amenity.image_url || getAmenityImage(amenity.name),
+    ? property.amenities.map((amenity: string) => ({
+        title: amenity,
+        image: getAmenityImage(amenity),
       }))
     : [];
 
   // Use real categories data (same as web layout)
   const categories = property.categories && property.categories.length > 0
-    ? property.categories.map((category: any) => ({
-        title: category.name,
-        icon: category.icon,
+    ? property.categories.map((category: string) => ({
+        title: category,
+        icon: 'Home',
       }))
     : [];
 

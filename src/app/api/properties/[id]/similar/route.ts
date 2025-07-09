@@ -2,15 +2,51 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { similarPropertiesService } from '@/lib/services/similar-properties-service';
 import { userPreferenceService } from '@/lib/personalization/user-preferences';
+import type { Property } from '@/types/property';
+
+function getAmenityName(pa: unknown): string | undefined {
+  if (
+    pa &&
+    typeof pa === 'object' &&
+    pa !== null &&
+    'amenity' in pa &&
+    pa.amenity &&
+    typeof pa.amenity === 'object' &&
+    pa.amenity !== null &&
+    'name' in pa.amenity &&
+    typeof (pa.amenity as Record<string, unknown>).name === 'string'
+  ) {
+    return (pa.amenity as { name: string }).name;
+  }
+  return undefined;
+}
+
+function getCategoryName(pc: unknown): string | undefined {
+  if (
+    pc &&
+    typeof pc === 'object' &&
+    pc !== null &&
+    'category' in pc &&
+    pc.category &&
+    typeof pc.category === 'object' &&
+    pc.category !== null &&
+    'name' in pc.category &&
+    typeof (pc.category as Record<string, unknown>).name === 'string'
+  ) {
+    return (pc.category as { name: string }).name;
+  }
+  return undefined;
+}
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '6');
     const userId = searchParams.get('userId') || undefined;
+    const { id } = await params;
 
     // Get property by ID
     const supabase = await createSupabaseServerClient();
@@ -72,7 +108,7 @@ export async function GET(
           )
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('status', 'active')
       .single();
 
@@ -83,16 +119,51 @@ export async function GET(
       );
     }
 
-    // Transform property data
+    // Transform property data to match Property interface
     const transformedProperty = {
       ...property,
-      property_images: property.property_images || [],
-      property_configurations: property.property_configurations || [],
-      location_data: property.location_data || null,
-      developer: property.developer || null,
-      amenities: property.property_amenities?.map((pa: any) => pa.amenity?.name).filter(Boolean) || [],
-      categories: property.property_categories?.map((pc: any) => pc.category?.name).filter(Boolean) || [],
-    };
+      property_images: Array.isArray(property.property_images) 
+        ? property.property_images.map((img: { id: string; image_url: string }) => ({
+            id: img.id,
+            property_id: id,
+            image_url: img.image_url,
+            created_at: new Date().toISOString()
+          }))
+        : [],
+      property_configurations: Array.isArray(property.property_configurations)
+        ? property.property_configurations.map((config: { id: string; bhk: number; price: number; area: number; bedrooms: number; bathrooms: number; ready_by?: string }) => ({
+            id: config.id,
+            property_id: id,
+            bhk: config.bhk,
+            price: config.price,
+            area: config.area,
+            bedrooms: config.bedrooms,
+            bathrooms: config.bathrooms,
+            ready_by: config.ready_by
+          }))
+        : [],
+      location_data: Array.isArray(property.location_data) 
+        ? property.location_data[0] || null 
+        : property.location_data || null,
+      developer: Array.isArray(property.developer) && property.developer.length > 0
+        ? {
+            id: property.developer[0].id,
+            name: property.developer[0].name,
+            website: property.developer[0].website,
+            address: property.developer[0].address,
+            logo_url: property.developer[0].logo_url,
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+        : undefined,
+      amenities: Array.isArray(property.property_amenities)
+        ? property.property_amenities.map(getAmenityName).filter((name): name is string => !!name)
+        : [],
+      categories: Array.isArray(property.property_categories)
+        ? property.property_categories.map(getCategoryName).filter((name): name is string => !!name)
+        : [],
+    } as unknown as Property;
 
     // Get enhanced similar properties
     const result = await similarPropertiesService.getSimilarProperties(
@@ -103,7 +174,7 @@ export async function GET(
 
     // Update user preferences if user is logged in
     if (userId) {
-      userPreferenceService.updatePreferences(userId, transformedProperty, 'view');
+      userPreferenceService.updatePreferences(userId, transformedProperty);
     }
 
     return NextResponse.json({
@@ -133,10 +204,11 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId, interactionType } = await request.json();
+    const { id } = await params;
 
     if (!userId || !interactionType) {
       return NextResponse.json(
@@ -164,7 +236,7 @@ export async function POST(
           name
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error || !property) {
@@ -177,11 +249,19 @@ export async function POST(
     // Transform property data
     const transformedProperty = {
       ...property,
-      developer: property.developer || null,
-    };
+      developer: Array.isArray(property.developer) && property.developer.length > 0
+        ? {
+            id: property.developer[0].id,
+            name: property.developer[0].name,
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+        : undefined,
+    } as Property;
 
     // Update user preferences
-    userPreferenceService.updatePreferences(userId, transformedProperty, interactionType);
+    userPreferenceService.updatePreferences(userId, transformedProperty);
 
     return NextResponse.json({
       success: true,

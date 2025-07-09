@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react'
+import Image from 'next/image'
 
 interface AvatarCircleProps {
   src?: string | null
@@ -15,10 +16,12 @@ export default function AvatarCircle({ src, alt = 'User', size = 32 }: AvatarCir
       className="flex items-center justify-center rounded-full bg-[#5A6782]"
     >
       {src ? (
-        <img
+        <Image
           src={src}
           alt={alt}
           className="w-full h-full object-cover rounded-full"
+          width={size}
+          height={size}
         />
       ) : (
         // Fallback SVG icon (user silhouette)

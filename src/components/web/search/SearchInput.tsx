@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Search, X, MapPin, Home, DollarSign } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { cn } from '@/lib/utils'
+import type { Property, BHKConfiguration } from '@/types/property'
+import type { LocationData } from '@/lib/locations-data'
 
 interface SearchResult {
   id: string
@@ -86,19 +87,17 @@ export default function SearchInput({ onClose, isActive }: SearchInputProps) {
 
       // Add property results with improved price calculation
       if (propertiesData.properties && Array.isArray(propertiesData.properties)) {
-        propertiesData.properties.forEach((property: any) => {
+        propertiesData.properties.forEach((property: Property) => {
           // Improved price calculation - only consider valid prices
           let lowestPrice = 0
           if (property.property_configurations && Array.isArray(property.property_configurations)) {
             const validPrices = property.property_configurations
-              .map((config: any) => config.price)
+              .map((config: BHKConfiguration) => config.price)
               .filter((price: number) => price && price > 0)
-            
             if (validPrices.length > 0) {
               lowestPrice = Math.min(...validPrices)
             }
           }
-
           searchResults.push({
             id: property.id,
             title: property.title,
@@ -112,12 +111,12 @@ export default function SearchInput({ onClose, isActive }: SearchInputProps) {
 
       // Add location results with improved error handling
       if (locationsData.locations && Array.isArray(locationsData.locations)) {
-        locationsData.locations.forEach((location: any) => {
+        locationsData.locations.forEach((location: LocationData) => {
           searchResults.push({
             id: location.id,
             title: location.name,
             type: 'location',
-            subtitle: `${location.property_count || 0} properties${location.description ? ` • ${location.description}` : ''}`
+            subtitle: `${(location as LocationData & { property_count?: number }).property_count || 0} properties${location.description ? ` • ${location.description}` : ''}`
           })
         })
       }
@@ -253,7 +252,7 @@ export default function SearchInput({ onClose, isActive }: SearchInputProps) {
             </div>
           ) : query.trim() ? (
             <div className="p-4 text-center text-gray-500">
-              No results found for "{query}"
+              No results found for &quot;{query}&quot;
             </div>
           ) : null}
         </div>

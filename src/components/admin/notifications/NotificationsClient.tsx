@@ -38,7 +38,6 @@ import {
   Plus, 
   Search, 
   MoreHorizontal,
-  Eye,
   Trash2,
   CheckCircle,
   AlertCircle,

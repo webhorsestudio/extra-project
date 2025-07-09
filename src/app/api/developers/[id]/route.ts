@@ -3,14 +3,15 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createSupabaseAdminClient()
   try {
+    const { id } = await params
     const { data, error } = await supabase
       .from('property_developers')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -22,14 +23,14 @@ export async function GET(
     }
 
     return NextResponse.json({ developer: data })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createSupabaseAdminClient()
   try {
@@ -43,8 +44,10 @@ export async function PUT(
       is_active 
     } = await request.json()
 
+    const { id } = await params
+
     console.log('PUT /api/developers/[id]:', {
-      id: params.id,
+      id,
       name,
       logo_url,
       logo_storage_path,
@@ -71,7 +74,7 @@ export async function PUT(
     const { data, error } = await supabase
       .from('property_developers')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 
@@ -94,15 +97,16 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createSupabaseAdminClient()
   try {
+    const { id } = await params
     // First, get the developer to check if it has a logo to delete
     const { data: developer, error: fetchError } = await supabase
       .from('property_developers')
       .select('logo_storage_path')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (fetchError) {
@@ -117,7 +121,7 @@ export async function DELETE(
     const { error: deleteError } = await supabase
       .from('property_developers')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (deleteError) {
       return NextResponse.json({ error: deleteError.message }, { status: 500 })
@@ -136,7 +140,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 } 

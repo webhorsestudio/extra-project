@@ -3,9 +3,10 @@ import { createSupabaseApiClient } from '@/lib/supabase/api'
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createSupabaseApiClient()
     const { name, slug, description } = await req.json()
     
@@ -18,7 +19,7 @@ export async function PUT(
     const { data, error } = await supabase
       .from('blog_categories')
       .update({ name, slug, description })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
     
@@ -39,15 +40,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = await createSupabaseApiClient()
     
     const { error } = await supabase
       .from('blog_categories')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
     
     if (error) {
       console.error('Error deleting blog category:', error)

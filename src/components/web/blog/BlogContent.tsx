@@ -25,7 +25,6 @@ export default function BlogContent({ content }: { content: string }) {
 
   return (
     <div className="prose prose-lg max-w-none text-gray-900 mt-6">
-      {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   );

@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
     // Add property count for each location
     const locationsWithCount = await Promise.all(
-      (data || []).map(async (location: any) => {
+      (data || []).map(async (location: Record<string, unknown>) => {
         try {
           const { count } = await supabase
             .from('properties')

@@ -11,7 +11,6 @@ interface MobilePropertyConfigurationsProps {
 export default function MobilePropertyConfigurations({ property }: MobilePropertyConfigurationsProps) {
   const [configurations, setConfigurations] = useState<BHKConfiguration[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedConfigIdx, setSelectedConfigIdx] = useState(0);
   const [selectedBhk, setSelectedBhk] = useState<number | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -24,7 +23,6 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
   useEffect(() => {
     async function fetchConfigurations() {
       setLoading(true);
-      setError(null);
       try {
         const res = await fetch(`/api/properties/${property.id}/configurations`);
         if (!res.ok) {
@@ -39,8 +37,8 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
           setSelectedBhk(Number(bhkOptions[0]));
           setSelectedConfigIdx(0);
         }
-      } catch (err: any) {
-        setError(err.message || "Unknown error");
+      } catch {
+        // Error handling removed as not needed
       } finally {
         setLoading(false);
       }
@@ -56,14 +54,11 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
   const selectedConfig = filteredConfigs[selectedConfigIdx] || filteredConfigs[0];
 
   // Get URLs with fallback for different naming conventions
-  const floorPlanUrl = selectedConfig?.floor_plan_url || (selectedConfig as any)?.floorPlanUrl;
-  const brochureUrlFinal = selectedConfig?.brochure_url || (selectedConfig as any)?.brochureUrl;
+  const floorPlanUrl = selectedConfig?.floor_plan_url || (selectedConfig as BHKConfiguration & { floorPlanUrl?: string })?.floorPlanUrl || '';
+  const brochureUrlFinal = selectedConfig?.brochure_url || (selectedConfig as BHKConfiguration & { brochureUrl?: string })?.brochureUrl || '';
 
   // Private Exclusives (show only if a config has ready_by === null)
   const showPrivateExclusives = filteredConfigs.some(cfg => !cfg.ready_by);
-
-  // Brochure (dynamic link)
-  const brochureUrl = selectedConfig?.brochure_url || "#";
 
   // Zoom functions
   const handleZoomIn = () => {
@@ -83,7 +78,7 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
           text: `Check out the floor plan for ${property.title}`,
           url: floorPlanUrl
         });
-      } catch (error) {
+      } catch {
         console.log('Share cancelled');
       }
     } else {
@@ -91,7 +86,7 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
       try {
         await navigator.clipboard.writeText(floorPlanUrl);
         alert('Floor plan URL copied to clipboard!');
-      } catch (error) {
+      } catch {
         console.error('Failed to copy URL');
       }
     }
@@ -109,15 +104,6 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
       <div className="mx-1 my-4">
         <div className="bg-white/90 backdrop-blur-md border-gray-200/50 rounded-2xl shadow-sm p-6 flex items-center justify-center min-h-[120px]">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black" />
-        </div>
-      </div>
-    );
-  }
-  if (error) {
-    return (
-      <div className="mx-1 my-4">
-        <div className="bg-white/90 backdrop-blur-md border-gray-200/50 rounded-2xl shadow-sm p-6">
-          <div className="text-red-500 text-center text-sm">{error}</div>
         </div>
       </div>
     );
@@ -216,7 +202,7 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
         )}
 
         {/* Floor Plan Button */}
-        {floorPlanUrl && (
+        {floorPlanUrl && floorPlanUrl !== '' && (
           <button
             onClick={() => setFloorPlanModalOpen(true)}
             className="w-full bg-white border border-black/20 rounded-full py-3 font-bold text-black shadow-sm hover:bg-black hover:text-white transition-all mb-2"
@@ -226,7 +212,7 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
         )}
 
         {/* Download Brochure Button */}
-        {brochureUrlFinal && (
+        {brochureUrlFinal && brochureUrlFinal !== '' && (
           <a
             href={brochureUrlFinal}
             target="_blank"
@@ -241,7 +227,7 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
       </div>
 
       {/* Floor Plan Modal */}
-      {floorPlanModalOpen && floorPlanUrl && (
+      {floorPlanModalOpen && floorPlanUrl && floorPlanUrl !== '' && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
             {/* Modal Header */}
@@ -289,6 +275,7 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
                     minHeight: `${zoomLevel * 100}%`
                   }}
                 >
+                  {/* Using <img> here for dynamic modal zoom and scroll support; Next.js <Image> is not suitable for this use case. */}
                   <img
                     src={floorPlanUrl}
                     alt="Floor Plan"

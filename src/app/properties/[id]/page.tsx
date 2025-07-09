@@ -13,6 +13,20 @@ import PropertyConfigurations from '@/components/web/PropertyConfigurations';
 import SimilarPropertiesCarousel from '@/components/web/similar-properties/SimilarPropertiesCarousel';
 import { SimilarPropertiesService } from '@/lib/services/similar-properties-service';
 
+interface PropertyAmenityRelation {
+  property_amenities?: {
+    name?: string;
+    image_url?: string;
+  };
+}
+
+interface PropertyCategoryRelation {
+  property_categories?: {
+    name?: string;
+    icon?: string;
+  };
+}
+
 interface PropertyPageProps {
   params: Promise<{ id: string }>;
 }
@@ -52,9 +66,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
                 Property Not Found
               </h1>
-              <p className="text-gray-600 mb-6">
-                The property you're looking for doesn't exist or is no longer available.
-              </p>
+              <p className="text-gray-600">We&apos;re sorry, but we couldn&apos;t find the property you&apos;re looking for.</p>
               <div className="mt-6">
                 <a 
                   href="/web/properties"
@@ -72,14 +84,14 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
 
   // Map relations to flat arrays for Features component (amenities and categories)
   if (property) {
-    property.amenities = property.property_amenity_relations?.map((rel: any) => ({
+    property.amenities = property.property_amenity_relations?.map((rel: PropertyAmenityRelation) => ({
       name: rel.property_amenities?.name,
       image_url: rel.property_amenities?.image_url
-    })).filter((a: any) => a.name) || [];
-    property.categories = property.property_category_relations?.map((rel: any) => ({
+    })).filter((a: { name?: string }) => a.name) || [];
+    property.categories = property.property_category_relations?.map((rel: PropertyCategoryRelation) => ({
       name: rel.property_categories?.name,
       icon: rel.property_categories?.icon
-    })).filter((c: any) => c.name) || [];
+    })).filter((c: { name?: string }) => c.name) || [];
   }
 
   // Fetch similar properties

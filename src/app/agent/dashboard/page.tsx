@@ -197,7 +197,7 @@ export default function AgentDashboard() {
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Property "Sunset Villa" listed</p>
+                    <p className="text-sm font-medium">Property &quot;Sunset Villa&quot; listed</p>
                     <p className="text-xs text-muted-foreground">2 hours ago</p>
                   </div>
                 </div>
@@ -211,7 +211,7 @@ export default function AgentDashboard() {
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">Property "Ocean View" updated</p>
+                    <p className="text-sm font-medium">Property &quot;Ocean View&quot; updated</p>
                     <p className="text-xs text-muted-foreground">1 day ago</p>
                   </div>
                 </div>

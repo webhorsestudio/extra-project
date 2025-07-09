@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
-import { Upload, Save, Download, AlertCircle, Palette, Image as ImageIcon, Monitor, Smartphone, X, CheckCircle, Globe, Eye } from 'lucide-react'
+import { Upload, Image as ImageIcon, Monitor, Smartphone, X, CheckCircle, Globe, Eye } from 'lucide-react'
 import { uploadFile } from '@/lib/uploadFile'
 
 type Props = {
@@ -17,7 +17,6 @@ type Props = {
     favicon_storage_path?: string
     logo_alt_text?: string
     favicon_alt_text?: string
-    [key: string]: string | undefined // Allow additional string properties
   }
 }
 

@@ -69,13 +69,6 @@ export default function FAQCategoriesClient({ initialCategories }: FAQCategories
   })
   const { toast } = useToast()
 
-  // Only refetch if initial data is empty (fallback)
-  useEffect(() => {
-    if (!initialCategories || initialCategories.length === 0) {
-      fetchCategories()
-    }
-  }, [initialCategories])
-
   const fetchCategories = useCallback(async () => {
     try {
       setIsLoading(true)
@@ -98,6 +91,13 @@ export default function FAQCategoriesClient({ initialCategories }: FAQCategories
       setIsLoading(false)
     }
   }, [toast])
+
+  // Only refetch if initial data is empty (fallback)
+  useEffect(() => {
+    if (!initialCategories || initialCategories.length === 0) {
+      fetchCategories()
+    }
+  }, [initialCategories, fetchCategories])
 
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault()

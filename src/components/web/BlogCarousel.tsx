@@ -10,6 +10,7 @@ interface Blog {
   excerpt: string;
   featured_image: string | null;
   created_at?: string;
+  categories?: Array<{ id: string; name: string }>;
 }
 
 interface BlogCarouselProps {

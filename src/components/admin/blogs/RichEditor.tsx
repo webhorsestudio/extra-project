@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input'
 import { useState, useEffect, useCallback } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import { supabase } from '@/lib/supabaseClient'
-import { isJsonContent } from '@/lib/content-utils'
+
 
 interface RichEditorProps {
   content: string

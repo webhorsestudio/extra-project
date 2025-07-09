@@ -26,8 +26,6 @@ interface UseCategoriesReturn {
 
 // Global cache to avoid multiple API calls
 let categoriesCache: Category[] | null = null
-let cacheTimestamp: number = 0
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
 export function useCategories(options: UseCategoriesOptions = {}): UseCategoriesReturn {
   const { includeInactive = false, refreshInterval, initialData } = options
@@ -52,7 +50,6 @@ export function useCategories(options: UseCategoriesOptions = {}): UseCategories
       
       // Update cache
       categoriesCache = data.categories || []
-      cacheTimestamp = Date.now()
       
       // Filter categories based on options
       let filteredCategories = categoriesCache
@@ -73,7 +70,6 @@ export function useCategories(options: UseCategoriesOptions = {}): UseCategories
     console.log('useCategories: Refetching categories')
     // Clear cache to force fresh fetch
     categoriesCache = null
-    cacheTimestamp = 0
     await fetchCategories()
   }, [fetchCategories])
 

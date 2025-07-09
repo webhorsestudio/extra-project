@@ -1,11 +1,25 @@
 import React from 'react';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { Property } from '@/types/property';
 import MobilePropertyPageClient from './MobilePropertyPageClient';
 import { SimilarPropertiesService } from '@/lib/services/similar-properties-service';
+import Link from 'next/link';
 
 interface PropertyPageProps {
   params: Promise<{ id: string }>;
+}
+
+interface AmenityRelation {
+  property_amenities?: {
+    name: string;
+    image_url?: string;
+  };
+}
+
+interface CategoryRelation {
+  property_categories?: {
+    name: string;
+    icon?: string;
+  };
 }
 
 export default async function MobilePropertyPage({ params }: PropertyPageProps) {
@@ -43,15 +57,15 @@ export default async function MobilePropertyPage({ params }: PropertyPageProps) 
               Property Not Found
             </h1>
             <p className="text-gray-600 mb-6">
-              The property you're looking for doesn't exist or is no longer available.
+              The property you&apos;re looking for doesn&apos;t exist or is no longer available.
             </p>
             <div className="mt-6">
-              <a 
+              <Link 
                 href="/m/properties"
                 className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Browse Properties
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -61,14 +75,12 @@ export default async function MobilePropertyPage({ params }: PropertyPageProps) 
 
   // Map relations to flat arrays for Features component (amenities and categories)
   if (property) {
-    property.amenities = property.property_amenity_relations?.map((rel: any) => ({
-      name: rel.property_amenities?.name,
-      image_url: rel.property_amenities?.image_url
-    })).filter((a: any) => a.name) || [];
-    property.categories = property.property_category_relations?.map((rel: any) => ({
-      name: rel.property_categories?.name,
-      icon: rel.property_categories?.icon
-    })).filter((c: any) => c.name) || [];
+    property.amenities = property.property_amenity_relations?.map((rel: AmenityRelation) => 
+      rel.property_amenities?.name
+    ).filter((name: string | undefined) => name) || [];
+    property.categories = property.property_category_relations?.map((rel: CategoryRelation) => 
+      rel.property_categories?.name
+    ).filter((name: string | undefined) => name) || [];
   }
 
   // Fetch similar properties

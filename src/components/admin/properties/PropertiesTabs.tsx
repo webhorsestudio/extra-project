@@ -132,7 +132,7 @@ export default function PropertiesTabs({
     minPrice || 
     maxPrice
 
-  const removeFilter = (filterType: string, _value: string) => {
+  const removeFilter = (filterType: string) => {
     switch (filterType) {
       case 'search':
         setSearchTerm('')
@@ -371,7 +371,7 @@ export default function PropertiesTabs({
                       variant="ghost"
                       size="sm"
                       className="h-auto p-0 ml-1"
-                      onClick={() => removeFilter('search', searchTerm)}
+                      onClick={() => removeFilter('search')}
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -385,7 +385,7 @@ export default function PropertiesTabs({
                       variant="ghost"
                       size="sm"
                       className="h-auto p-0 ml-1"
-                      onClick={() => removeFilter('type', filterType)}
+                      onClick={() => removeFilter('type')}
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -399,7 +399,7 @@ export default function PropertiesTabs({
                       variant="ghost"
                       size="sm"
                       className="h-auto p-0 ml-1"
-                      onClick={() => removeFilter('collection', filterCollection)}
+                      onClick={() => removeFilter('collection')}
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -413,7 +413,7 @@ export default function PropertiesTabs({
                       variant="ghost"
                       size="sm"
                       className="h-auto p-0 ml-1"
-                      onClick={() => removeFilter('status', filterStatus)}
+                      onClick={() => removeFilter('status')}
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -437,7 +437,7 @@ export default function PropertiesTabs({
                       variant="ghost"
                       size="sm"
                       className="h-auto p-0 ml-1"
-                      onClick={() => removeFilter('verified', filterVerified)}
+                      onClick={() => removeFilter('verified')}
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -452,8 +452,8 @@ export default function PropertiesTabs({
                       size="sm"
                       className="h-auto p-0 ml-1"
                       onClick={() => {
-                        removeFilter('minPrice', minPrice)
-                        removeFilter('maxPrice', maxPrice)
+                        removeFilter('minPrice')
+                        removeFilter('maxPrice')
                       }}
                     >
                       <X className="h-3 w-3" />

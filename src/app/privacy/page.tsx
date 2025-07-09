@@ -30,12 +30,19 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PrivacyPolicyPage() {
   const supabase = await createSupabaseApiClient()
   
-  const { data: policy, error } = await supabase
-    .from('policies')
-    .select('*')
-    .eq('policy_type', 'privacy')
-    .eq('is_active', true)
-    .single()
+  let policy = null
+  try {
+    const { data } = await supabase
+      .from('policies')
+      .select('*')
+      .eq('policy_type', 'privacy')
+      .eq('is_active', true)
+      .single()
+
+    policy = data
+  } catch (_error) {
+    console.error('Failed to fetch privacy policy:', _error)
+  }
 
   // Process the content to convert JSON to HTML if needed
   let processedPolicy = null

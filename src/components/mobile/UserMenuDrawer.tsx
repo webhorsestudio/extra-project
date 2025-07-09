@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
+import Image from 'next/image'
 
 interface UserMenuDrawerProps {
   open: boolean;
@@ -155,7 +156,7 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           ) : user ? (
             <div className="flex items-center gap-3">
               {profile?.avatar_data ? (
-                <img src={profile.avatar_data} alt={profile.full_name || user.email} className="w-12 h-12 rounded-full object-cover border-2 border-white/50 shadow-sm" />
+                <Image src={profile.avatar_data || ''} alt={profile.full_name || user.email || 'User'} className="w-12 h-12 rounded-full object-cover border-2 border-white/50 shadow-sm" width={48} height={48} />
               ) : (
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-600 text-2xl font-bold border-2 border-white/50 shadow-sm">
                   {profile?.full_name?.[0] || user.email?.[0] || 'U'}

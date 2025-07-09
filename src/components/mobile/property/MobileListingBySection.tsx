@@ -2,10 +2,7 @@
 
 import React from 'react';
 import { Property } from '@/types/property';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Building2, User, Phone, Mail, Globe } from 'lucide-react';
+import Image from 'next/image';
 
 interface MobileListingBySectionProps {
   property: Property;
@@ -21,9 +18,11 @@ export default function MobileListingBySection({ property }: MobileListingBySect
       <div className="flex items-start gap-4">
         {/* Logo */}
         {developer.logo_url && (
-          <img
+          <Image
             src={developer.logo_url}
             alt={developer.name}
+            width={64}
+            height={64}
             className="w-16 h-16 object-contain rounded bg-gray-50 border border-gray-100"
           />
         )}

@@ -2,8 +2,8 @@ interface CachedProperty {
   id: string;
   title: string;
   location: string;
-  property_configurations?: any[];
-  property_images?: any[];
+  property_configurations?: Record<string, unknown>[];
+  property_images?: Record<string, unknown>[];
   cachedAt: number;
 }
 
@@ -11,16 +11,16 @@ class PropertiesCache {
   private cache = new Map<string, CachedProperty[]>();
   private cacheTimeout = 5 * 60 * 1000; // 5 minutes
 
-  cacheProperties(key: string, properties: any[]): void {
+  cacheProperties(key: string, properties: Record<string, unknown>[]): void {
     const cachedProperties = properties.map(property => ({
       ...property,
       cachedAt: Date.now()
-    }));
+    })) as CachedProperty[];
     
     this.cache.set(key, cachedProperties);
   }
 
-  getCachedProperties(key: string): any[] | null {
+  getCachedProperties(key: string): Record<string, unknown>[] | null {
     const cached = this.cache.get(key);
     if (!cached) return null;
 
@@ -36,8 +36,9 @@ class PropertiesCache {
     }
 
     return cached.map(property => {
-      const { cachedAt, ...rest } = property;
-      return rest;
+      // Return all properties except cachedAt since it's not needed
+      const { id, title, location, property_configurations, property_images } = property;
+      return { id, title, location, property_configurations, property_images };
     });
   }
 
@@ -45,7 +46,7 @@ class PropertiesCache {
     this.cache.clear();
   }
 
-  generateCacheKey(filters: any): string {
+  generateCacheKey(filters: Record<string, unknown>): string {
     return JSON.stringify(filters);
   }
 }

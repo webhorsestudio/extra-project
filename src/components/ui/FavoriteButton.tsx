@@ -46,7 +46,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
             setIsFavorited(data.isFavorited);
           }
         }
-      } catch (error) {
+      } catch {
         setIsAuthenticated(false);
       }
     };
@@ -54,9 +54,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     checkAuth();
   }, [propertyId]);
 
-  const handleToggle = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
+  const handleToggle = async () => {
     // Check if user is authenticated
     if (!isAuthenticated) {
       toast({
@@ -98,7 +96,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
           variant: 'destructive'
         });
       }
-    } catch (e) {
+    } catch {
       toast({ 
         title: 'Error', 
         description: 'Failed to update wishlist. Please try again.',

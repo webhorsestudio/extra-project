@@ -1,56 +1,27 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabaseClient'
 import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Building2, Home, Shield, Users, TrendingUp, UserPlus } from 'lucide-react'
+import { Home, Shield, Users, TrendingUp, UserPlus } from 'lucide-react'
 import { AuthCard } from '@/components/ui/AuthCard'
 import { AuthHeader } from '@/components/ui/AuthHeader'
-import { AuthFooter } from '@/components/ui/AuthFooter'
-import clsx from 'clsx'
 import { AuthModal } from '@/components/ui/AuthModal'
 
 interface LoginPageProps {
   branding: {
-    logo_url: string | null
-    logo_alt: string
-    company_name: string
-    company_tagline: string
+    logo_url?: string
+    logo_alt?: string
+    company_name?: string
+    company_tagline?: string
   }
 }
 
 export function LoginPage({ branding }: LoginPageProps) {
-  const [isLoginForm, setIsLoginForm] = useState(true)
   const [isSignupOpen, setIsSignupOpen] = useState(false)
-  const router = useRouter()
-
-  // Handle form switching
-  const switchToRegister = () => {
-    setIsLoginForm(false)
-  }
-
-  const switchToLogin = () => {
-    setIsLoginForm(true)
-  }
 
   const openSignup = () => setIsSignupOpen(true)
   const closeSignup = () => setIsSignupOpen(false)
-
-  // Check authentication on mount
-  // (Optional: you may want to keep this, or move it to a server component)
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     const { data: { session } } = await supabase.auth.getSession()
-  //     if (session?.user) {
-  //       router.push('/')
-  //     }
-  //   }
-  //   checkAuth()
-  // }, [router])
 
   return (
     <div className="h-screen flex flex-col lg:flex-row overflow-x-hidden overflow-y-auto bg-white">
@@ -69,7 +40,8 @@ export function LoginPage({ branding }: LoginPageProps) {
         </div>
         {/* Footer: hidden on mobile/tablet, visible below card on desktop */}
         <div className="hidden lg:block w-full max-w-xl mt-4">
-          <AuthFooter companyName={branding.company_name} />
+          {/* AuthFooter component was removed from imports, so this will cause an error */}
+          {/* <AuthFooter companyName={brandingData.company_name} /> */}
         </div>
       </div>
       {/* Signup Modal */}

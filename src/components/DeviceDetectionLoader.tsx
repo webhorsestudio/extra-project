@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
 // Screen width breakpoints
@@ -26,7 +26,6 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
     // Determine device type
     const isMobileBySize = width <= MOBILE_BREAKPOINT
     const isTabletBySize = width > MOBILE_BREAKPOINT && width <= TABLET_BREAKPOINT
-    const isDesktopBySize = width > TABLET_BREAKPOINT
     
     const mobile = isMobileBySize || isMobileByUserAgent
     const tablet = isTabletBySize || (isMobileByUserAgent && /iPad|Android(?=.*\bMobile\b)(?=.*\bSafari\b)/i.test(userAgent))
@@ -38,7 +37,7 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
   }
 
   // Function to handle layout changes
-  function handleLayoutChange(shouldUseMobile: boolean, deviceType: 'mobile' | 'desktop') {
+  const handleLayoutChange = useCallback((shouldUseMobile: boolean, deviceType: 'mobile' | 'desktop') => {
     // Prevent multiple redirects
     if (isRedirecting.current) return
     
@@ -74,7 +73,7 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
     setTimeout(() => {
       isRedirecting.current = false
     }, 1000)
-  }
+  }, [router])
 
   // Initial load logic
   useEffect(() => {
@@ -106,7 +105,7 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
       clearTimeout(timer)
       clearTimeout(fallbackTimer)
     }
-  }, [router])
+  }, [handleLayoutChange])
 
   // Screen size change logic
   useEffect(() => {
@@ -140,7 +139,7 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
       window.removeEventListener('orientationchange', handleResize)
       clearTimeout(resizeTimeout)
     }
-  }, [router, lastDeviceType, isInitialLoad])
+  }, [handleLayoutChange, lastDeviceType, isInitialLoad])
 
   // Show loading spinner only during initial load
   if (isLoading && isInitialLoad) {

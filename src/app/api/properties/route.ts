@@ -75,13 +75,13 @@ export async function GET(req: NextRequest) {
     const bhk = searchParams.get('bhk')
     if (bhk && bhk !== 'Any') {
       const targetBhk = Number(bhk)
-      filteredData = filteredData.filter((property: any) => {
+      filteredData = filteredData.filter((property: Record<string, unknown>) => {
         if (!property.property_configurations || !Array.isArray(property.property_configurations) || property.property_configurations.length === 0) {
           return false
         }
         
         // Check if any configuration matches the BHK requirement
-        return property.property_configurations.some((config: any) => config.bhk === targetBhk)
+        return property.property_configurations.some((config: Record<string, unknown>) => (config.bhk as number) === targetBhk)
       })
     }
 
@@ -90,14 +90,14 @@ export async function GET(req: NextRequest) {
     const maxPrice = searchParams.get('max_price')
     
     if (minPrice || maxPrice) {
-      filteredData = filteredData.filter((property: any) => {
+      filteredData = filteredData.filter((property: Record<string, unknown>) => {
         if (!property.property_configurations || !Array.isArray(property.property_configurations) || property.property_configurations.length === 0) {
           return false
         }
         
         // Check if any configuration matches the price range
-        return property.property_configurations.some((config: any) => {
-          const price = config.price
+        return property.property_configurations.some((config: Record<string, unknown>) => {
+          const price = config.price as number
           if (!price || price <= 0) return false
           
           // Convert Lacs to actual price for comparison
@@ -110,17 +110,17 @@ export async function GET(req: NextRequest) {
     }
 
     // Transform data to match the same structure as featured/latest properties
-    const propertiesWithLocation = filteredData.map((property: any) => ({
+    const propertiesWithLocation = filteredData.map((property: Record<string, unknown>) => ({
       ...property,
-      price: property.property_configurations?.[0]?.price ?? null,
+      price: (property.property_configurations as Record<string, unknown>[])?.[0]?.price ?? null,
       location_data: Array.isArray(property.property_locations) ? property.property_locations[0] : property.property_locations
     }))
 
     // Debug log for first 3 properties
     console.log('Sample properties:', propertiesWithLocation.slice(0, 3).map(p => ({
-      id: p.id,
-      property_locations: p.property_locations,
-      location_data: p.location_data
+      id: (p as Record<string, unknown>).id,
+      property_locations: (p as Record<string, unknown>).property_locations,
+      location_data: (p as Record<string, unknown>).location_data
     })))
 
     // Add cache headers for better performance

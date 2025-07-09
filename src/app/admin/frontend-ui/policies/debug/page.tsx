@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function PoliciesDebugPage() {
-  const [apiResponse, setApiResponse] = useState<unknown>(null)
+  const [apiResponse, setApiResponse] = useState<string | object | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -50,7 +50,7 @@ export default function PoliciesDebugPage() {
             </div>
           )}
 
-          {apiResponse && (() => {
+          {apiResponse && ((() => {
             let displayString: string
             if (typeof apiResponse === 'string') {
               displayString = apiResponse
@@ -65,7 +65,7 @@ export default function PoliciesDebugPage() {
                 </pre>
               </div>
             )
-          })()}
+          })() as React.ReactNode)}
         </CardContent>
       </Card>
     </div>

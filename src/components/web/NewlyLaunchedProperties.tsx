@@ -1,7 +1,10 @@
 import { getNewlyLaunchedProperties } from '@/lib/data'
-import PropertyCardV2 from './PropertyCardV2'
-import Section from './Section'
 import PropertyCarousel from './PropertyCarousel'
+import type { Property, BHKConfiguration, PropertyImage } from '@/types/property'
+
+// Type for Supabase result (fields selected in the query)
+type SupabaseBHKConfig = Omit<BHKConfiguration, 'property_id' | 'floor_plan_url' | 'brochure_url'>;
+type SupabasePropertyImage = Pick<PropertyImage, 'id' | 'image_url'>;
 
 export default async function NewlyLaunchedProperties() {
   const properties = await getNewlyLaunchedProperties()
@@ -10,7 +13,38 @@ export default async function NewlyLaunchedProperties() {
     return null
   }
 
+  // Transform the data to match Property interface
+  const transformedProperties: Property[] = properties.map(property => ({
+    id: property.id,
+    title: property.title,
+    description: property.description,
+    property_type: 'Apartment' as const, // Default type since not in query
+    property_collection: property.property_collection || 'Newly Launched' as const,
+    location: property.location,
+    latitude: 0, // Default value since not in query
+    longitude: 0, // Default value since not in query
+    created_at: property.created_at,
+    updated_at: property.updated_at,
+    created_by: '', // Default value since not in query
+    posted_by: '', // Default value since not in query
+    parking: false, // Default value since not in query
+    status: property.status,
+    price: property.price,
+    location_data: Array.isArray(property.property_locations) && property.property_locations.length > 0
+      ? { id: String(property.property_locations[0].id), name: String(property.property_locations[0].name) }
+      : null,
+    property_configurations: property.property_configurations?.map((config: SupabaseBHKConfig) => ({ ...config, property_id: property.id })) || [],
+    property_images: property.property_images?.map((img: SupabasePropertyImage) => ({
+      ...img,
+      property_id: property.id,
+      created_at: property.created_at || ''
+    })) || [],
+    // Add other required fields with defaults
+    amenities: [],
+    categories: []
+  }))
+
   return (
-    <PropertyCarousel properties={properties} title="Newly Launched" titleAlign="left" />
+    <PropertyCarousel properties={transformedProperties} title="Newly Launched" titleAlign="left" />
   )
 } 

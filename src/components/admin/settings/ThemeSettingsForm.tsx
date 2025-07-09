@@ -20,13 +20,15 @@ import {
 
 type Props = {
   settings: {
+    primary_color?: string
+    secondary_color?: string
     accent_color?: string
+    font_family?: string
     font_size_base?: string
     border_radius?: string
     enable_dark_mode?: boolean
     enable_animations?: boolean
     enable_shadows?: boolean
-    [key: string]: string | boolean | undefined // Allow additional properties
   }
 }
 
@@ -70,26 +72,23 @@ export function ThemeSettingsForm({ settings }: Props) {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = e.target
+  const handleChange = () => {
     // Handle change logic
   }
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = () => {
     // Handle select change logic
   }
 
-  const handleSwitchChange = (name: string, checked: boolean) => {
+  const handleSwitchChange = () => {
     // Handle switch change logic
   }
 
-  const applyColorPreset = (preset: typeof colorPresets[0]) => {
+  const applyColorPreset = () => {
     // Handle color preset application logic
   }
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: Record<string, unknown>) => {
     try {
       console.log('Starting theme settings update...')
       setIsLoading(true)
@@ -149,7 +148,7 @@ export function ThemeSettingsForm({ settings }: Props) {
                 Color Scheme
               </CardTitle>
               <CardDescription className="text-gray-600">
-                Customize your website's color palette and visual identity
+                Customize your website&apos;s color palette and visual identity
               </CardDescription>
             </div>
           </div>
@@ -162,7 +161,7 @@ export function ThemeSettingsForm({ settings }: Props) {
               {colorPresets.map((preset) => (
                 <button
                   key={preset.name}
-                  onClick={() => applyColorPreset(preset)}
+                  onClick={applyColorPreset}
                   className="p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left"
                 >
                   <div className="flex items-center gap-2 mb-2">
@@ -203,13 +202,13 @@ export function ThemeSettingsForm({ settings }: Props) {
                     id="primary_color"
                     name="primary_color"
                     type="color"
-                    value={settings.primary_color || '#0ea5e9'}
+                    value={settings.accent_color || '#0ea5e9'}
                     onChange={handleChange}
                     className="w-12 h-10 p-1 rounded-lg border-gray-200"
                   />
                   <Input
                     type="text"
-                    value={settings.primary_color || '#0ea5e9'}
+                    value={settings.accent_color || '#0ea5e9'}
                     onChange={handleChange}
                     name="primary_color"
                     className="flex-1"
@@ -298,7 +297,7 @@ export function ThemeSettingsForm({ settings }: Props) {
               </Label>
               <Select
                 value={settings.font_family || 'Inter'}
-                onValueChange={(value) => handleSelectChange('font_family', value)}
+                onValueChange={handleSelectChange}
               >
                 <SelectTrigger className="border-gray-200">
                   <SelectValue placeholder="Select a font" />
@@ -320,7 +319,7 @@ export function ThemeSettingsForm({ settings }: Props) {
               </Label>
               <Select
                 value={settings.font_size_base || '16px'}
-                onValueChange={(value) => handleSelectChange('font_size_base', value)}
+                onValueChange={handleSelectChange}
               >
                 <SelectTrigger className="border-gray-200">
                   <SelectValue placeholder="Select font size" />
@@ -343,7 +342,7 @@ export function ThemeSettingsForm({ settings }: Props) {
             </Label>
             <Select
               value={settings.border_radius || '8px'}
-              onValueChange={(value) => handleSelectChange('border_radius', value)}
+              onValueChange={handleSelectChange}
             >
               <SelectTrigger className="border-gray-200">
                 <SelectValue placeholder="Select border radius" />
@@ -386,7 +385,7 @@ export function ThemeSettingsForm({ settings }: Props) {
             </div>
             <Switch
               checked={settings.enable_dark_mode || false}
-              onCheckedChange={(checked) => handleSwitchChange('enable_dark_mode', checked)}
+              onCheckedChange={handleSwitchChange}
             />
           </div>
 
@@ -397,7 +396,7 @@ export function ThemeSettingsForm({ settings }: Props) {
             </div>
             <Switch
               checked={settings.enable_animations || true}
-              onCheckedChange={(checked) => handleSwitchChange('enable_animations', checked)}
+              onCheckedChange={handleSwitchChange}
             />
           </div>
 
@@ -408,7 +407,7 @@ export function ThemeSettingsForm({ settings }: Props) {
             </div>
             <Switch
               checked={settings.enable_shadows || true}
-              onCheckedChange={(checked) => handleSwitchChange('enable_shadows', checked)}
+              onCheckedChange={handleSwitchChange}
             />
           </div>
         </CardContent>
@@ -451,11 +450,11 @@ export function ThemeSettingsForm({ settings }: Props) {
                 <div className="flex items-center gap-3 mb-3">
                   <div 
                     className="w-8 h-8 rounded-lg"
-                    style={{ backgroundColor: settings.primary_color || '#0ea5e9' }}
+                    style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
                   />
                   <div 
                     className="w-24 h-4 rounded"
-                    style={{ backgroundColor: settings.primary_color || '#0ea5e9' }}
+                    style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
                   />
                 </div>
                 <div className="space-y-2">
@@ -470,7 +469,7 @@ export function ThemeSettingsForm({ settings }: Props) {
                 </div>
                 <div 
                   className="absolute bottom-3 right-3 w-16 h-8 rounded-lg"
-                  style={{ backgroundColor: settings.primary_color || '#0ea5e9' }}
+                  style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
                 />
               </div>
             </div>
@@ -493,11 +492,11 @@ export function ThemeSettingsForm({ settings }: Props) {
                 <div className="flex items-center gap-2 mb-2">
                   <div 
                     className="w-4 h-4 rounded"
-                    style={{ backgroundColor: settings.primary_color || '#0ea5e9' }}
+                    style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
                   />
                   <div 
                     className="w-8 h-3 rounded"
-                    style={{ backgroundColor: settings.primary_color || '#0ea5e9' }}
+                    style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
                   />
                 </div>
                 <div className="space-y-1">
@@ -512,7 +511,7 @@ export function ThemeSettingsForm({ settings }: Props) {
                 </div>
                 <div 
                   className="absolute bottom-2 right-2 w-8 h-6 rounded"
-                  style={{ backgroundColor: settings.primary_color || '#0ea5e9' }}
+                  style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
                 />
               </div>
             </div>
@@ -523,7 +522,7 @@ export function ThemeSettingsForm({ settings }: Props) {
       {/* Save Button */}
       <div className="flex justify-end">
         <Button 
-          onClick={onSubmit} 
+          onClick={() => onSubmit(settings)} 
           disabled={isLoading}
           className="bg-black hover:bg-gray-800 text-white px-8 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
         >

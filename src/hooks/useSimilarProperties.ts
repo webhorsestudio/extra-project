@@ -19,7 +19,7 @@ interface SimilarPropertiesState {
   metadata: {
     processingTime: number;
     totalCandidates: number;
-    cacheStats: any;
+    cacheStats: unknown;
   } | null;
 }
 

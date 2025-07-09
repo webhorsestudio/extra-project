@@ -22,7 +22,6 @@ const CARDS_PER_PAGE = 3;
 
 export default function SimilarProjectsSection({ 
   properties = [], 
-  currentProperty,
   loading = false,
   error,
   personalizedCount = 0,

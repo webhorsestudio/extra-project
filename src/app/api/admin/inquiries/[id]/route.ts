@@ -37,7 +37,7 @@ export async function PATCH(
     }
 
     // Prepare update data
-    const updateData: Record<string, any> = {}
+    const updateData: Record<string, string | number | boolean | Date> = {}
     
     // Handle status updates
     if (body.status) {

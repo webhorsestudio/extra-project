@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -38,10 +38,10 @@ interface AdminNavigationProps {
   onToggleExpanded: (itemName: string) => void
   isMobile?: boolean
   onMobileItemClick?: () => void
-  navigationItems: any[]
+  navigationItems: NavigationItem[]
 }
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Home,
   Building2,
   Users,

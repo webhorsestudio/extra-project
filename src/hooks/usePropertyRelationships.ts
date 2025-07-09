@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useToast } from '@/components/ui/use-toast'
-import { Amenity, PropertyCategory } from '@/types/property'
 import { supabase } from '@/lib/supabaseClient'
 
 export function usePropertyRelationships(propertyId: string) {
@@ -81,9 +80,9 @@ export function usePropertyRelationships(propertyId: string) {
       await fetch(`/api/properties/${propertyId}/views`, {
         method: 'POST',
       })
-    } catch (error) {
+    } catch (_error) {
       // Silently fail for view tracking
-      console.error('Failed to track view:', error)
+      console.error('Failed to track view:', _error)
     }
   }
 
@@ -125,7 +124,7 @@ export function usePropertyRelationships(propertyId: string) {
           return true
         }
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update favorites',
@@ -148,8 +147,7 @@ export function usePropertyRelationships(propertyId: string) {
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to add review')
+        throw new Error('Failed to add review')
       }
 
       toast({

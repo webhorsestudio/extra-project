@@ -3,7 +3,7 @@ import { createSupabaseApiClient } from '@/lib/supabase/api'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createSupabaseApiClient()
@@ -11,7 +11,8 @@ export async function GET(
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const { data, error } = await supabase
+    const { id } = await params
+    const result = await supabase
       .from('property_reviews')
       .select(`
         id,
@@ -27,13 +28,15 @@ export async function GET(
           role
         )
       `)
-      .eq('property_id', params.id)
+      .eq('property_id', id)
       .order('created_at', { ascending: false })
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    if (result.error) {
+      return NextResponse.json({ error: result.error.message }, { status: 500 })
     }
-    return NextResponse.json(data)
-  } catch (error) {
+    
+    return NextResponse.json(result.data)
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -43,7 +46,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createSupabaseApiClient()
@@ -52,6 +55,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const { rating, review_text } = await request.json()
+    const { id } = await params
     if (!rating || rating < 1 || rating > 5) {
       return NextResponse.json(
         { error: 'Rating must be between 1 and 5' },
@@ -61,27 +65,29 @@ export async function POST(
     const { data: existing } = await supabase
       .from('property_reviews')
       .select('id')
-      .eq('property_id', params.id)
+      .eq('property_id', id)
       .eq('user_id', user.id)
       .single()
     if (existing) {
       return NextResponse.json({ error: 'You have already reviewed this property' }, { status: 400 })
     }
-    const { data, error } = await supabase
+    const insertResult = await supabase
       .from('property_reviews')
       .insert({
-        property_id: params.id,
+        property_id: id,
         user_id: user.id,
         rating,
         review_text: review_text || null
       })
       .select()
       .single()
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    if (insertResult.error) {
+      return NextResponse.json({ error: insertResult.error.message }, { status: 500 })
     }
-    return NextResponse.json(data)
-  } catch (error) {
+    
+    return NextResponse.json(insertResult.data)
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -91,7 +97,7 @@ export async function POST(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createSupabaseApiClient()
@@ -100,28 +106,31 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const { rating, review_text } = await request.json()
+    const { id } = await params
     if (!rating || rating < 1 || rating > 5) {
       return NextResponse.json(
         { error: 'Rating must be between 1 and 5' },
         { status: 400 }
       )
     }
-    const { data, error } = await supabase
+    const updateResult = await supabase
       .from('property_reviews')
       .update({
         rating,
         review_text: review_text || null,
         updated_at: new Date().toISOString()
       })
-      .eq('property_id', params.id)
+      .eq('property_id', id)
       .eq('user_id', user.id)
       .select()
       .single()
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    if (updateResult.error) {
+      return NextResponse.json({ error: updateResult.error.message }, { status: 500 })
     }
-    return NextResponse.json(data)
-  } catch (error) {
+    
+    return NextResponse.json(updateResult.data)
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -131,7 +140,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createSupabaseApiClient()
@@ -139,16 +148,19 @@ export async function DELETE(
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const { error } = await supabase
+    const { id } = await params
+    const deleteResult = await supabase
       .from('property_reviews')
       .delete()
-      .eq('property_id', params.id)
+      .eq('property_id', id)
       .eq('user_id', user.id)
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    if (deleteResult.error) {
+      return NextResponse.json({ error: deleteResult.error.message }, { status: 500 })
     }
+    
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

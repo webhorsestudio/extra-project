@@ -1,10 +1,22 @@
 import React from 'react';
 import PropertyCardV2 from './PropertyCardV2';
 
-export default {
-  title: 'Web/PropertyCardV2',
+const PropertyCardV2Story = {
+  title: 'Components/PropertyCardV2',
   component: PropertyCardV2,
-};
+  parameters: {
+    layout: 'centered',
+  },
+  argTypes: {
+    property: { control: 'object' },
+    initialIsFavorited: { control: 'boolean' },
+    showPersonalization: { control: 'boolean' },
+    personalizationScore: { control: 'number' },
+    personalizationReason: { control: 'text' },
+  },
+}
+
+export default PropertyCardV2Story
 
 const mockProperty = {
   id: '1',

@@ -4,11 +4,10 @@ import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PropertyCard from '@/components/mobile/PropertyCard';
-import { useFooterVisible } from '@/components/mobile/FooterVisibleContext';
+import { Property } from '@/types/property';
 
-export default function MobileWishlistContent({ properties: initialProperties }: { properties: any[] | null }) {
+export default function MobileWishlistContent({ properties: initialProperties }: { properties: Property[] | null }) {
   const [properties, setProperties] = useState(initialProperties ?? []);
-  const footerVisible = useFooterVisible();
 
   // If user is not signed in
   if (initialProperties === null) {

@@ -45,7 +45,6 @@ export default function PropertiesAnalytics({ properties }: PropertiesAnalyticsP
   // Calculate performance metrics
   const totalViews = properties.reduce((sum, p) => sum + (p.view_count || 0), 0)
   const totalFavorites = properties.reduce((sum, p) => sum + (p.favorite_count || 0), 0)
-  const totalReviews = properties.reduce((sum, p) => sum + (p.review_count || 0), 0)
   const averageRating = properties.reduce((sum, p) => sum + (p.average_rating || 0), 0) / Math.max(properties.filter(p => p.average_rating).length, 1)
   
   // Recent activity (last 7 days)
@@ -141,8 +140,8 @@ export default function PropertiesAnalytics({ properties }: PropertiesAnalyticsP
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {performanceTrends.map((trend, index) => (
-              <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
+            {performanceTrends.map((trend) => (
+                              <div key={trend.metric} className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{trend.metric}</p>
                   <p className="text-2xl font-bold">
@@ -176,7 +175,7 @@ export default function PropertiesAnalytics({ properties }: PropertiesAnalyticsP
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {topViewed.map((property, index) => (
+              {topViewed.map((property) => (
                 <div key={property.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{property.title}</p>
@@ -201,7 +200,7 @@ export default function PropertiesAnalytics({ properties }: PropertiesAnalyticsP
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {topFavorited.map((property, index) => (
+              {topFavorited.map((property) => (
                 <div key={property.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{property.title}</p>
@@ -226,7 +225,7 @@ export default function PropertiesAnalytics({ properties }: PropertiesAnalyticsP
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {topRated.map((property, index) => (
+              {topRated.map((property) => (
                 <div key={property.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{property.title}</p>
@@ -253,8 +252,8 @@ export default function PropertiesAnalytics({ properties }: PropertiesAnalyticsP
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {recommendations.map((rec, index) => (
-              <div key={index} className={`p-4 rounded-lg ${rec.bgColor} border`}>
+            {recommendations.map((rec) => (
+                              <div key={rec.title} className={`p-4 rounded-lg ${rec.bgColor} border`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className={`p-2 rounded-lg bg-background`}>
                     <rec.icon className={`h-5 w-5 ${rec.color}`} />

@@ -217,7 +217,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           </Button>
 
           <div className="text-center text-xs lg:text-sm text-gray-600">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <button
               type="button"
               onClick={onSwitchToRegister}

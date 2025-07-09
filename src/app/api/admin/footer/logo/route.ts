@@ -3,7 +3,7 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 import { createSupabaseApiClient } from '@/lib/supabase/api'
 
 // GET: Fetch active footer logo settings
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Auth check
     const supabase = await createSupabaseApiClient()
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     }
     
     return NextResponse.json({ logo: logo || null })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -77,7 +77,7 @@ export async function PUT(request: NextRequest) {
     }
     
     return NextResponse.json({ logo: data })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     const filePath = `footer-logos/${fileName}`
     
     // Upload file to Supabase Storage
-    const { data: uploadData, error: uploadError } = await adminSupabase.storage
+    const { error: uploadError } = await adminSupabase.storage
       .from('branding')
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
       logo: data,
       message: 'Logo uploaded successfully' 
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 } 

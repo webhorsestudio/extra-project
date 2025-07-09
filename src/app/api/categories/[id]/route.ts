@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const supabase = await createSupabaseAdminClient()
-  const { id } = params
+  const { id } = await params
   const { name, icon, is_active } = await req.json()
-  const update: any = {}
+  const update: Record<string, unknown> = {}
   if (name !== undefined) update.name = name
   if (icon !== undefined) update.icon = icon
   if (is_active !== undefined) update.is_active = is_active
@@ -24,9 +24,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json({ category: data })
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const supabase = await createSupabaseAdminClient()
-  const { id } = params
+  const { id } = await params
   const { error } = await supabase
     .from('property_categories')
     .delete()

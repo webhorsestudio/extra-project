@@ -119,7 +119,7 @@ export default function ProfileContent({ user, profile, profileError }: ProfileC
         const errorMessage = accessTest.error instanceof Error 
           ? accessTest.error.message 
           : typeof accessTest.error === 'object' && accessTest.error !== null
-          ? (accessTest.error as any).message || 'Unknown error'
+          ? (accessTest.error as Record<string, unknown>).message || 'Unknown error'
           : 'Unknown error'
         throw new Error(`Cannot access profile: ${errorMessage}`)
       }
@@ -181,7 +181,7 @@ export default function ProfileContent({ user, profile, profileError }: ProfileC
         errorMessage = error.message
       } else if (typeof error === 'object' && error !== null) {
         // Handle empty error objects
-        const errorObj = error as any
+        const errorObj = error as { message?: string; details?: string }
         if (errorObj.message) {
           errorMessage = errorObj.message
         } else if (errorObj.details) {

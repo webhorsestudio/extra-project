@@ -69,7 +69,7 @@ export default function UserList() {
       const text = await response.text()
       if (!text || text.trim() === '') { setUsers([]); return }
       let result
-      try { result = JSON.parse(text) } catch (_parseError) { setUsers([]); return }
+      try { result = JSON.parse(text) } catch { setUsers([]); return }
       if (!result || typeof result !== 'object') { setUsers([]); return }
       if (result.error) { setUsers([]); return }
       const transformedUsers: User[] = result.users?.map((user: unknown) => ({
@@ -81,9 +81,7 @@ export default function UserList() {
         updated_at: (user as { updated_at: string }).updated_at
       })) || []
       setUsers(transformedUsers)
-    } catch (_error) {
-      setUsers([])
-    } finally {
+    } catch { setUsers([]) } finally {
       setIsLoading(false)
     }
   }, [filters])

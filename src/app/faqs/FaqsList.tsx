@@ -61,7 +61,7 @@ export default function FaqsList({ initialFaqs, initialCategories }: FaqsListPro
         setLoading(false)
       })
     }
-  }, [selectedCategory])
+  }, [selectedCategory, initialFaqs])
 
   if (loading) {
     return (
@@ -99,7 +99,7 @@ export default function FaqsList({ initialFaqs, initialCategories }: FaqsListPro
       {faqs.length === 0 ? (
         <div className="text-center text-gray-500 py-12">No FAQs found for this category.</div>
       ) : (
-        faqs.map((faq, idx) => (
+        faqs.map((faq) => (
           <FaqItem key={faq.id} question={faq.question} answer={faq.answer} />
         ))
       )}

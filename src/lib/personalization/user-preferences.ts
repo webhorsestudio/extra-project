@@ -41,21 +41,20 @@ export class UserPreferenceService {
   private behaviors = new Map<string, UserBehavior>();
 
   /**
-   * Update user preferences based on interactions
+   * Update user preferences based on property interaction
    */
   updatePreferences(
     userId: string,
-    property: Property,
-    interactionType: 'view' | 'favorite' | 'search' | 'contact'
+    property: Property
   ): void {
     const currentPrefs = this.preferences.get(userId) || this.createDefaultPreferences(userId);
     const currentBehavior = this.behaviors.get(userId) || this.createDefaultBehavior(userId);
 
     // Update behavior tracking
-    this.updateBehavior(currentBehavior, property, interactionType);
+    this.updateBehavior(currentBehavior, property);
 
     // Update preferences based on interaction
-    this.updatePreferencesFromInteraction(currentPrefs, property, interactionType);
+    this.updatePreferencesFromInteraction(currentPrefs, property);
 
     // Save updated data
     this.preferences.set(userId, currentPrefs);
@@ -201,51 +200,23 @@ export class UserPreferenceService {
   /**
    * Update user behavior tracking
    */
-  private updateBehavior(behavior: UserBehavior, property: Property, interactionType: string): void {
+  private updateBehavior(behavior: UserBehavior, property: Property): void {
     behavior.lastActivity = new Date().toISOString();
 
-    switch (interactionType) {
-      case 'view':
-        if (!behavior.viewedProperties.includes(property.id)) {
-          behavior.viewedProperties.push(property.id);
-          // Keep only last 50 viewed properties
-          if (behavior.viewedProperties.length > 50) {
-            behavior.viewedProperties = behavior.viewedProperties.slice(-50);
-          }
-        }
-        break;
-
-      case 'favorite':
-        if (!behavior.favoritedProperties.includes(property.id)) {
-          behavior.favoritedProperties.push(property.id);
-          // Keep only last 20 favorited properties
-          if (behavior.favoritedProperties.length > 20) {
-            behavior.favoritedProperties = behavior.favoritedProperties.slice(-20);
-          }
-        }
-        break;
-
-      case 'search':
-        // Add location to searched locations
-        if (!behavior.searchedLocations.includes(property.location)) {
-          behavior.searchedLocations.push(property.location);
-          if (behavior.searchedLocations.length > 20) {
-            behavior.searchedLocations = behavior.searchedLocations.slice(-20);
-          }
-        }
-
-        // Add property type to searched types
-        if (!behavior.searchedTypes.includes(property.property_type)) {
-          behavior.searchedTypes.push(property.property_type);
-        }
-        break;
+    // Add property to viewed properties if not already present
+    if (!behavior.viewedProperties.includes(property.id)) {
+      behavior.viewedProperties.push(property.id);
+      // Keep only last 50 viewed properties
+      if (behavior.viewedProperties.length > 50) {
+        behavior.viewedProperties = behavior.viewedProperties.slice(-50);
+      }
     }
   }
 
   /**
    * Update preferences based on interaction
    */
-  private updatePreferencesFromInteraction(prefs: UserPreference, property: Property, interactionType: string): void {
+  private updatePreferencesFromInteraction(prefs: UserPreference, property: Property): void {
     prefs.lastUpdated = new Date().toISOString();
 
     // Add property type if not already present

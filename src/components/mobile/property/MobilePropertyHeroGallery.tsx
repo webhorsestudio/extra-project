@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
+import Image from 'next/image'
 import { Property } from '@/types/property';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { X, ChevronLeft, ChevronRight, Send, Heart, Copy, MessageCircle, ArrowLeft, Share2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { X, ChevronLeft, ChevronRight, Copy, MessageCircle, ArrowLeft, Share2 } from 'lucide-react';
 import FavoriteButton from '@/components/ui/FavoriteButton';
 import { shareProperty, shareToWhatsApp, copyToClipboard, generatePropertyShareData } from '@/lib/utils/share';
 
@@ -25,15 +23,14 @@ function MobileGalleryModal({ images, open, initialIndex, onClose, property }: {
   const [current, setCurrent] = useState(initialIndex);
   React.useEffect(() => { setCurrent(initialIndex); }, [initialIndex, open]);
   const total = images.length;
-  const { toast } = useToast();
 
   const handleCopy = async () => {
-    const shareData = generatePropertyShareData(property, window.location.origin + '/m/properties/' + property.id);
+    const shareData = generatePropertyShareData(property as unknown as Record<string, unknown>, window.location.origin + '/m/properties/' + property.id);
     await copyToClipboard(shareData.url, "Property link copied!");
   };
 
   const handleWhatsApp = () => {
-    const shareData = generatePropertyShareData(property, window.location.origin + '/m/properties/' + property.id);
+    const shareData = generatePropertyShareData(property as unknown as Record<string, unknown>, window.location.origin + '/m/properties/' + property.id);
     shareToWhatsApp(shareData);
   };
 
@@ -85,10 +82,12 @@ function MobileGalleryModal({ images, open, initialIndex, onClose, property }: {
         <div className="flex items-center justify-center w-full h-full min-h-[50vh]">
           <div className="bg-white rounded-xl p-2 shadow-xl max-w-[95vw] max-h-[70vh] flex items-center justify-center">
             {images[current] ? (
-              <img
+              <Image
                 src={images[current]}
                 alt={`Gallery ${current + 1}`}
                 className="object-contain max-h-[60vh] max-w-full rounded-lg"
+                fill
+                style={{ objectFit: 'contain' }}
                 draggable={false}
               />
             ) : (
@@ -144,7 +143,7 @@ export default function MobilePropertyHeroGallery({ property, onBack }: MobilePr
 
   // Share handler
   const handleShare = async () => {
-    const shareData = generatePropertyShareData(property);
+    const shareData = generatePropertyShareData(property as unknown as Record<string, unknown>);
     await shareProperty(shareData);
   };
 
@@ -153,7 +152,7 @@ export default function MobilePropertyHeroGallery({ property, onBack }: MobilePr
       {/* Main Image */}
       <div className="relative w-screen h-80 md:h-96 overflow-hidden" style={{ marginLeft: '50%', transform: 'translateX(-50%)' }}>
         {hasImages ? (
-          <img
+          <Image
             src={images[current]}
             alt={property.title}
             className="w-full h-full object-cover cursor-pointer"

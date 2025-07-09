@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 import { checkAdminAuth } from '@/lib/admin-data'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('Developer selection API: Starting request')
     
     // Check admin authentication
-    const { user, profile, error: authError } = await checkAdminAuth()
+    const { user, error: authError } = await checkAdminAuth()
     if (authError || !user) {
       console.log('Developer selection API: Unauthorized - no user')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log('Developer selection API: Starting POST request')
     
-    const { user, profile, error: authError } = await checkAdminAuth()
+    const { user, error: authError } = await checkAdminAuth()
     if (authError || !user) {
       console.log('Developer selection API: Unauthorized - no user')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     // Update the property with developer information using service role client
     const supabase = await createSupabaseAdminClient()
-    const updateData: any = {}
+    const updateData: Record<string, unknown> = {}
     
     if (developerId) {
       updateData.developer_id = developerId

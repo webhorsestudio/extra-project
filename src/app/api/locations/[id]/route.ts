@@ -3,11 +3,11 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createSupabaseAdminClient()
   try {
-    const { id } = params
+    const { id } = await params
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json(
@@ -55,7 +55,7 @@ export async function PATCH(
           { status: 400 }
         )
       }
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         name: name.trim(),
         description: description?.trim() || null,
         image_url: image_url || null,
@@ -78,7 +78,7 @@ export async function PATCH(
       }
       return NextResponse.json({ success: true, location: data })
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -88,11 +88,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createSupabaseAdminClient()
   try {
-    const { id } = params
+    const { id } = await params
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json(
@@ -109,7 +109,7 @@ export async function DELETE(
       return NextResponse.json({ error: deleteError.message }, { status: 500 })
     }
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

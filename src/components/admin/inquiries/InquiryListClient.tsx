@@ -15,27 +15,17 @@ import {
 } from '@/components/ui/select'
 import { 
   Search, 
-  Filter, 
+  Filter,
   Mail, 
   Calendar,
-  User,
   Phone,
   Building,
   MessageSquare,
-  Eye,
-  Clock
+  Eye
 } from 'lucide-react'
 import { InquiryStatusBadge } from './InquiryStatusBadge'
 import { InquiryDetail } from './InquiryDetail'
 import { Inquiry } from '@/lib/admin-data'
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table'
 
 export function InquiryListClient() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([])

@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import SearchBar from "./search/SearchBar";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserMenuButton from '@/components/web/ui/UserMenuButton'
@@ -12,6 +11,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { ConfigurationData } from '@/lib/configuration-data-client'
 import { BudgetData } from '@/lib/budget-data'
 import { Location } from '@/hooks/useLocations'
+import type { Session } from '@supabase/supabase-js'
 
 // Proper TypeScript interfaces
 interface User {
@@ -152,7 +152,7 @@ export default function Navbar({
   }, []);
 
   // Improved auth state change handler
-  const handleAuthChange = useCallback(async (event: string, session: any) => {
+  const handleAuthChange = useCallback(async (event: string, session: Session | null) => {
     console.log('Auth state changed:', event, session?.user?.email);
     
     try {

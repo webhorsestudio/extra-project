@@ -69,7 +69,7 @@ export default function MobileFaqsClient({ initialFaqs, initialCategories }: Mob
         setLoading(false)
       })
     }
-  }, [selectedCategory])
+  }, [selectedCategory, initialFaqs])
 
   return (
     <HydrationSuppressor>
@@ -81,7 +81,7 @@ export default function MobileFaqsClient({ initialFaqs, initialCategories }: Mob
               <ArrowLeft className="w-5 h-5 mr-2" />
               <span className="text-sm font-medium">Back</span>
             </a>
-            <h1 className="text-lg font-semibold text-gray-900">FAQ's</h1>
+            <h1 className="text-lg font-semibold text-gray-900">FAQ&apos;s</h1>
             <div className="w-16"></div>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function MobileFaqsClient({ initialFaqs, initialCategories }: Mob
                   </CardContent>
                 </Card>
               ) : (
-                faqs.map((faq, idx) => (
+                faqs.map((faq) => (
                   <MobileFaqItem key={faq.id} question={faq.question} answer={faq.answer} />
                 ))
               )}
@@ -163,7 +163,7 @@ export default function MobileFaqsClient({ initialFaqs, initialCategories }: Mob
             <CardContent className="p-6 text-center">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Still have questions?</h3>
               <p className="text-gray-600 mb-4 text-sm">
-                Can't find what you're looking for? Contact our support team for assistance.
+                Can&apos;t find what you&apos;re looking for? Contact our support team for assistance.
               </p>
               <Button 
                 asChild

@@ -12,15 +12,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/components/ui/use-toast'
 import { Phone, Mail, MapPin, Globe } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Settings } from '@/lib/settings'
 
 type Props = {
-  settings: {
-    contact_email?: string
-    contact_phone?: string
-    contact_address?: string
-    contact_website?: string
-    [key: string]: string | undefined // Allow additional string properties
-  }
+  settings: Settings
 }
 
 type ContactFormData = {

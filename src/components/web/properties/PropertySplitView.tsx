@@ -7,19 +7,31 @@ import type { Property } from '@/types/property';
 
 const PropertyMap = dynamic(() => import('@/components/web/PropertyMap'), { ssr: false });
 
+// Type that works with both Property interfaces
+type MapProperty = {
+  id: string;
+  title: string;
+  latitude?: number;
+  longitude?: number;
+  location_data?: { name?: string };
+  [key: string]: unknown;
+};
+
 interface PropertySplitViewProps {
-  properties: any[];
+  properties: Property[];
 }
 
 const PropertySplitView: React.FC<PropertySplitViewProps> = ({ properties }) => {
   const safeProperties = Array.isArray(properties) ? properties : [];
-  // Use the first property with valid lat/lng as the map center, or fallback to Mumbai
-  const defaultPosition: [number, number] = [19.0760, 72.8777];
-  const firstWithCoords = safeProperties.find((p) => p.latitude && p.longitude);
-  const mapPosition: [number, number] = firstWithCoords
-    ? [firstWithCoords.latitude, firstWithCoords.longitude]
-    : defaultPosition;
-  const mapPopup = firstWithCoords?.title || 'Property Location';
+
+  // Transform Property[] to MapProperty[]
+  const mapProperties: MapProperty[] = safeProperties.map((property) => ({
+    id: String(property.id || ''),
+    title: String(property.title || ''),
+    latitude: typeof property.latitude === 'number' ? property.latitude : undefined,
+    longitude: typeof property.longitude === 'number' ? property.longitude : undefined,
+    location_data: property.location_data && property.location_data !== null ? property.location_data as { name?: string } : undefined
+  }));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -30,7 +42,7 @@ const PropertySplitView: React.FC<PropertySplitViewProps> = ({ properties }) => 
           {safeProperties.map(property => (
             <PropertyCardV2 
               key={property.id} 
-              property={property as Property}
+              property={property}
               initialIsFavorited={false}
             />
           ))}
@@ -39,7 +51,7 @@ const PropertySplitView: React.FC<PropertySplitViewProps> = ({ properties }) => 
       
       {/* Sticky, Tall Map */}
       <div className="h-[600px] sticky top-12 flex items-center justify-center">
-        <PropertyMap properties={safeProperties} />
+        <PropertyMap properties={mapProperties} />
       </div>
     </div>
   );

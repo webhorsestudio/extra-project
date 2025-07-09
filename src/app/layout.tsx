@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import DeviceDetectionLoader from "@/components/DeviceDetectionLoader";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script src="/suppress-extension-errors.js" />
+        <Script src="/suppress-extension-errors.js" strategy="afterInteractive" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

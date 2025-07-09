@@ -42,11 +42,6 @@ export default function UserMenuButton({ user, onSignIn, isLoading = false }: Us
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
-  const handleLogout = () => {
-    // This is handled in UserMenuDropdown component
-    setOpen(false)
-  }
-
   // Show loading skeleton while checking authentication
   if (isLoading) {
     return <Skeleton className="h-10 w-24 rounded-full" />

@@ -3,7 +3,15 @@
 import { Facebook, Twitter, Linkedin, Share2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-export default function BlogShare({ blog }: { blog: any }) {
+interface Blog {
+  id: string;
+  title: string;
+  excerpt: string;
+  featured_image: string | null;
+  created_at?: string;
+}
+
+export default function BlogShare({ blog }: { blog: Blog }) {
   const [url, setUrl] = useState('')
   const [copied, setCopied] = useState(false)
 

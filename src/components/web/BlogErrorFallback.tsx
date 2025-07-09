@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { AlertTriangle, RefreshCw, BookOpen } from 'lucide-react'
+import { RefreshCw, BookOpen } from 'lucide-react'
 
 interface BlogErrorFallbackProps {
   error: Error
@@ -21,7 +21,7 @@ export default function BlogErrorFallback({ error, resetError }: BlogErrorFallba
         </CardHeader>
         <CardContent className="text-center space-y-4">
           <p className="text-sm text-gray-600">
-            We couldn't load the latest blog posts at the moment.
+            We couldn&apos;t load the latest blog posts at the moment.
           </p>
           <div className="flex gap-2 justify-center">
             <Button onClick={resetError} variant="outline" size="sm">

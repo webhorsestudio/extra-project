@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createSupabaseServerClient()
     // Only fetch notifications that are not expired
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
     // Get creator info
     const creatorIds = notifications?.map(n => n.created_by).filter(Boolean) || []
-    let creators: any[] = []
+    let creators: Array<{ id: string; full_name: string }> = []
     if (creatorIds.length > 0) {
       const { data: profiles } = await supabase
         .from('profiles')
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       }
     }) || []
     return NextResponse.json({ notifications: transformedNotifications })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 } 

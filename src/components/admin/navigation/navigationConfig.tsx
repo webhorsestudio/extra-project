@@ -1,29 +1,4 @@
-import { 
-  Home, 
-  Building2, 
-  Users, 
-  MessageSquare, 
-  Settings, 
-  FileText, 
-  BookOpen, 
-  Tag, 
-  Globe, 
-  Palette, 
-  Paintbrush, 
-  Phone, 
-  Search, 
-  Key, 
-  Plus, 
-  MapPin, 
-  Dumbbell,
-  Bell,
-  HelpCircle,
-  Layout,
-  FileCheck,
-  Building,
-  Calendar,
-  HomeIcon
-} from 'lucide-react'
+
 
 export interface NavigationItem {
   name: string

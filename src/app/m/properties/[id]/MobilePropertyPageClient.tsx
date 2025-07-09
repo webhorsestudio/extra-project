@@ -24,16 +24,10 @@ export default function MobilePropertyPageClient({
   similarProperties 
 }: MobilePropertyPageClientProps) {
   const router = useRouter();
-  const [isFavorited, setIsFavorited] = useState(false);
   const [enquiryModalOpen, setEnquiryModalOpen] = useState<'contact' | 'tour' | null>(null);
 
   const handleBack = () => {
     router.push('/m/properties');
-  };
-
-  const handleFavoriteToggle = () => {
-    setIsFavorited(!isFavorited);
-    // Here you would typically make an API call to save the favorite status
   };
 
   return (

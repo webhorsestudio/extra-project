@@ -8,7 +8,7 @@ interface ShareData {
 }
 
 export const shareProperty = async (data: ShareData) => {
-  const { title, text, url, propertyId } = data;
+  const { title, text, url } = data;
 
   try {
     // Try native Web Share API first
@@ -90,16 +90,15 @@ export const copyToClipboard = async (text: string, successMessage = "Copied to 
   }
 };
 
-export const generatePropertyShareData = (property: any, baseUrl?: string): ShareData => {
+export const generatePropertyShareData = (property: Record<string, unknown>, baseUrl?: string): ShareData => {
   const url = baseUrl || (typeof window !== 'undefined' ? window.location.href : '');
-  const config = property.property_configurations?.[0];
+  const config = (property.property_configurations as Record<string, unknown>[] | undefined)?.[0];
   const beds = config?.bedrooms || config?.bhk || '';
-  const price = config?.price ? `₹${config.price.toLocaleString()}` : '';
-  
+  const price = config?.price ? `₹${(config.price as number).toLocaleString()}` : '';
   return {
-    title: property.title || 'Property',
-    text: `Check out this amazing property${beds ? ` (${beds} BHK)` : ''}${price ? ` for ${price}` : ''} in ${property.property_locations?.name || property.location || 'Mumbai'}.`,
+    title: property.title as string || 'Property',
+    text: `Check out this amazing property${beds ? ` (${beds} BHK)` : ''}${price ? ` for ${price}` : ''} in ${((property.property_locations as { name?: string } | undefined)?.name || property.location || 'Mumbai')}.`,
     url,
-    propertyId: property.id
+    propertyId: property.id as string
   };
 }; 

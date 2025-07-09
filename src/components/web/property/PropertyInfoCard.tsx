@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { Heart, Send, MapPin, BedDouble, Ruler, Calendar, Copy, MessageCircle } from 'lucide-react';
+import { Send, MapPin, BedDouble, Ruler, Calendar, Copy, MessageCircle } from 'lucide-react';
 import { Property } from '@/types/property';
 import FavoriteButton from '@/components/ui/FavoriteButton';
 import { useToast } from '@/components/ui/use-toast';

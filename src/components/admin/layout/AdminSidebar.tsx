@@ -2,6 +2,7 @@
 
 import AdminLogo from '@/components/admin/AdminLogo'
 import { AdminNavigation } from '../navigation/AdminNavigation'
+import type { NavigationItem } from '../navigation/navigationConfig'
 
 interface LogoData {
   logoUrl: string | null
@@ -13,7 +14,7 @@ interface AdminSidebarProps {
   onToggleExpanded: (itemName: string) => void
   logoData?: LogoData
   logoLoading?: boolean
-  navigationItems: any[]
+  navigationItems: NavigationItem[]
   version?: string
 }
 

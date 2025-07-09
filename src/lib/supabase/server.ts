@@ -14,7 +14,7 @@ export const createSupabaseServerClient = async () => {
         get(name: string) {
           return cookieStore.get(name)?.value
         },
-        set(name: string, value: string, options: any) {
+        set(name: string, value: string, options: Record<string, unknown>) {
           try {
             cookieStore.set({ name, value, ...options })
           } catch (error) {
@@ -23,7 +23,7 @@ export const createSupabaseServerClient = async () => {
             throw new Error(`Failed to set authentication cookie: ${error instanceof Error ? error.message : 'Unknown error'}`)
           }
         },
-        remove(name: string, options: any) {
+        remove(name: string, options: Record<string, unknown>) {
           try {
             cookieStore.set({ name, value: '', ...options })
           } catch (error) {

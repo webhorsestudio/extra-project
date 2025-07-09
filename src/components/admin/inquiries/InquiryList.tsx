@@ -16,49 +16,26 @@ import {
 } from '@/components/ui/select'
 import { 
   Search, 
-  Filter, 
   Mail, 
   Calendar,
-  User,
   Phone,
   Building,
   MessageSquare,
-  Eye,
-  Clock
+  Eye
 } from 'lucide-react'
 import { InquiryStatusBadge } from './InquiryStatusBadge'
 import { InquiryDetail } from './InquiryDetail'
-
-interface Inquiry {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  message: string
-  inquiry_type: 'property' | 'contact' | 'other'
-  property_id?: string
-  status: 'unread' | 'read' | 'resolved'
-  created_at: string
-  updated_at: string
-  property?: {
-    id: string
-    title: string
-  }
-}
+import type { InquiryWithProperty } from '@/types/inquiry'
 
 export default function InquiryList() {
-  const [inquiries, setInquiries] = useState<Inquiry[]>([])
+  const [inquiries, setInquiries] = useState<InquiryWithProperty[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [typeFilter, setTypeFilter] = useState<string>('all')
-  const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null)
+  const [selectedInquiry, setSelectedInquiry] = useState<InquiryWithProperty | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
   const { toast } = useToast()
-
-  useEffect(() => {
-    fetchInquiries()
-  }, [])
 
   const fetchInquiries = async () => {
     try {
@@ -114,15 +91,13 @@ export default function InquiryList() {
       console.log('Table exists, count:', countData?.length || 0)
       
       // Now fetch the actual data
-      let query = supabase
+      const { data, error } = await supabase
         .from('inquiries')
         .select(`
           *,
           property:properties(id, title)
         `)
         .order('created_at', { ascending: false })
-
-      const { data, error } = await query
 
       if (error) {
         console.error('Supabase error:', error)
@@ -162,6 +137,10 @@ export default function InquiryList() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchInquiries()
+  }, [fetchInquiries])
 
   const handleStatusUpdate = async (inquiryId: string, newStatus: string) => {
     try {
@@ -217,7 +196,7 @@ export default function InquiryList() {
     }
   }
 
-  const openInquiryDetail = (inquiry: Inquiry) => {
+  const openInquiryDetail = (inquiry: InquiryWithProperty) => {
     setSelectedInquiry(inquiry)
     setDetailOpen(true)
   }
@@ -429,8 +408,8 @@ export default function InquiryList() {
 
       <InquiryDetail
         inquiry={selectedInquiry}
-        isOpen={detailOpen}
-        onClose={() => setDetailOpen(false)}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
         onStatusUpdate={handleStatusUpdate}
       />
     </div>

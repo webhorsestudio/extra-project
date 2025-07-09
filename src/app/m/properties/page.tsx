@@ -4,11 +4,11 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/mobile/PropertyCard';
 import PropertyCardSkeleton from '@/components/mobile/PropertyCardSkeleton';
-import { MapPin, LayoutGrid } from 'lucide-react';
 import FloatingViewModeButtons from '@/components/mobile/FloatingViewModeButtons';
 import { useFooterVisible } from '@/components/mobile/FooterVisibleContext';
 // import MapViewDrawer from '@/components/mobile/MapViewDrawer';
 import MobileHeader from '@/components/mobile/Header';
+import type { Property } from '@/types/property';
 
 const PAGE_SIZE = 10;
 const VIEW_MODES = {
@@ -18,19 +18,9 @@ const VIEW_MODES = {
 
 type ViewMode = typeof VIEW_MODES[keyof typeof VIEW_MODES];
 
-function FloatingButton({ icon: Icon, active, onClick, label }: { icon: any; active: boolean; onClick: () => void; label: string }) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      className={`mb-3 w-14 h-14 flex items-center justify-center rounded-full shadow-lg transition-all border-2
-        ${active ? 'bg-[#11182B] border-blue-500' : 'bg-[#11182B] border-transparent'}
-        hover:scale-105 active:scale-95 focus:outline-none`}
-      style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.18)' }}
-    >
-      <Icon className="w-7 h-7 text-white" />
-    </button>
-  );
+interface ApiResponse {
+  properties: Property[];
+  count: number;
 }
 
 function MapViewPlaceholder() {
@@ -44,7 +34,7 @@ function MapViewPlaceholder() {
 export default function MobilePropertiesPage() {
   const footerVisible = useFooterVisible();
   const searchParams = useSearchParams();
-  const [properties, setProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -54,7 +44,7 @@ export default function MobilePropertiesPage() {
 
   // Fetch properties
   const fetchProperties = useCallback(
-    async (pageNum: number) => {
+    async (pageNum: number): Promise<ApiResponse> => {
       const params = new URLSearchParams({
         limit: PAGE_SIZE.toString(),
         offset: ((pageNum - 1) * PAGE_SIZE).toString(),
@@ -108,11 +98,6 @@ export default function MobilePropertiesPage() {
     return () => observer.disconnect();
   }, [hasMore, loadingMore, page, fetchProperties]);
 
-  // Only properties with valid coordinates for map view
-  const mapProperties = properties.filter(
-    (p) => typeof p.latitude === 'number' && typeof p.longitude === 'number' && !isNaN(p.latitude) && !isNaN(p.longitude)
-  );
-
   // Render view based on viewMode
   let content;
   if (viewMode === VIEW_MODES.GRID) {
@@ -129,7 +114,7 @@ export default function MobilePropertiesPage() {
       </div>
     ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {properties.map((property: any) => (
+        {properties.map((property: Property) => (
           <PropertyCard 
             key={property.id} 
             property={property}

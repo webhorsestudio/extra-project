@@ -1,6 +1,6 @@
 import { navigationItems } from './navigationConfig'
 
-export function getAdminNavigationItems(profile: any) {
+export function getAdminNavigationItems(profile: { role?: string } | null) {
   // Example: Only show all items for admin, restrict for other roles in the future
   if (profile?.role === 'admin') {
     return navigationItems

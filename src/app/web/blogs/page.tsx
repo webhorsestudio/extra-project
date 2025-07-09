@@ -1,7 +1,6 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import ServerLayout from '@/components/web/ServerLayout'
 import BlogCarousel from '@/components/web/BlogCarousel'
-import { AlertCircle } from 'lucide-react'
 
 async function getBlogs() {
   const supabase = await createSupabaseServerClient()

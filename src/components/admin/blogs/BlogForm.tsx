@@ -32,7 +32,7 @@ interface Blog {
   id?: string
   title: string
   slug: string
-  content: Record<string, unknown>
+  content: string
   excerpt: string
   category_id: string
   status: 'draft' | 'published'
@@ -59,7 +59,7 @@ export function BlogForm({ blog, categories }: BlogFormProps) {
   const [formData, setFormData] = useState<Blog>({
     title: blog?.title || '',
     slug: blog?.slug || '',
-    content: blog?.content || {},
+    content: typeof blog?.content === 'string' ? blog.content : '',
     excerpt: blog?.excerpt || '',
     category_id: blog?.category_id || '',
     status: blog?.status || 'draft',
@@ -357,7 +357,7 @@ export function BlogForm({ blog, categories }: BlogFormProps) {
               <Label>Content</Label>
               <RichEditor
                 content={formData.content}
-                onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                onChange={(content) => setFormData(prev => ({ ...prev, content: typeof content === 'string' ? content : '' }))}
               />
             </div>
           </CardContent>

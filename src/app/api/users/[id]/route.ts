@@ -128,7 +128,7 @@ export async function PUT(
     }
 
     const adminSupabase = await createSupabaseAdminClient()
-    const { full_name, role, phone } = await request.json()
+    const { full_name, role } = await request.json()
 
     // Validate required fields
     if (!full_name || !role) {

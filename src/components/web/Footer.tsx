@@ -5,8 +5,84 @@ import FooterPolicyLinks from './footer/FooterPolicyLinks'
 import FooterSocialIcons from './footer/FooterSocialIcons'
 import FooterCTA from './footer/FooterCTA'
 
+// Import the NavigationColumn type from FooterNavColumns
+interface NavigationLink {
+  label: string
+  href: string
+  isActive: boolean
+}
+
+interface NavigationColumn {
+  title: string
+  links: NavigationLink[]
+}
+
+interface FooterData {
+  settings: {
+    footer_enabled: boolean
+    footer_position?: string
+    footer_behavior?: string
+    max_width?: string
+    custom_css?: string | null
+    custom_js?: string | null
+  }
+  styling: {
+    padding_top: string
+    padding_bottom: string
+    padding_x: string
+    text_color: string
+    enable_animations: boolean
+    transition_duration?: string
+    background_color: string
+    background_gradient?: boolean
+    gradient_from?: string
+    gradient_to?: string
+    column_gap?: string
+    show_borders?: boolean
+    border_width?: string
+    border_color?: string
+    link_color?: string
+    link_hover_color?: string
+  }
+  layout: {
+    show_cta?: boolean
+    show_logo?: boolean
+    show_navigation?: boolean
+    show_contact?: boolean
+    show_policy_links?: boolean
+    show_social?: boolean
+    show_copyright?: boolean
+    column_layout?: string
+    alignment?: string
+  }
+  content: {
+    cta_title?: string
+    cta_subtitle?: string
+    cta_button_text?: string
+    cta_button_url?: string
+    company_name?: string
+    navigation_columns?: Record<string, unknown>[]
+    facebook_url?: string
+    twitter_url?: string
+    linkedin_url?: string
+    instagram_url?: string
+    youtube_url?: string
+    whatsapp_url?: string
+    copyright_text?: string
+    designed_by_text?: string
+    policy_links?: Record<string, unknown>[]
+  }
+  logo: {
+    logo_url?: string | null
+    logo_alt_text?: string
+    logo_width?: number
+    logo_height?: number
+    link_to_home?: boolean
+  }
+}
+
 interface FooterProps {
-  footerData: any // Make it required and remove async type
+  footerData: FooterData
 }
 
 export default function Footer({ footerData }: FooterProps) {
@@ -84,7 +160,7 @@ export default function Footer({ footerData }: FooterProps) {
             )}
             {data.layout.show_navigation && (
               <FooterNavColumns 
-                columns={data.content.navigation_columns}
+                columns={data.content.navigation_columns as unknown as NavigationColumn[]}
                 columnLayout={data.layout.column_layout}
                 alignment={data.layout.alignment}
               />
@@ -115,7 +191,6 @@ export default function Footer({ footerData }: FooterProps) {
       <div className={`${containerClasses} pb-8 flex flex-col md:flex-row items-center justify-between gap-6`}>
         {data.layout.show_policy_links && (
           <FooterPolicyLinks 
-            links={data.content.policy_links}
             linkColor={data.styling.link_color}
             linkHoverColor={data.styling.link_hover_color}
           />

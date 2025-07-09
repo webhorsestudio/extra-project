@@ -1,7 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
-import { Bell, Inbox, Clock, CheckCircle, AlertCircle, Info, Trash2, Check, Eye, X } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -12,6 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { useToast } from '@/components/ui/use-toast'
+import { CheckCircle, AlertCircle, Info, Check, Inbox, Clock, Trash2, Eye } from 'lucide-react'
 
 interface NotificationsContentProps {
   initialNotifications: NotificationData[]
@@ -24,6 +25,7 @@ export default function NotificationsContent({ initialNotifications }: Notificat
   const [loading, setLoading] = useState(!initialNotifications?.length)
   const [selectedNotification, setSelectedNotification] = useState<NotificationData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { toast } = useToast()
 
   // Fallback to client fetch if SSR data is empty
   useEffect(() => {
@@ -95,8 +97,12 @@ export default function NotificationsContent({ initialNotifications }: Notificat
         body: JSON.stringify({ status: 'read' })
       })
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' } : n))
-    } catch (e) {
-      // Optionally show error toast
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to mark notification as read',
+        variant: 'destructive',
+      })
     }
   }
 
@@ -113,7 +119,13 @@ export default function NotificationsContent({ initialNotifications }: Notificat
         )
       )
       setNotifications(prev => prev.map(n => ({ ...n, status: 'read' })))
-    } catch (e) {}
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to mark all notifications as read',
+        variant: 'destructive',
+      })
+    }
   }
 
   // Delete selected (API call)
@@ -126,7 +138,13 @@ export default function NotificationsContent({ initialNotifications }: Notificat
       )
       setNotifications(prev => prev.filter(n => !selectedNotifications.includes(n.id)))
       setSelectedNotifications([])
-    } catch (e) {}
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete notification',
+        variant: 'destructive',
+      })
+    }
   }
 
   const handleSelectAll = () => {
@@ -238,12 +256,12 @@ export default function NotificationsContent({ initialNotifications }: Notificat
                 No notifications yet
               </h2>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                We'll notify you when something important happens, like new property matches, 
+                We&apos;ll notify you when something important happens, like new property matches, 
                 inquiry updates, or account activities.
               </p>
               <div className="flex items-center justify-center text-sm text-gray-500">
                 <Clock className="w-4 h-4 mr-2" />
-                <span>You're all caught up!</span>
+                <span>You&apos;re all caught up!</span>
               </div>
             </div>
           ) : filteredNotifications.length === 0 ? (
@@ -256,7 +274,7 @@ export default function NotificationsContent({ initialNotifications }: Notificat
                 All caught up!
               </h2>
               <p className="text-gray-600 mb-6">
-                You've read all your notifications. Check back later for new updates.
+                You&apos;ve read all your notifications. Check back later for new updates.
               </p>
               <Button
                 variant="outline"

@@ -29,10 +29,7 @@ export async function getFAQsData(category?: string): Promise<FAQData[]> {
   try {
     const supabase = await createSupabaseServerClient()
     
-    // Add caching for better performance
-    const cacheOptions = {
-      next: { revalidate: 300 } // Cache for 5 minutes
-    }
+
     
     // Build the query - only published FAQs
     let query = supabase

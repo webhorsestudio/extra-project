@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import {
   Select,
   SelectContent,
@@ -16,19 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { 
-  AlertCircle, 
-  Save, 
-  X, 
   FileText,
   Hash,
   Calendar,
-  Eye,
-  Edit3,
   Sparkles,
-  ArrowLeft,
-  Plus
+  Edit3,
+  Eye,
+  X,
+  Save
 } from 'lucide-react'
 import { TiptapEditor } from './TiptapEditor'
 
@@ -36,7 +31,7 @@ interface Page {
   id?: string
   title: string
   slug: string
-  content: any
+  content: Record<string, unknown>
   status: 'draft' | 'published'
   created_at?: string
   updated_at?: string
@@ -53,7 +48,9 @@ export default function PageForm({ page }: PageFormProps) {
   const [formData, setFormData] = useState<Page>({
     title: page?.title || '',
     slug: page?.slug || '',
-    content: page?.content || {},
+    content: (page?.content && typeof page.content === 'object' && !Array.isArray(page.content)) 
+      ? page.content as Record<string, unknown> 
+      : {},
     status: page?.status || 'draft',
   })
 

@@ -7,10 +7,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ArrowLeft, Upload, Send, AlertCircle, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Upload, Send, CheckCircle } from 'lucide-react'
 import { HydrationSuppressor } from '@/components/HydrationSuppressor'
-
-interface MobileSupportClientProps {}
 
 function MobileSupportTabs({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) {
   return (
@@ -183,10 +181,10 @@ function MobileSupportForm() {
       // Reset success state after 3 seconds
       setTimeout(() => setIsSuccess(false), 3000)
       
-    } catch (error) {
+    } catch {
       toast({
-        title: 'Submission failed',
-        description: 'Please try again later',
+        title: 'Error',
+        description: 'Failed to submit support request',
         variant: 'destructive',
       })
     } finally {
@@ -386,7 +384,7 @@ function MobileSupportForm() {
   )
 }
 
-export default function MobileSupportClient({}: MobileSupportClientProps) {
+export default function MobileSupportClient() {
   const [activeTab, setActiveTab] = useState('technical')
   
   return (

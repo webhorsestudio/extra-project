@@ -3,7 +3,6 @@ import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
 import Link from 'next/link'
 import { MapPin, Bed, Bath, Square } from 'lucide-react'
-import type { Property } from '@/types/property'
 
 interface PropertyCardProps {
   property: {

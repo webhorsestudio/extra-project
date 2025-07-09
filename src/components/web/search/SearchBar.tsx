@@ -239,7 +239,6 @@ export default function SearchBar({
     console.log('SearchBar: budgetData =', budgetData)
   }, [budgetData])
 
-  const isModalOpen = searchState.activeModal !== 'none'
   const hasFilters = Object.keys(searchState.filters).length > 0
 
   return (

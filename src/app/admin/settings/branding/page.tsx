@@ -7,7 +7,7 @@ import { BrandingSettingsForm } from '@/components/admin/settings/BrandingSettin
 
 export const metadata: Metadata = {
   title: 'Branding Settings - Admin',
-  description: 'Configure your website\'s branding, including logos, favicons, and visual identity',
+  description: 'Configure your website&apos;s branding, including logos, favicons, and visual identity',
 }
 
 export default async function BrandingSettingsPage() {
@@ -65,7 +65,7 @@ export default async function BrandingSettingsPage() {
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Branding Settings</h1>
             <p className="text-muted-foreground">
-              Configure your website's branding, including logos, favicons, and visual identity.
+              Configure your website&apos;s branding, including logos, favicons, and visual identity.
             </p>
           </div>
           <BrandingSettingsForm settings={settings} />

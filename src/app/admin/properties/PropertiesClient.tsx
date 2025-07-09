@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -99,22 +99,7 @@ export default function PropertiesClient({ properties: initialProperties }: Prop
 
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(properties)
 
-  useEffect(() => {
-    checkAuth()
-  }, [])
-
-  useEffect(() => {
-    filterAndSortProperties()
-  }, [properties, searchTerm, filterType, filterStatus, filterCollection, filterVerified, minPrice, maxPrice, sortBy, sortOrder])
-
-  const checkAuth = async () => {
-    const { data: { user }, error } = await supabase.auth.getUser()
-    if (error || !user) {
-      router.push('/users/login')
-    }
-  }
-
-  const filterAndSortProperties = () => {
+  const filterAndSortProperties = useCallback(() => {
     let filtered = [...properties]
 
     // Search filter
@@ -168,23 +153,37 @@ export default function PropertiesClient({ properties: initialProperties }: Prop
 
     // Sort
     filtered.sort((a, b) => {
-      let aValue: any = a[sortBy as keyof Property]
-      let bValue: any = b[sortBy as keyof Property]
+      let aValue: unknown = a[sortBy as keyof Property]
+      let bValue: unknown = b[sortBy as keyof Property]
 
       if (sortBy === 'created_at') {
-        aValue = new Date(aValue || '').getTime()
-        bValue = new Date(bValue || '').getTime()
+        aValue = new Date(String(aValue) || '').getTime()
+        bValue = new Date(String(bValue) || '').getTime()
       }
 
       if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1
+        return (aValue as number) > (bValue as number) ? 1 : -1
       } else {
-        return aValue < bValue ? 1 : -1
+        return (aValue as number) < (bValue as number) ? 1 : -1
       }
     })
 
     setFilteredProperties(filtered)
-  }
+  }, [properties, searchTerm, filterType, filterStatus, filterCollection, filterVerified, minPrice, maxPrice, sortBy, sortOrder])
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser()
+      if (error || !user) {
+        router.push('/users/login')
+      }
+    }
+    checkAuth()
+  }, [router])
+
+  useEffect(() => {
+    filterAndSortProperties()
+  }, [properties, searchTerm, filterType, filterStatus, filterCollection, filterVerified, minPrice, maxPrice, sortBy, sortOrder, filterAndSortProperties])
 
   const handleDelete = async (propertyId: string) => {
     try {

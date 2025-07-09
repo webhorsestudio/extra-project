@@ -24,7 +24,5 @@ export async function GET(
       return NextResponse.json({ error: 'No configurations found' }, { status: 404 });
     }
     return NextResponse.json({ configurations });
-  } catch (err) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
+  } catch {}
 } 

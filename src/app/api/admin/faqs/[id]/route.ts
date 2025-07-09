@@ -102,7 +102,7 @@ export async function PUT(
     }
 
     // Build update object
-    const updateData: any = {}
+    const updateData: Record<string, unknown> = {}
     if (question !== undefined) updateData.question = question.trim()
     if (answer !== undefined) updateData.answer = answer.trim()
     if (order !== undefined) updateData.order_index = order

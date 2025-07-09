@@ -13,7 +13,7 @@ export function usePropertyImages(propertyId: string) {
   const [images, setImages] = useState<PropertyImage[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
-  const { toast } = useToast()
+  useToast();
 
   const fetchImages = useCallback(async () => {
     if (!propertyId) return

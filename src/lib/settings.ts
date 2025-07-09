@@ -13,6 +13,7 @@ export interface Settings {
   default_og_image_storage_path?: string
   
   // SEO fields
+  google_analytics_id?: string
   google_tag_manager_id?: string
   robots_txt?: string
   sitemap_schedule?: string

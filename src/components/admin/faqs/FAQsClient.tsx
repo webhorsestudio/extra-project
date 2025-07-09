@@ -74,13 +74,6 @@ export default function FAQsClient({ initialFaqs }: FAQsClientProps) {
   const [statusFilter, setStatusFilter] = useState('all')
   const { toast } = useToast()
 
-  // Only refetch if initial data is empty (fallback)
-  useEffect(() => {
-    if (!initialFaqs || initialFaqs.length === 0) {
-      fetchFAQs()
-    }
-  }, [initialFaqs])
-
   const fetchFAQs = useCallback(async () => {
     try {
       setIsLoading(true)
@@ -109,6 +102,13 @@ export default function FAQsClient({ initialFaqs }: FAQsClientProps) {
       setIsLoading(false)
     }
   }, [categoryFilter, statusFilter, toast])
+
+  // Only refetch if initial data is empty (fallback)
+  useEffect(() => {
+    if (!initialFaqs || initialFaqs.length === 0) {
+      fetchFAQs()
+    }
+  }, [initialFaqs, fetchFAQs])
 
   // Refetch when filters change
   useEffect(() => {

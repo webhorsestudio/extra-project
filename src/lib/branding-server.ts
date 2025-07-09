@@ -89,11 +89,6 @@ export async function getBrandingData(): Promise<BrandingData> {
   try {
     const supabase = await createSupabaseServerClientSafe()
     
-    // Add caching for better performance
-    const cacheOptions = {
-      next: { revalidate: 3600 } // Cache for 1 hour
-    }
-    
     // First, try to fetch logo data from settings table
     const { data: settings, error: settingsError } = await supabase
       .from('settings')

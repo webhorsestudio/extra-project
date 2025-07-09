@@ -192,10 +192,9 @@ interface CategoryBarProps {
   categories: Category[];
   activeCategoryId?: string;
   onCategorySelect?: (id: string) => void;
-  barHeightClass?: string;
 }
 
-const CategoryBar: React.FC<CategoryBarProps> = ({ categories, activeCategoryId, onCategorySelect, barHeightClass }) => {
+const CategoryBar: React.FC<CategoryBarProps> = ({ categories, activeCategoryId, onCategorySelect }) => {
   const [isHydrated, setIsHydrated] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(activeCategoryId || null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);

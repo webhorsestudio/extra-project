@@ -47,7 +47,7 @@ export function DeletePageDialog({
             <div>
               <AlertDialogTitle>Delete Page</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete "{page.title}"? This action cannot be undone.
+                Are you sure you want to delete &quot;{page.title}&quot;? This action cannot be undone.
               </AlertDialogDescription>
             </div>
           </div>

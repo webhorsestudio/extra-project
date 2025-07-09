@@ -1,4 +1,4 @@
-export function editorjsToHtml(data: any): string {
+export function editorjsToHtml(data: unknown): string {
   try {
     // Handle SSR - return empty string if no data
     if (typeof window === 'undefined' && !data) {
@@ -16,33 +16,36 @@ export function editorjsToHtml(data: any): string {
     }
 
     // Simple parser for our JSON structure
-    if (data.blocks) {
-      let blocks = data.blocks;
+    if (data && typeof data === 'object' && 'blocks' in data) {
+      let blocks = (data as { blocks: unknown }).blocks;
       if (!Array.isArray(blocks)) {
         blocks = [blocks];
       }
 
       const htmlParts: string[] = [];
 
-      blocks.forEach((block: any) => {
-        if (block && block.type && block.content) {
-          switch (block.type) {
-            case 'paragraph':
-              htmlParts.push(`<p>${block.content}</p>`);
-              break;
-            case 'header':
-              const level = block.level || 1;
-              htmlParts.push(`<h${level}>${block.content}</h${level}>`);
-              break;
-            case 'list':
-              const listType = block.style === 'ordered' ? 'ol' : 'ul';
-              const items = Array.isArray(block.items) ? block.items : [block.items];
-              const listItems = items.map((item: any) => `<li>${item}</li>`).join('');
-              htmlParts.push(`<${listType}>${listItems}</${listType}>`);
-              break;
-            default:
-              // For any other type, just wrap in a paragraph
-              htmlParts.push(`<p>${block.content}</p>`);
+      (blocks as unknown[]).forEach((block: unknown) => {
+        if (block && typeof block === 'object' && block !== null) {
+          const blockObj = block as Record<string, unknown>;
+          if (blockObj.type && blockObj.content) {
+            switch (blockObj.type) {
+              case 'paragraph':
+                htmlParts.push(`<p>${blockObj.content}</p>`);
+                break;
+              case 'header':
+                const level = (blockObj.level as number) || 1;
+                htmlParts.push(`<h${level}>${blockObj.content}</h${level}>`);
+                break;
+              case 'list':
+                const listType = blockObj.style === 'ordered' ? 'ol' : 'ul';
+                const items = Array.isArray(blockObj.items) ? blockObj.items : [blockObj.items];
+                const listItems = items.map((item: unknown) => `<li>${item}</li>`).join('');
+                htmlParts.push(`<${listType}>${listItems}</${listType}>`);
+                break;
+              default:
+                // For any other type, just wrap in a paragraph
+                htmlParts.push(`<p>${blockObj.content}</p>`);
+            }
           }
         }
       });

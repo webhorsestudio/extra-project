@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseApiClient } from '@/lib/supabase/api'
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createSupabaseApiClient()
     

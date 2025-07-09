@@ -82,7 +82,7 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
         body: JSON.stringify({ status: 'read' }),
       });
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' } : n));
-    } catch (e) {}
+    } catch {}
   };
 
   // Mark all as read (API call)
@@ -98,7 +98,7 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
         )
       );
       setNotifications(prev => prev.map(n => ({ ...n, status: 'read' })));
-    } catch (e) {}
+    } catch {}
   };
 
   // Delete all notifications (API call)
@@ -110,7 +110,7 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
         )
       );
       setNotifications([]);
-    } catch (e) {}
+    } catch {}
   };
 
   if (loading) {

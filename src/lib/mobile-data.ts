@@ -29,7 +29,7 @@ export interface MobilePropertyData {
   title: string
   description: string
   location: string
-  location_data: any
+  location_data: Record<string, unknown>
   price: number | null
   bhk: number | null
   area: number | null
@@ -143,7 +143,7 @@ export async function getMobileLocationsData(): Promise<MobileLocationData[]> {
 
     // Add property count for each location
     const locationsWithCount = await Promise.all(
-      (data || []).map(async (location: any) => {
+      (data || []).map(async (location: { id: string; name: string; description: string | null; image_url: string | null }) => {
         try {
           const { count } = await supabase
             .from('properties')

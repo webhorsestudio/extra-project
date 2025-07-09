@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useToast } from '@/components/ui/use-toast'
-import { Property, BHKConfiguration, PropertyImage } from '@/types/property'
+import { Property } from '@/types/property'
 import { supabase } from '@/lib/supabaseClient'
 
 export function useProperty(id: string) {
@@ -92,9 +92,17 @@ export function useProperty(id: string) {
         images: imagesData || [],
         property_images: imagesData || [],
         // Extract amenity names from relationships
-        features: amenitiesData?.map((rel: any) => rel.property_amenities?.name).filter(Boolean) || [],
+        features: amenitiesData?.map((rel: unknown) => {
+          const relation = rel as Record<string, unknown>
+          const amenities = relation.property_amenities as Record<string, unknown>[] | undefined
+          return amenities?.[0]?.name as string | undefined
+        }).filter(Boolean) || [],
         // Extract category names from relationships
-        categories: categoriesData?.map((rel: any) => rel.property_categories?.name).filter(Boolean) || [],
+        categories: categoriesData?.map((rel: unknown) => {
+          const relation = rel as Record<string, unknown>
+          const categories = relation.property_categories as Record<string, unknown>[] | undefined
+          return categories?.[0]?.name as string | undefined
+        }).filter(Boolean) || [],
       }
 
       setProperty(transformedData)

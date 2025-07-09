@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+
 import {
   Dialog,
   DialogContent,
@@ -41,7 +41,6 @@ export function RequiredFieldsModal({
   }, {} as Record<string, FieldError[]>)
 
   const handleTabClick = (tab: string) => {
-    setSelectedTab(tab)
     onNavigateToTab(tab)
     onClose()
   }

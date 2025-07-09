@@ -15,10 +15,7 @@ export async function getLocationsData(): Promise<LocationData[]> {
   try {
     const supabase = await createSupabaseServerClientSafe()
     
-    // Add caching for better performance
-    const cacheOptions = {
-      next: { revalidate: 3600 } // Cache for 1 hour
-    }
+
     
     const { data: locations, error } = await supabase
       .from('property_locations')
@@ -52,7 +49,7 @@ export async function getTopLocationsWithPropertyCount(limit = 20): Promise<Loca
     }
     // For each location, get the property count
     const locationsWithCount = await Promise.all(
-      (locations || []).map(async (location: any) => {
+      (locations || []).map(async (location: LocationData) => {
         try {
           const { count } = await supabase
             .from('properties')

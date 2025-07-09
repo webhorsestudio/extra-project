@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Property } from '@/types/property';
-import { X, ChevronLeft, ChevronRight, Calendar, Video, Building } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Video, Building } from 'lucide-react';
 
 interface MobileEnquiryModalProps {
   open: boolean;
@@ -11,6 +11,13 @@ interface MobileEnquiryModalProps {
 }
 
 export default function MobileEnquiryModal({ open, type, property, onClose }: MobileEnquiryModalProps) {
+  // Contact form state
+  const configOptions = property.property_configurations?.map(config => `${config.bhk}BHK`) || ['3BHK', '4BHK'];
+  const configState = configOptions.reduce((acc, config) => {
+    acc[config] = false;
+    return acc;
+  }, {} as Record<string, boolean>);
+
   // Reset form state when modal opens with different type
   React.useEffect(() => {
     if (open) {
@@ -38,13 +45,7 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
       setTourValidationErrors([]);
       setDateOffset(0);
     }
-  }, [open, type]);
-  // Contact form state
-  const configOptions = property.property_configurations?.map(config => `${config.bhk}BHK`) || ['3BHK', '4BHK'];
-  const configState = configOptions.reduce((acc, config) => {
-    acc[config] = false;
-    return acc;
-  }, {} as Record<string, boolean>);
+  }, [open, type, configState]);
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
@@ -115,11 +116,11 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
   ];
 
   // Handlers for contact form
-  const handleContactChange = (field: string, value: any) => {
+  const handleContactChange = (field: string, value: string | boolean | Record<string, boolean>) => {
     if (field === 'config') {
       setContactForm((prev) => ({
         ...prev,
-        config: { ...prev.config, ...value },
+        config: { ...prev.config, ...value as Record<string, boolean> },
       }));
     } else {
       setContactForm((prev) => ({ ...prev, [field]: value }));
@@ -155,7 +156,7 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
   };
 
   // Handlers for tour form
-  const handleTourChange = (field: string, value: any) => {
+  const handleTourChange = (field: string, value: string | boolean) => {
     setTourForm((prev) => ({ ...prev, [field]: value }));
     if (tourValidationErrors.length > 0) setTourValidationErrors([]);
   };

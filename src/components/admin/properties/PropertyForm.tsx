@@ -7,7 +7,6 @@ import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useToast } from '@/components/ui/use-toast'
 import { Form } from '@/components/ui/form'
 import { useHydration } from '@/hooks/use-hydration'
 import { HydrationSuppressor } from '@/components/HydrationSuppressor'
@@ -22,7 +21,7 @@ import {
   MapPin,
   X,
   Save,
-  Image as ImageIcon,
+  ImageIcon,
   Dumbbell,
   Tag,
   Settings
@@ -32,7 +31,7 @@ import { Property } from '@/types/property'
 import { ValidationModal } from '@/components/admin/properties/ValidationModal'
 import { mapFormErrorsToTabErrors } from '@/lib/form-validation'
 
-const formSchema = z.object({
+export const formSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
   property_type: z.enum(['House', 'Apartment', 'Commercial', 'Land', 'Villa', 'Penthouse'], {
@@ -80,7 +79,7 @@ export function PropertyForm({
   const [tempImages, setTempImages] = useState<File[]>([]);
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
-  const { toast } = useToast();
+
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -319,7 +318,7 @@ export function PropertyForm({
                   <PropertyCategories />
                 </TabsContent>
                 <TabsContent value="configurations" className="space-y-6 mt-0">
-                  <BHKConfigurations control={form.control} name="bhk_configurations" />
+                  <BHKConfigurations name="bhk_configurations" />
                 </TabsContent>
               </div>
             </Tabs>
