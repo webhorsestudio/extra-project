@@ -259,9 +259,9 @@ const PropertyImageCarousel = ({ images }: { images?: { image_url: string }[] })
 
 // Title Row
 const TitleRow = ({ title }: { title: string }) => (
-  <h3 className="font-semibold text-gray-900 text-lg line-clamp-2 leading-tight">
-    {title}
-  </h3>
+  <div className="h-12 flex items-start">
+    <h3 className="text-base font-semibold text-gray-900 line-clamp-2 leading-tight">{title}</h3>
+  </div>
 );
 
 // Price Location Row
@@ -271,22 +271,15 @@ const PriceLocationRow = ({ price, locationData }: { price?: number; locationDat
       return `₹${(price / 10000000).toFixed(1)} Cr`;
     } else if (price >= 100000) {
       return `₹${(price / 100000).toFixed(1)} L`;
+    } else if (price >= 1000) {
+      return `₹${(price / 1000).toFixed(1)} K`;
     } else {
-      return `₹${price.toLocaleString()}`;
+      return `₹${price}`;
     }
   };
-  
-  if (!price) {
-    return (
-      <div className="flex items-center justify-between mt-1">
-        <span className="text-black text-xs md:text-sm font-bold">Price available on request</span>
-        <span className="text-gray-600 text-sm line-clamp-1">{locationData?.name || ''}</span>
-      </div>
-    );
-  }
-  
+
   return (
-    <div className="flex items-center justify-between mt-1">
+    <div className="flex items-center justify-between mt-3 h-8">
       <div className="flex items-center gap-1">
         <span className="text-gray-400 text-base">Starts At</span>
         <span className="text-black text-lg font-bold">{formatPrice(price)}</span>
@@ -328,7 +321,7 @@ const AmenitiesRow = ({ property }: { property: Property }) => {
   const readyBy = property.property_configurations?.[0]?.ready_by;
 
   return (
-    <div className="flex items-center justify-between mt-4 text-sm text-gray-700">
+    <div className="flex items-center justify-between mt-4 text-sm text-gray-700 h-6">
       <div className="flex items-center gap-1">
         <Bed className="h-5 w-5 mr-1 text-blue-700" />
         {beds} Beds
@@ -352,7 +345,7 @@ interface PropertyCardContentProps {
 }
 const PropertyCardContent = ({ property, contentMargin = "mt-8" }: PropertyCardContentProps) => {
   return (
-    <div className={`p-4 pb-5 flex-grow flex flex-col ${contentMargin}`}>
+    <div className={`p-4 pb-5 flex flex-col ${contentMargin} h-32`}>
       <TitleRow title={property.title} />
       <div className="mt-3">
         <PriceLocationRow price={property.price} locationData={property.location_data} />
@@ -451,7 +444,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 
   return (
     <div 
-      className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-[1.01] flex flex-col"
+      className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-[1.01] flex flex-col h-80"
       onClick={handleCardClick}
     >
       <div className="h-48 sm:h-56">

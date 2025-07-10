@@ -292,7 +292,7 @@ export default function MobileHomePage() {
                   <a
                     key={loc.id}
                     href={`/m/properties?location=${loc.id}&locationName=${encodeURIComponent(loc.name)}`}
-                    className="flex flex-col items-start bg-white rounded-2xl px-6 py-5 min-w-[200px] max-w-[220px] shadow border border-gray-100 hover:shadow-xl hover:border-blue-400 transition-shadow duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 snap-center"
+                    className="flex flex-col items-start bg-white rounded-2xl px-6 py-5 w-[40vw] max-w-[220px] sm:w-[20vw] shadow border border-gray-100 hover:shadow-xl hover:border-blue-400 transition-shadow duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 snap-center"
                   >
                     {loc.image_url ? (
                       <div className="relative w-full h-24 mb-3">
@@ -346,7 +346,7 @@ export default function MobileHomePage() {
             <div className="relative">
               <div className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 pb-2 snap-x snap-mandatory">
                 {normalizedBlogs.slice(0, 6).map((blog) => (
-                  <div key={blog.id} className="flex-shrink-0 w-96 snap-center">
+                  <div key={blog.id} className="flex-shrink-0 w-[75vw] max-w-xs sm:w-[45vw] snap-center">
                     <BlogCard blog={blog} />
                   </div>
                 ))}
