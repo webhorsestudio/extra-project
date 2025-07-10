@@ -1,13 +1,21 @@
 'use client';
 import React, { useState } from 'react';
 import * as LucideIconsImport from 'lucide-react';
-import { Property } from '@/types/property';
 import Image from 'next/image'
 
 const LucideIcons = LucideIconsImport as unknown as Record<string, React.ComponentType<{ className?: string }>>;
 
+interface Amenity {
+  name: string;
+  image_url?: string;
+}
+interface Category {
+  name: string;
+  icon?: string;
+}
 interface PropertyFeaturesProps {
-  property: Property;
+  amenities: Amenity[];
+  categories: Category[];
 }
 
 // Pill-shaped tab navigation for two tabs (restored)
@@ -31,11 +39,12 @@ function FeaturesTabNav({ activeTab, setActiveTab }: { activeTab: string; setAct
 }
 
 // Card with image and title only
-function FeatureCard({ title, image }: { title: string; image: string }) {
+function FeatureCard({ title, image }: { title: string; image?: string }) {
+  const imgSrc = image && typeof image === 'string' ? image : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80';
   return (
     <div className="flex items-center bg-white rounded-xl border border-[#FFD700]/40 shadow-sm p-4 gap-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-150 max-w-md mb-4">
       <Image
-        src={image}
+        src={imgSrc}
         alt={title}
         className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-gray-200"
         width={48}
@@ -47,7 +56,7 @@ function FeatureCard({ title, image }: { title: string; image: string }) {
 }
 
 // Card with icon and title only
-function CategoryCard({ title, icon }: { title: string; icon: string }) {
+function CategoryCard({ title, icon }: { title: string; icon?: string }) {
   const LucideIcon = (icon && LucideIcons[icon]) ? LucideIcons[icon] : LucideIcons['Home'];
   return (
     <div className="flex items-center bg-white rounded-xl border border-[#FFD700]/40 shadow-sm p-4 gap-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-150 max-w-md mb-4">
@@ -59,38 +68,8 @@ function CategoryCard({ title, icon }: { title: string; icon: string }) {
   );
 }
 
-// Helper function to get amenity image
-function getAmenityImage(amenityName: string) {
-  const imageMap: { [key: string]: string } = {
-    'Pool': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80',
-    'Clubhouse': 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=200&q=80',
-    'Gym': 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=200&q=80',
-    'Lounge': 'https://images.unsplash.com/photo-1465101178521-c1a9136a3c5a?auto=format&fit=crop&w=200&q=80',
-    'Garden': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=200&q=80',
-    'Parking': 'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=200&q=80',
-    'Security': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=200&q=80',
-  };
-  return imageMap[amenityName] || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80';
-}
-
-export default function PropertyFeatures({ property }: PropertyFeaturesProps) {
+export default function PropertyFeatures({ amenities, categories }: PropertyFeaturesProps) {
   const [activeTab, setActiveTab] = useState('amenities');
-
-  // Use real amenities data
-  const amenities = property.amenities && property.amenities.length > 0
-    ? property.amenities.map((amenity: string) => ({
-        title: amenity,
-        image: getAmenityImage(amenity),
-      }))
-    : [];
-
-  // Use real categories data
-  const categories = property.categories && property.categories.length > 0
-    ? property.categories.map((category: string) => ({
-        title: category,
-        icon: 'Home',
-      }))
-    : [];
 
   return (
     <section className="bg-transparent mb-8">
@@ -99,8 +78,8 @@ export default function PropertyFeatures({ property }: PropertyFeaturesProps) {
       {activeTab === 'amenities' ? (
         amenities.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {amenities.map((amenity, idx) => (
-              <FeatureCard key={idx} title={amenity.title} image={amenity.image} />
+            {amenities.map((amenity: Amenity, idx: number) => (
+              <FeatureCard key={idx} title={amenity.name} image={amenity.image_url} />
             ))}
           </div>
         ) : (
@@ -109,8 +88,8 @@ export default function PropertyFeatures({ property }: PropertyFeaturesProps) {
       ) : (
         categories.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {categories.map((cat, idx) => (
-              <CategoryCard key={idx} title={cat.title} icon={cat.icon} />
+            {categories.map((cat: Category, idx: number) => (
+              <CategoryCard key={idx} title={cat.name} icon={cat.icon} />
             ))}
           </div>
         ) : (

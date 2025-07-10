@@ -29,9 +29,11 @@ export async function PATCH(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    if (!status || !['unread', 'read', 'resolved'].includes(status)) {
+    // Updated validation to accept all status values from UI
+    const validStatuses = ['unread', 'read', 'in_progress', 'resolved', 'closed', 'spam']
+    if (!status || !validStatuses.includes(status)) {
       return NextResponse.json(
-        { error: 'Invalid status. Must be unread, read, or resolved.' },
+        { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` },
         { status: 400 }
       )
     }

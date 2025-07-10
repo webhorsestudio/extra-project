@@ -59,9 +59,10 @@ interface Location {
 interface LocationListProps {
   refreshTrigger: number
   onEditLocation?: (location: Location) => void
+  isAuthenticated?: boolean
 }
 
-export function LocationList({ refreshTrigger, onEditLocation }: LocationListProps) {
+export function LocationList({ refreshTrigger, onEditLocation, isAuthenticated = true }: LocationListProps) {
   const [locations, setLocations] = useState<Location[]>([])
   const [filteredLocations, setFilteredLocations] = useState<Location[]>([])
   const [loading, setLoading] = useState(true)
@@ -77,13 +78,20 @@ export function LocationList({ refreshTrigger, onEditLocation }: LocationListPro
     try {
       setLoading(true)
       
-      const response = await fetch('/api/locations')
-      const result = await response.json()
-
+      const response = await fetch('/api/locations?admin=true', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to fetch locations')
+        const errorText = await response.text()
+        throw new Error(`HTTP ${response.status}: ${errorText}`)
       }
-
+      
+      const result = await response.json()
       setLocations(result.locations || [])
     } catch (error) {
       console.error('Error fetching locations:', error)
@@ -98,8 +106,15 @@ export function LocationList({ refreshTrigger, onEditLocation }: LocationListPro
   }, [toast])
 
   useEffect(() => {
-    fetchLocations()
-  }, [refreshTrigger, fetchLocations])
+    if (isAuthenticated) {
+      // Small delay to ensure authentication is fully established
+      const timer = setTimeout(() => {
+        fetchLocations()
+      }, 100)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [refreshTrigger, fetchLocations, isAuthenticated])
 
   useEffect(() => {
     let filtered = locations

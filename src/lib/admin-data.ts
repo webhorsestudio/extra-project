@@ -53,12 +53,21 @@ export async function checkAdminAuth() {
     
     if (authError) {
       console.error('Authentication error:', authError)
-      return { user: null, profile: null, error: 'Authentication failed' }
+      
+      // Provide more specific error messages
+      if (authError.message?.includes('session missing')) {
+        return { user: null, profile: null, error: 'No active session. Please log in.' }
+      }
+      if (authError.message?.includes('expired')) {
+        return { user: null, profile: null, error: 'Session expired. Please log in again.' }
+      }
+      
+      return { user: null, profile: null, error: 'Authentication failed. Please log in.' }
     }
     
     if (!user) {
       console.log('No user found')
-      return { user: null, profile: null, error: 'No user found' }
+      return { user: null, profile: null, error: 'No user found. Please log in.' }
     }
 
     // Get user profile using service role client to bypass RLS
@@ -73,19 +82,19 @@ export async function checkAdminAuth() {
 
     if (profileError || !profile) {
       console.error('Profile error:', profileError)
-      return { user: null, profile: null, error: 'Profile not found' }
+      return { user: null, profile: null, error: 'User profile not found. Please contact support.' }
     }
 
     if (profile.role !== 'admin') {
       console.log('User is not admin')
-      return { user: null, profile: null, error: 'Admin access required' }
+      return { user: null, profile: null, error: 'Admin access required. Please log in with admin credentials.' }
     }
 
     console.log('Admin authentication successful')
     return { user, profile, error: null }
   } catch (error) {
     console.error('Error in checkAdminAuth:', error)
-    return { user: null, profile: null, error: 'Server error' }
+    return { user: null, profile: null, error: 'Server error. Please try again.' }
   }
 }
 

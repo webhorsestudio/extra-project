@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Property, BHKConfiguration } from '@/types/property';
 import Image from 'next/image'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 interface PropertyConfigurationsProps {
   property: Property;
@@ -55,17 +56,68 @@ function ConfigurationsInfoText({ config }: { config: BHKConfiguration | undefin
 
 // Floor plan preview
 function FloorPlanPreview({ config }: { config: BHKConfiguration | undefined }) {
-  if (config?.floor_plan_url) {
-    return (
-      <div className="bg-gray-100 rounded-xl flex items-center justify-center h-56 md:h-64 w-full mb-6">
-        <Image src={config.floor_plan_url} alt="Floor Plan" className="object-contain h-full max-h-60" fill style={{ objectFit: 'contain' }} />
-      </div>
-    );
-  }
+  const hasImage = !!config?.floor_plan_url;
+  const [modalOpen, setModalOpen] = React.useState(false);
   return (
-    <div className="bg-gray-100 rounded-xl flex items-center justify-center h-56 md:h-64 w-full mb-6">
-      <span className="text-gray-400 text-sm">No Floor Plan Available</span>
-    </div>
+    <>
+      <div className="relative w-full bg-white border border-gray-200 rounded-xl flex items-center justify-center aspect-video shadow mb-6 overflow-hidden">
+        {hasImage ? (
+          <button
+            type="button"
+            className="w-full h-full cursor-zoom-in focus:outline-none"
+            onClick={() => setModalOpen(true)}
+            style={{ padding: 0, margin: 0 }}
+          >
+            <Image
+              src={config.floor_plan_url!}
+              alt="Floor Plan"
+              className="object-cover w-full h-full"
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width: 768px) 100vw, 600px"
+            />
+          </button>
+        ) : (
+          <div className="flex flex-col items-center justify-center w-full h-full text-gray-400">
+            <svg width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="mb-2">
+              <rect x="3" y="5" width="18" height="14" rx="2" strokeWidth="2" />
+              <path d="M3 15l4-4a3 3 0 014 0l4 4" strokeWidth="2" />
+              <circle cx="9" cy="10" r="1" strokeWidth="2" />
+            </svg>
+            <span className="text-base">No Floor Plan Available</span>
+          </div>
+        )}
+      </div>
+      {/* Modal for zoomed-in floor plan */}
+      {hasImage && (
+        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+          <DialogContent className="max-w-4xl w-full h-[80vh] flex items-center justify-center bg-black/90 p-0 border-none shadow-none">
+            <DialogTitle className="sr-only">Floor Plan Zoomed View</DialogTitle>
+            {/* Close button */}
+            <button
+              onClick={() => setModalOpen(false)}
+              className="absolute top-4 right-4 z-50 bg-white/80 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Close"
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="relative w-full h-full flex items-center justify-center overflow-auto p-4">
+              <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 max-w-3xl w-full h-auto flex items-center justify-center p-4 mx-auto">
+                <img
+                  src={config.floor_plan_url!}
+                  alt="Floor Plan Zoomed"
+                  className="max-w-full max-h-[70vh] object-contain mx-auto drop-shadow-lg rounded-xl border border-gray-100"
+                  style={{ display: 'block' }}
+                />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 }
 
@@ -73,11 +125,12 @@ function FloorPlanPreview({ config }: { config: BHKConfiguration | undefined }) 
 function BrochurePreview({ config }: { config: BHKConfiguration | undefined }) {
   if (config?.brochure_url) {
     return (
-      <div className="relative w-full h-56 md:h-64 mb-6 rounded-xl overflow-hidden">
+      <div className="relative w-full aspect-video mb-6 rounded-xl overflow-hidden border border-gray-200 shadow">
         <iframe
           src={config.brochure_url}
           title="Brochure Preview"
-          className="w-full h-full rounded-xl border-none"
+          className="w-full h-full min-h-[300px] rounded-xl border-none"
+          allow="autoplay"
         />
       </div>
     );
@@ -93,9 +146,9 @@ function DownloadBrochureButton({ config }: { config: BHKConfiguration | undefin
       href={config.brochure_url}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-full block"
+      className="block text-center mt-2"
     >
-      <button className="w-full bg-[#0A1736] text-white font-semibold rounded-xl py-3 mt-2 shadow-sm transition hover:bg-[#142a5c] text-sm">
+      <button className="bg-blue-700 text-white font-semibold rounded-xl py-3 px-6 shadow-sm hover:bg-blue-800 transition text-sm">
         DOWNLOAD BROCHURE
       </button>
     </a>

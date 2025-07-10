@@ -2,13 +2,16 @@ import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
   FormField,
+  FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Trash2, Home, AlertCircle } from 'lucide-react'
+import { FileUpload } from './FileUpload'
 
 import { formatIndianPrice } from '@/lib/utils'
 
@@ -149,82 +152,132 @@ export function BHKConfigurations({ name }: BHKConfigurationsProps) {
                       control={form.control}
                       name={`${name}.${index}.bhk`}
                       render={({ field }) => (
-                        <FormControl>
+                        <FormItem>
                           <FormLabel>BHK</FormLabel>
-                          <Input {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="number"
+                              min="1"
+                              placeholder="e.g., 2"
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
                     />
                     <FormField
                       control={form.control}
                       name={`${name}.${index}.price`}
                       render={({ field }) => (
-                        <FormControl>
-                          <FormLabel>Price</FormLabel>
-                          <Input {...field} />
-                        </FormControl>
+                        <FormItem>
+                          <FormLabel>Price (₹)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="number"
+                              min="0"
+                              placeholder="e.g., 5000000"
+                              onChange={(e) => field.onChange(e.target.value === '' ? 0 : Number(e.target.value))}
+                              value={field.value || ''}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
                     />
                     <FormField
                       control={form.control}
                       name={`${name}.${index}.area`}
                       render={({ field }) => (
-                        <FormControl>
-                          <FormLabel>Area</FormLabel>
-                          <Input {...field} />
-                        </FormControl>
+                        <FormItem>
+                          <FormLabel>Area (sq.ft)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="number"
+                              min="0"
+                              placeholder="e.g., 1200"
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
                     />
                     <FormField
                       control={form.control}
                       name={`${name}.${index}.bedrooms`}
                       render={({ field }) => (
-                        <FormControl>
+                        <FormItem>
                           <FormLabel>Bedrooms</FormLabel>
-                          <Input {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="number"
+                              min="0"
+                              placeholder="e.g., 2"
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
                     />
                     <FormField
                       control={form.control}
                       name={`${name}.${index}.bathrooms`}
                       render={({ field }) => (
-                        <FormControl>
+                        <FormItem>
                           <FormLabel>Bathrooms</FormLabel>
-                          <Input {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="number"
+                              min="0"
+                              placeholder="e.g., 2"
+                              onChange={(e) => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
                     />
                     <FormField
                       control={form.control}
                       name={`${name}.${index}.ready_by`}
                       render={({ field }) => (
-                        <FormControl>
+                        <FormItem>
                           <FormLabel>Ready By</FormLabel>
-                          <Input {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              placeholder="e.g., Dec 2024"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name={`${name}.${index}.floor_plan_url`}
-                      render={({ field }) => (
-                        <FormControl>
-                          <FormLabel>Floor Plan URL</FormLabel>
-                          <Input {...field} />
-                        </FormControl>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`${name}.${index}.brochure_url`}
-                      render={({ field }) => (
-                        <FormControl>
-                          <FormLabel>Brochure URL</FormLabel>
-                          <Input {...field} />
-                        </FormControl>
-                      )}
-                    />
+                  </div>
+
+                  {/* File Upload Section */}
+                  <div className="mt-6 space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <FileUpload
+                        name={`${name}.${index}.floor_plan_url`}
+                        label="Floor Plan"
+                        accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
+                        bucket="property-files"
+                      />
+                      <FileUpload
+                        name={`${name}.${index}.brochure_url`}
+                        label="Brochure"
+                        accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
+                        bucket="property-files"
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>

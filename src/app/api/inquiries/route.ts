@@ -149,10 +149,19 @@ export async function POST(req: NextRequest) {
 
     console.log('Enquiry submitted successfully:', data)
 
+    // Return the first (and only) inquiry from the array
+    const inquiry = data?.[0]
+    if (!inquiry) {
+      return NextResponse.json({ 
+        error: 'Failed to create enquiry. Please try again.',
+      }, { status: 500 })
+    }
+
     return NextResponse.json({ 
       success: true, 
       message: 'Enquiry submitted successfully',
-      data 
+      inquiry: inquiry,
+      id: inquiry.id // Explicitly include the ID for easier access
     })
 
   } catch (error) {

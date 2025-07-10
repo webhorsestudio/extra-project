@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tag } from 'lucide-react'
 import CategoryForm from '@/components/admin/properties/CategoryForm'
@@ -13,12 +13,38 @@ type Category = {
   description?: string;
   created_at?: string;
   updated_at?: string;
+  icon?: string;
+  is_active?: boolean;
 };
 
 export default function CategoryClient({ categories: initialCategories }: { categories: Category[] }) {
-  const [refresh, setRefresh] = useState(0)
+  const [categories, setCategories] = useState<Category[]>(initialCategories)
 
-  // Optionally, you can implement a refetch here if needed
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await fetch('/api/categories')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories')
+      }
+
+      const data = await response.json()
+      setCategories(data.categories || [])
+    } catch (error) {
+      console.error('Error in fetchCategories:', error)
+    }
+  }, [])
+
+  // Only refetch if initial data is empty (fallback)
+  useEffect(() => {
+    if (!initialCategories || initialCategories.length === 0) {
+      fetchCategories()
+    }
+  }, [initialCategories, fetchCategories])
+
+  const handleRefresh = () => {
+    fetchCategories()
+  }
 
   return (
     <div className="space-y-6">
@@ -30,7 +56,7 @@ export default function CategoryClient({ categories: initialCategories }: { cate
             Manage property categories and types
           </p>
         </div>
-        <CategoryForm onSuccess={() => setRefresh(r => r + 1)} />
+        <CategoryForm onSuccess={handleRefresh} />
       </div>
 
       {/* Content */}
@@ -42,7 +68,7 @@ export default function CategoryClient({ categories: initialCategories }: { cate
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CategoryList onChange={() => setRefresh(r => r + 1)} key={refresh} categories={initialCategories} />
+          <CategoryList onChange={handleRefresh} categories={categories} />
         </CardContent>
       </Card>
     </div>

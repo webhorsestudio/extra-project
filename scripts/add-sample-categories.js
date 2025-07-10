@@ -39,7 +39,7 @@ const sampleCategories = [
   },
   {
     name: 'Land',
-    icon: 'Map',
+    icon: 'MapPin',
     is_active: true
   },
   {

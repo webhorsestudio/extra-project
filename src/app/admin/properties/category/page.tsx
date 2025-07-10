@@ -29,8 +29,9 @@ export default async function CategoryPage() {
           hint: error.hint
         })
       } else {
-        console.log('CategoryPage: Categories fetched successfully:', data?.length || 0, 'categories')
-        categories = data || []
+              console.log('CategoryPage: Categories fetched successfully:', data?.length || 0, 'categories')
+
+      categories = data || []
       }
     } catch (fetchError) {
       console.error('CategoryPage: Exception while fetching categories:', fetchError)

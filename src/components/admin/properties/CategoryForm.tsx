@@ -1,66 +1,39 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription, DialogClose, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
+import { useToast } from '@/components/ui/use-toast'
 import { 
-  Home, Building2, Star, Heart, MapPin, Users, Calendar, 
-  Tag, Car, Trees, Sun, Moon, Cloud, 
-  Wifi, Battery, Camera, Phone, Mail, MessageSquare,
-  Settings, User, Lock, Unlock, Eye, EyeOff, 
-  Plus, Minus, Check, X, ArrowRight, ArrowLeft,
-  Search, Filter, SortAsc, SortDesc, Download, Upload,
-  Edit, Trash2, Save, RefreshCw, Clock, AlertCircle,
-  Info, HelpCircle, ExternalLink, Link, Share2,
-  Bookmark, BookOpen, FileText, Image, Video,
-  Music, Volume2, VolumeX, Play, Pause, SkipBack,
-  SkipForward, RotateCcw, RotateCw, ZoomIn, ZoomOut,
-  Move, Crop, Scissors, Type, Bold, Italic,
-  Underline, List, Grid, Columns, Rows,
-  PieChart, BarChart3, TrendingUp, TrendingDown,
-  Activity, Zap, Target, Award, Gift, ShoppingCart,
-  CreditCard, Wallet, PiggyBank, Coins, DollarSign as DollarSignIcon,
-  // Real Estate & Property Icons
-  Building, Map, Navigation, Compass, Globe,
-  // Business & Finance Icons
-  Briefcase, Store, Factory, Receipt, Calculator,
-  // Technology & Communication Icons
-  Smartphone, Laptop, Monitor, Printer, Server, Database,
-  Signal, Bluetooth, Satellite, Router,
-  // Lifestyle & Amenities Icons
-  Coffee, Utensils, ShoppingBag, Dumbbell, Bike, Plane, Train,
-  // Nature & Environment Icons
-  Leaf, Flower, Waves, Snowflake, Umbrella,
-  // Security & Safety Icons
-  Shield, AlertTriangle, LifeBuoy,
-  // Utilities & Services Icons
-  Lightbulb, Plug, Wrench,
-  // Social & Community Icons
-  UserPlus, UserMinus, UserCheck, MessageCircle,
-  // Media & Entertainment Icons
-  Tv, Radio, Headphones, Gamepad2, Film,
-  // Food & Dining Icons
-  Wine, Beer, Pizza, Hamburger,
-  // Transportation Icons
-  Bus, Ship, Rocket,
-  // Weather & Time Icons
-  Sunrise, Sunset, CloudRain, CloudLightning, Wind, Thermometer,
-  // Miscellaneous Icons
-  Package, Box, Archive, Folder, File, Paperclip,
-  // Additional Business Icons
-  BarChart, LineChart, Trophy, Medal,
-  // Additional Property Icons
-  Key,
-  // Additional Technology Icons
-  Cpu, HardDrive, Network,
-  // Additional Lifestyle Icons
+  DollarSign as DollarSignIcon,
+  Home, Building2, Star, Heart, MapPin, Users, Calendar, Tag,
+  Car, Trees, Sun, Moon, Cloud, Wifi, Battery, Camera, Phone,
+  Mail, MessageSquare, Settings, User, Lock, Unlock, Eye, EyeOff,
+  Plus, Minus, Check, X, ArrowRight, ArrowLeft, Search, Filter,
+  SortAsc, SortDesc, Download, Upload, Edit, Trash2, Save, RefreshCw,
+  Clock, AlertCircle, Info, HelpCircle, ExternalLink, Link, Share2,
+  Bookmark, BookOpen, FileText, Image, Video, Music, Volume2, VolumeX,
+  Play, Pause, SkipBack, SkipForward, RotateCcw, RotateCw, ZoomIn,
+  ZoomOut, Move, Crop, Scissors, Type, Bold, Italic, Underline,
+  List, Grid, Columns, Rows, PieChart, BarChart3, TrendingUp,
+  TrendingDown, Activity, Zap, Target, Award, Gift, ShoppingCart,
+  CreditCard, Wallet, PiggyBank, Coins, Building, Map, Navigation,
+  Compass, Globe, Briefcase, Store, Factory, Receipt, Calculator,
+  Smartphone, Laptop, Monitor, Printer, Server, Database, Signal,
+  Bluetooth, Satellite, Router, Coffee, Utensils, ShoppingBag,
+  Dumbbell, Bike, Plane, Train, Leaf, Flower, Waves, Snowflake,
+  Umbrella, Shield, AlertTriangle, LifeBuoy, Lightbulb, Plug,
+  Wrench, UserPlus, UserMinus, UserCheck, MessageCircle, Tv,
+  Radio, Headphones, Gamepad2, Film, Wine, Beer, Pizza, Hamburger,
+  Bus, Ship, Rocket, Sunrise, Sunset, CloudRain, CloudLightning,
+  Wind, Thermometer, Package, Box, Archive, Folder, File, Paperclip,
+  BarChart, LineChart, Trophy, Medal, Key, Cpu, HardDrive, Network,
   Smile, ThumbsUp,
   // New Requested Icons
   Baby, Gem, TicketPercent, Dog, WavesLadder, Telescope, Church, IdCard
 } from 'lucide-react'
-import { toast } from 'sonner'
 import { useCategories } from '@/hooks/useCategories'
 
 // Define a safe list of icons with their components
@@ -272,6 +245,7 @@ export default function CategoryForm({
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
   
   // Use the categories hook to refresh the list after operations
   const { refetch } = useCategories({ includeInactive: true })
@@ -344,7 +318,11 @@ export default function CategoryForm({
     setLoading(false)
     if (!res.ok) {
       setError(data.error || 'Failed to save category')
-      toast.error(data.error || 'Failed to save category')
+      toast({
+        title: data.error || 'Failed to save category',
+        description: data.error || 'Failed to save category',
+        variant: 'destructive',
+      })
       return
     }
     setOpen(false)
@@ -357,8 +335,13 @@ export default function CategoryForm({
       // Don't fail the operation if refetch fails
     }
     
+    // Call onSuccess for client-side refresh
     if (onSuccess) onSuccess()
-    toast.success(mode === 'edit' ? 'Category updated' : 'Category added')
+    
+    toast({
+      title: mode === 'edit' ? 'Category updated' : 'Category added',
+      description: mode === 'edit' ? 'Category updated' : 'Category added',
+    })
   }
 
   return (

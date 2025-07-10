@@ -31,7 +31,7 @@ export function useAdminAuth() {
 
   const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
     try {
-      // Use regular client with RLS policies
+      // Use regular client with RLS policies - this should work for own profile
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -68,13 +68,10 @@ export function useAdminAuth() {
 
     const initializeAuth = async () => {
       try {
-        console.log('useAdminAuth: Starting authentication check...')
         setState(prev => ({ ...prev, loading: true, error: null }))
 
         // Get current user
         const { data: { user }, error: authError } = await supabase.auth.getUser()
-        
-        console.log('useAdminAuth: User check result:', { user: user?.id, error: authError })
         
         if (authError) {
           console.error('Auth error:', authError)
@@ -90,7 +87,6 @@ export function useAdminAuth() {
         }
 
         if (!user) {
-          console.log('useAdminAuth: No user found')
           if (mounted) {
             setState({
               user: null,
@@ -102,17 +98,12 @@ export function useAdminAuth() {
           return
         }
 
-        console.log('useAdminAuth: User found, fetching profile...')
-
         // Fetch user profile
         const profile = await fetchUserProfile(user.id)
-        
-        console.log('useAdminAuth: Profile fetch result:', { profile: profile?.id, role: profile?.role })
         
         if (!mounted) return
 
         if (!profile) {
-          console.log('useAdminAuth: No profile found')
           setState({
             user: null,
             profile: null,
@@ -124,7 +115,6 @@ export function useAdminAuth() {
 
         // Check if user is admin
         if (!checkAdminRole(profile)) {
-          console.log('useAdminAuth: User is not admin')
           setState({
             user: null,
             profile: null,
@@ -134,7 +124,6 @@ export function useAdminAuth() {
           return
         }
 
-        console.log('useAdminAuth: Authentication successful, user is admin')
         setState({
           user,
           profile,
@@ -159,8 +148,6 @@ export function useAdminAuth() {
 
     // Listen for auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('useAdminAuth: Auth state change:', event, session?.user?.id)
-      
       if (!mounted) return
 
       const currentUser = session?.user || null
@@ -171,7 +158,6 @@ export function useAdminAuth() {
         if (!mounted) return
 
         if (profile && checkAdminRole(profile)) {
-          console.log('useAdminAuth: Auth state change - user authenticated as admin')
           setState({
             user: currentUser,
             profile,
@@ -179,7 +165,6 @@ export function useAdminAuth() {
             error: null
           })
         } else {
-          console.log('useAdminAuth: Auth state change - user not admin or no profile')
           setState({
             user: null,
             profile: null,
@@ -188,7 +173,6 @@ export function useAdminAuth() {
           })
         }
       } else {
-        console.log('useAdminAuth: Auth state change - no user')
         setState({
           user: null,
           profile: null,
@@ -203,7 +187,7 @@ export function useAdminAuth() {
       clearTimeout(loadingTimeout)
       authListener?.subscription?.unsubscribe()
     }
-  }, [state.loading])
+  }, []) // Remove state.loading dependency to prevent infinite loop
 
   const signOut = async () => {
     await supabase.auth.signOut()

@@ -83,15 +83,21 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
   }
 
   // Map relations to flat arrays for Features component (amenities and categories)
+  type Amenity = { name: string; image_url: string };
+  type Category = { name: string; icon: string };
   if (property) {
-    property.amenities = property.property_amenity_relations?.map((rel: PropertyAmenityRelation) => ({
-      name: rel.property_amenities?.name,
-      image_url: rel.property_amenities?.image_url
-    })).filter((a: { name?: string }) => a.name) || [];
-    property.categories = property.property_category_relations?.map((rel: PropertyCategoryRelation) => ({
-      name: rel.property_categories?.name,
-      icon: rel.property_categories?.icon
-    })).filter((c: { name?: string }) => c.name) || [];
+    property.amenities = property.property_amenity_relations?.map((rel: PropertyAmenityRelation) =>
+      rel.property_amenities?.name && {
+        name: rel.property_amenities.name,
+        image_url: rel.property_amenities.image_url || '',
+      }
+    ).filter((a: Amenity | false | undefined): a is Amenity => !!a && !!a.name) || [];
+    property.categories = property.property_category_relations?.map((rel: PropertyCategoryRelation) =>
+      rel.property_categories?.name && {
+        name: rel.property_categories.name,
+        icon: rel.property_categories.icon || 'Home',
+      }
+    ).filter((c: Category | false | undefined): c is Category => !!c && !!c.name) || [];
   }
 
   // Fetch similar properties
@@ -129,7 +135,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
                 <PropertyLocationMap property={property} locationName={property.location_data.name} />
               ) : null}
               <section id="features">
-                <PropertyFeatures property={property} />
+                <PropertyFeatures amenities={property.amenities} categories={property.categories} />
               </section>
             </div>
             {/* Sidebar */}

@@ -43,19 +43,19 @@ export default async function DashboardPage() {
   }) => (
     <Link href={href} className="block">
       <Card className="group hover:shadow-md transition-all duration-200 cursor-pointer">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Icon className={`h-5 w-5 ${variant === 'primary' ? 'text-primary' : 'text-muted-foreground'}`} />
-                <h3 className="font-semibold">{title}</h3>
-              </div>
-              <p className="text-sm text-muted-foreground">{description}</p>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Icon className={`h-5 w-5 ${variant === 'primary' ? 'text-primary' : 'text-muted-foreground'}`} />
+              <h3 className="font-semibold">{title}</h3>
             </div>
-            <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <p className="text-sm text-muted-foreground">{description}</p>
           </div>
-        </CardContent>
-      </Card>
+          <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+        </div>
+      </CardContent>
+    </Card>
     </Link>
   )
 

@@ -133,6 +133,7 @@ export default function LocationPage() {
           <LocationList 
             refreshTrigger={refreshTrigger} 
             onEditLocation={handleEditLocation}
+            isAuthenticated={!!user && !!profile}
           />
         </TabsContent>
 

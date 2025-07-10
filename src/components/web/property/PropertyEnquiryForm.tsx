@@ -102,10 +102,38 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
     setContactMessage('');
     setContactMessageType('');
     try {
-      // Simulate API call
-      await new Promise(res => setTimeout(res, 1000));
-      setContactMessage('Enquiry submitted successfully!');
-      setContactMessageType('success');
+      // Prepare config selection as comma-separated string
+      const selectedConfigs = Object.entries(contactForm.config)
+        .filter((entry) => entry[1])
+        .map((entry) => entry[0])
+        .join(', ');
+      // Convert to Postgres array literal if not empty
+      const propertyConfigurationsArray = selectedConfigs
+        ? `{${selectedConfigs.split(',').map(cfg => `"${cfg.trim()}"`).join(',')}}`
+        : '{}';
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: contactForm.name,
+          email: contactForm.email,
+          phone: contactForm.phone,
+          message: contactForm.message,
+          inquiry_type: 'contact',
+          property_id: property.id,
+          property_name: property.title,
+          property_location: property.location,
+          property_configurations: propertyConfigurationsArray,
+        }),
+      });
+      const data = await res.json();
+      console.log('Contact API response:', data, 'Status:', res.status);
+      if (!res.ok) {
+        setContactMessage(data.error || data.details || 'Failed to submit enquiry. Please try again.');
+        setContactMessageType('error');
+      } else {
+        setContactMessage('Enquiry submitted successfully!');
+        setContactMessageType('success');
         setContactForm({
           name: '',
           email: '',
@@ -113,6 +141,7 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
           config: configState,
           message: '',
         });
+      }
     } catch {
       setContactMessage('Failed to submit enquiry. Please try again.');
       setContactMessageType('error');
@@ -144,10 +173,40 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
     }
     setTourSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise(res => setTimeout(res, 1000));
-      setTourMessage('Tour request submitted successfully!');
-      setTourMessageType('success');
+      // Prepare tour type as comma-separated string
+      const tourTypes = [
+        tourForm.siteVisit ? 'siteVisit' : null,
+        tourForm.videoChat ? 'videoChat' : null,
+      ].filter(Boolean).join(', ');
+      // Convert to Postgres array literal if not empty
+      const tourTypeArray = tourTypes
+        ? `{${tourTypes.split(',').map(type => `"${type.trim()}"`).join(',')}}`
+        : '{}';
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: tourForm.name,
+          email: tourForm.email,
+          phone: tourForm.phone,
+          message: 'Tour request',
+          inquiry_type: 'tour',
+          property_id: property.id,
+          property_name: property.title,
+          property_location: property.location,
+          tour_date: tourForm.date,
+          tour_time: tourForm.time,
+          tour_type: tourTypeArray,
+        }),
+      });
+      const data = await res.json();
+      console.log('Tour API response:', data, 'Status:', res.status);
+      if (!res.ok) {
+        setTourMessage(data.error || data.details || 'Failed to submit tour request. Please try again.');
+        setTourMessageType('error');
+      } else {
+        setTourMessage('Tour request submitted successfully!');
+        setTourMessageType('success');
         setTourForm({
           name: '',
           email: '',
@@ -157,6 +216,7 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
           siteVisit: false,
           videoChat: false,
         });
+      }
     } catch {
       setTourMessage('Failed to submit tour request. Please try again.');
       setTourMessageType('error');

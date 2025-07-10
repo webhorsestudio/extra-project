@@ -158,18 +158,18 @@ function GalleryModal({ images, open, initialIndex, onClose, property }: { image
         </div>
         {/* Main Image */}
         <div className="flex items-center justify-center w-full h-full min-h-[60vh]">
-          <div className="bg-white rounded-2xl p-2 md:p-4 shadow-xl max-w-[90vw] max-h-[80vh] flex items-center justify-center">
+          <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 flex items-center justify-center max-w-4xl w-full h-[70vh] overflow-hidden">
             {images[current] ? (
               <Image
                 src={images[current]}
                 alt={`Gallery ${current + 1}`}
-                className="object-contain max-h-[70vh] max-w-full rounded-xl"
+                className="object-contain w-full h-full rounded-2xl drop-shadow-lg"
                 fill
                 style={{ objectFit: 'contain' }}
                 draggable={false}
               />
             ) : (
-              <BlankImagePlaceholder className="w-[60vw] h-[40vh]" />
+              <BlankImagePlaceholder className="w-full h-full" />
             )}
           </div>
         </div>
