@@ -37,7 +37,7 @@ export default function BlogCard({ blog }: BlogCardProps) {
 
   return (
     <Link href={`/m/blogs/${blog.id}`} className="block group focus:outline-none">
-      <div className="bg-white/90 backdrop-blur-md border-gray-200/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-300 flex flex-col h-[420px]">
+      <div className="bg-white/90 backdrop-blur-md border-gray-200/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-300 flex flex-col h-full">
         <div className="relative h-40 w-full overflow-hidden">
           <Image
             src={imageError || !blog.featured_image ? '/placeholder.svg' : blog.featured_image}

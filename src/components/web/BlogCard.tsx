@@ -34,7 +34,7 @@ export default function BlogCard({ blog }: BlogCardProps) {
 
   return (
     <Link href={`/web/blogs/${blog.id}`} className="group">
-      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 h-[420px] flex flex-col bg-white border-gray-200 hover:border-blue-200">
+      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-white border-gray-200 hover:border-blue-200">
         <CardHeader className="p-0 relative">
           <div className="relative h-36 sm:h-40 w-full overflow-hidden">
             <Image
