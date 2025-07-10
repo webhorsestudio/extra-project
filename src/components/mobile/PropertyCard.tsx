@@ -259,7 +259,7 @@ const PropertyImageCarousel = ({ images }: { images?: { image_url: string }[] })
 
 // Title Row
 const TitleRow = ({ title }: { title: string }) => (
-  <div className="h-12 flex items-start">
+  <div className="min-h-[3rem] flex items-start">
     <h3 className="text-base font-semibold text-gray-900 line-clamp-2 leading-tight">{title}</h3>
   </div>
 );
@@ -279,12 +279,12 @@ const PriceLocationRow = ({ price, locationData }: { price?: number; locationDat
   };
 
   return (
-    <div className="flex items-center justify-between mt-3 h-8">
-      <div className="flex items-center gap-1">
-        <span className="text-gray-400 text-base">Starts At</span>
-        <span className="text-black text-lg font-bold">{price ? formatPrice(price) : 'Price on request'}</span>
+    <div className="flex items-center justify-between mt-3 min-h-[2rem]">
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <span className="text-gray-400 text-sm">Starts At</span>
+        <span className="text-black text-base font-bold truncate">{price ? formatPrice(price) : 'Price on request'}</span>
       </div>
-      <span className="text-gray-600 text-sm line-clamp-1">{locationData?.name || ''}</span>
+      <span className="text-gray-600 text-sm truncate ml-2 flex-shrink-0">{locationData?.name || ''}</span>
     </div>
   );
 };
@@ -321,18 +321,18 @@ const AmenitiesRow = ({ property }: { property: Property }) => {
   const readyBy = property.property_configurations?.[0]?.ready_by;
 
   return (
-    <div className="flex items-center justify-between mt-4 text-sm text-gray-700 h-6">
-      <div className="flex items-center gap-1">
-        <Bed className="h-5 w-5 mr-1 text-blue-700" />
-        {beds} Beds
+    <div className="flex items-center justify-between mt-4 text-sm text-gray-700 min-h-[1.5rem]">
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <Bed className="h-4 w-4 mr-1 text-blue-700 flex-shrink-0" />
+        <span className="truncate">{beds} Beds</span>
       </div>
-      <div className="flex items-center gap-1">
-        <Ruler className="h-5 w-5 mr-1 text-blue-700" />
-        {area}
+      <div className="flex items-center gap-1 flex-1 min-w-0 mx-2">
+        <Ruler className="h-4 w-4 mr-1 text-blue-700 flex-shrink-0" />
+        <span className="truncate">{area}</span>
       </div>
-      <div className="flex items-center gap-1">
-        <Calendar className="h-5 w-5 mr-1 text-blue-700" />
-        {formatReadyByDate(readyBy)}
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <Calendar className="h-4 w-4 mr-1 text-blue-700 flex-shrink-0" />
+        <span className="truncate">{formatReadyByDate(readyBy)}</span>
       </div>
     </div>
   );
@@ -345,7 +345,7 @@ interface PropertyCardContentProps {
 }
 const PropertyCardContent = ({ property, contentMargin = "mt-8" }: PropertyCardContentProps) => {
   return (
-    <div className={`p-4 pb-5 flex flex-col ${contentMargin} h-32`}>
+    <div className={`p-4 pb-5 flex flex-col ${contentMargin} min-h-[8rem]`}>
       <TitleRow title={property.title} />
       <div className="mt-3">
         <PriceLocationRow price={property.price} locationData={property.location_data} />
@@ -444,7 +444,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 
   return (
     <div 
-      className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-[1.01] flex flex-col h-80"
+      className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-[1.01] flex flex-col min-h-[20rem]"
       onClick={handleCardClick}
     >
       <div className="h-48 sm:h-56">
