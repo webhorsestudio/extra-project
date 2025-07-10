@@ -122,7 +122,7 @@ export default function PropertyCarousel({ properties, title, titleAlign = 'none
             style={{ scrollbarWidth: 'auto', msOverflowStyle: 'auto' }}
           >
             {properties.map((property) => (
-              <div key={property.id} className="flex-shrink-0 w-80">
+              <div key={property.id} className="flex-shrink-0 w-[75vw] max-w-xs sm:w-80">
                 <PropertyCardV2 property={property} />
               </div>
             ))}

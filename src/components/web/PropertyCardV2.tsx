@@ -447,7 +447,7 @@ const PropertyCardV2: React.FC<PropertyCardV2Props> = ({
 
   return (
     <Card 
-      className="w-full min-h-[380px] rounded-lg overflow-hidden shadow-lg border border-gray-200 p-0 cursor-pointer hover:shadow-xl transition-shadow duration-300 flex flex-col"
+      className="w-full h-[420px] rounded-lg overflow-hidden shadow-lg border border-gray-200 p-0 cursor-pointer hover:shadow-xl transition-shadow duration-300 flex flex-col"
       onClick={handleCardClick}
     >
       <div className="h-40">

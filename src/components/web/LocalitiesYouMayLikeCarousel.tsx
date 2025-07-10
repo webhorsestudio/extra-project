@@ -78,8 +78,8 @@ export default function ClientLocalitiesCarousel({ locations }: Props) {
         {locations.map((loc) => (
           <Link
             key={loc.id}
-                            href={`/properties?location=${loc.id}&locationName=${encodeURIComponent(loc.name)}`}
-            className="flex flex-col items-start bg-white rounded-2xl px-7 py-6 min-w-[220px] max-w-[240px] shadow border border-gray-100 hover:shadow-xl hover:border-blue-400 transition-shadow duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+            href={`/properties?location=${loc.id}&locationName=${encodeURIComponent(loc.name)}`}
+            className="flex flex-col items-start bg-white rounded-2xl px-7 py-6 w-[40vw] max-w-[240px] h-[420px] shadow border border-gray-100 hover:shadow-xl hover:border-blue-400 transition-shadow duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <div className="flex items-center gap-2 mb-1 text-gray-700">
               <Building2 className="h-5 w-5 text-blue-700" />

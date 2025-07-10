@@ -132,7 +132,7 @@ export default function BlogCarousel({ blogs, title, titleAlign = 'none' }: Blog
               style={{ scrollbarWidth: 'auto', msOverflowStyle: 'auto' }}
             >
               {blogs.map((blog) => (
-                <div key={blog.id} className="flex-shrink-0 w-72 sm:w-80">
+                <div key={blog.id} className="flex-shrink-0 w-[75vw] max-w-xs sm:w-80">
                   <BlogCard blog={blog} />
                 </div>
               ))}
@@ -164,7 +164,7 @@ export default function BlogCarousel({ blogs, title, titleAlign = 'none' }: Blog
             style={{ scrollbarWidth: 'auto', msOverflowStyle: 'auto' }}
           >
             {blogs.map((blog) => (
-              <div key={blog.id} className="flex-shrink-0 w-72 sm:w-80">
+              <div key={blog.id} className="flex-shrink-0 w-[75vw] max-w-xs sm:w-80">
                 <BlogCard blog={blog} />
               </div>
             ))}
