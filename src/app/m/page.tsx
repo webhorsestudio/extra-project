@@ -187,7 +187,7 @@ export default function MobileHomePage() {
             <div className="relative">
               <div className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 pb-2 snap-x snap-mandatory">
                 {latestProperties.slice(0, 6).map((property: PropertyType) => (
-                  <div key={property.id} className="flex-shrink-0 w-96 snap-center">
+                  <div key={property.id} className="flex-shrink-0 w-[75vw] max-w-xs sm:w-[45vw] snap-center">
                     <PropertyCard property={property} />
                   </div>
                 ))}
@@ -221,7 +221,7 @@ export default function MobileHomePage() {
             <div className="relative">
               <div className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 pb-2 snap-x snap-mandatory">
                 {properties.slice(0, 6).map((property: PropertyType) => (
-                  <div key={property.id} className="flex-shrink-0 w-96 snap-center">
+                  <div key={property.id} className="flex-shrink-0 w-[75vw] max-w-xs sm:w-[45vw] snap-center">
                     <PropertyCard property={property} />
                   </div>
                 ))}
@@ -255,7 +255,7 @@ export default function MobileHomePage() {
             <div className="relative">
               <div className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 pb-2 snap-x snap-mandatory">
                 {newlyLaunchedProperties.slice(0, 6).map((property: PropertyType) => (
-                  <div key={property.id} className="flex-shrink-0 w-96 snap-center">
+                  <div key={property.id} className="flex-shrink-0 w-[75vw] max-w-xs sm:w-[45vw] snap-center">
                     <PropertyCard property={property} />
                   </div>
                 ))}

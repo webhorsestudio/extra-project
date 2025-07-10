@@ -229,7 +229,7 @@ const PropertyImageCarousel = ({ images }: { images?: { image_url: string }[] })
 
   if (!images || images.length === 0) {
     return (
-      <div className="w-full h-56 bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-2xl flex items-center justify-center">
+      <div className="w-full h-48 sm:h-56 bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-2xl flex items-center justify-center">
         <span className="text-gray-400 text-sm">No image</span>
       </div>
     );
@@ -240,7 +240,7 @@ const PropertyImageCarousel = ({ images }: { images?: { image_url: string }[] })
   const goNext = () => setCurrent(c => (c < total - 1 ? c + 1 : c));
 
   return (
-    <div className="relative w-full h-56 rounded-t-2xl overflow-hidden">
+    <div className="relative w-full h-48 sm:h-56 rounded-t-2xl overflow-hidden">
       <PropertyImageSlide src={images[current]?.image_url} alt="Property" />
       {total > 1 && (
         <>
@@ -454,7 +454,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-[1.01] flex flex-col"
       onClick={handleCardClick}
     >
-      <div className="h-56">
+      <div className="h-48 sm:h-56">
         <PropertyCardImageSection
           property={property}
           onShare={() => setShareOpen(true)}
