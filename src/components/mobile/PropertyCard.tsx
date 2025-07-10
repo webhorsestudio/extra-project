@@ -282,7 +282,7 @@ const PriceLocationRow = ({ price, locationData }: { price?: number; locationDat
     <div className="flex items-center justify-between mt-3 h-8">
       <div className="flex items-center gap-1">
         <span className="text-gray-400 text-base">Starts At</span>
-        <span className="text-black text-lg font-bold">{formatPrice(price)}</span>
+        <span className="text-black text-lg font-bold">{price ? formatPrice(price) : 'Price on request'}</span>
       </div>
       <span className="text-gray-600 text-sm line-clamp-1">{locationData?.name || ''}</span>
     </div>
