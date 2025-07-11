@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { Bell, Inbox, Clock, CheckCircle, AlertCircle, Info, Trash2, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, Inbox, Clock, CheckCircle, AlertCircle, Info, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useFooterVisible } from '@/components/mobile/FooterVisibleContext';
@@ -9,38 +9,31 @@ import type { NotificationData } from '@/lib/notifications-data-client';
 
 interface MobileNotificationsContentProps {
   initialNotifications: NotificationData[] | null;
+  error: string | null;
 }
 
-export default function MobileNotificationsContent({ initialNotifications }: MobileNotificationsContentProps) {
+export default function MobileNotificationsContent({ 
+  initialNotifications, 
+  error 
+}: MobileNotificationsContentProps) {
   const [notifications, setNotifications] = useState<NotificationData[]>(initialNotifications ?? []);
   const [showRead, setShowRead] = useState(true);
-  const [loading, setLoading] = useState(!initialNotifications);
+  const [actionLoading, setActionLoading] = useState(false);
   const footerVisible = useFooterVisible();
 
-  useEffect(() => {
-    if (!initialNotifications) {
-      setLoading(true);
-      fetch('/api/notifications')
-        .then(res => res.json())
-        .then(data => {
-          setNotifications(data.notifications || []);
-          setLoading(false);
-        });
-    }
-  }, [initialNotifications]);
-
-  if (initialNotifications === null) {
+  // Handle error state
+  if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center text-center px-6">
-        <div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-          <Bell className="h-10 w-10 text-gray-500" />
+        <div className="mx-auto w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-6">
+          <AlertCircle className="h-10 w-10 text-red-500" />
         </div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">Sign in to view notifications</h3>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Notifications</h3>
         <p className="text-gray-600 mb-6 max-w-md mx-auto">
-          Please log in to receive important updates and alerts.
+          {error}
         </p>
-        <Button size="lg" asChild>
-          <a href="/users/login">Sign In</a>
+        <Button size="lg" onClick={() => window.location.reload()}>
+          Try Again
         </Button>
         <FooterNav visible={footerVisible} isTablet={false} />
       </div>
@@ -76,20 +69,35 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
   // Mark as read (API call)
   const handleMarkAsRead = async (id: string) => {
     try {
-      await fetch(`/api/notifications/${id}`, {
+      setActionLoading(true);
+      const response = await fetch(`/api/notifications/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'read' }),
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to mark notification as read');
+      }
+      
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' } : n));
-    } catch {}
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // Mark all as read (API call)
   const handleMarkAllAsRead = async () => {
     try {
+      setActionLoading(true);
+      const unreadNotifications = notifications.filter(n => n.status === 'unread');
+      
+      if (unreadNotifications.length === 0) return;
+      
       await Promise.all(
-        notifications.filter(n => n.status === 'unread').map(n =>
+        unreadNotifications.map(n =>
           fetch(`/api/notifications/${n.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -97,29 +105,14 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
           })
         )
       );
+      
       setNotifications(prev => prev.map(n => ({ ...n, status: 'read' })));
-    } catch {}
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    } finally {
+      setActionLoading(false);
+    }
   };
-
-  // Delete all notifications (API call)
-  const handleDeleteAll = async () => {
-    try {
-      await Promise.all(
-        notifications.map(n =>
-          fetch(`/api/notifications/${n.id}`, { method: 'DELETE' })
-        )
-      );
-      setNotifications([]);
-    } catch {}
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-gray-50">
@@ -163,19 +156,10 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
               variant="outline"
               size="sm"
               onClick={handleMarkAllAsRead}
-              disabled={unreadCount === 0}
+              disabled={unreadCount === 0 || actionLoading}
             >
               <Check className="w-4 h-4 mr-1" />
               Mark all read
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleDeleteAll}
-              disabled={notifications.length === 0}
-            >
-              <Trash2 className="w-4 h-4 mr-1" />
-              Delete all
             </Button>
           </div>
         </div>
@@ -190,7 +174,7 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No notifications</h3>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              You have no notifications at the moment.
+              {showRead ? 'You have no notifications at the moment.' : 'You have no unread notifications.'}
             </p>
           </div>
         ) : (
@@ -201,7 +185,7 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
                 className={`flex items-start gap-3 p-4 rounded-xl shadow-sm border bg-white ${
                   n.status === 'unread' ? 'border-blue-400' : 'border-gray-200'
                 }`}
-                onClick={() => handleMarkAsRead(n.id)}
+                onClick={() => !actionLoading && handleMarkAsRead(n.id)}
                 role="button"
                 tabIndex={0}
               >
@@ -231,6 +215,8 @@ export default function MobileNotificationsContent({ initialNotifications }: Mob
           </div>
         )}
       </div>
+      
+      <FooterNav visible={footerVisible} isTablet={false} />
     </div>
   );
 } 

@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { createSupabaseClient } from '@/lib/supabaseClient'
 
 export interface FAQData {
   id: string
@@ -27,9 +27,7 @@ export interface FAQCategoryData {
 
 export async function getFAQsData(category?: string): Promise<FAQData[]> {
   try {
-    const supabase = await createSupabaseServerClient()
-    
-
+    const supabase = createSupabaseClient()
     
     // Build the query - only published FAQs
     let query = supabase
@@ -69,7 +67,7 @@ export async function getFAQsData(category?: string): Promise<FAQData[]> {
 
 export async function getFAQCategoriesData(): Promise<FAQCategoryData[]> {
   try {
-    const supabase = await createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     
     // Get categories with published FAQ count
     const { data: categories, error } = await supabase
