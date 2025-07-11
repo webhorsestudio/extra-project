@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     }
     
     console.log('Mobile locations API: Executing query')
-    const { data, error } = await query.order('name', { ascending: true })
+    const { data, error } = await query.order('name', { ascending: true }).limit(5)
     
     if (error) {
       console.error('Error fetching mobile locations:', error)
@@ -65,7 +65,8 @@ export async function GET(req: NextRequest) {
     // Return mobile-optimized location data
     return NextResponse.json({
       locations: locationsWithCount,
-      total: locationsWithCount.length
+      total: locationsWithCount.length,
+      hasMore: locationsWithCount.length === 5 // If we got exactly 5, there might be more
     })
   } catch (error) {
     console.error('Unexpected error in mobile locations API:', error)

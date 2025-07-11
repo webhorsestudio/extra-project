@@ -2,7 +2,7 @@
 
 import ModalHeader from './ModalHeader';
 import SearchBar from './SearchBar';
-// import LocationGrid from './LocationGrid';
+import LocationGrid from './LocationGrid';
 import FilterRow from './FilterRow';
 import ExploreButton from './ExploreButton';
 import { useState, useEffect } from 'react';
@@ -30,7 +30,7 @@ export default function MobileFilterModal({
   city?: string;
 }) {
   const [activeDropdown, setActiveDropdown] = useState<null | 'location' | 'configuration' | 'budget'>('location');
-  const [selectedLocation] = useState<string | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [configurationData, setConfigurationData] = useState<{ bhkOptions: number[] }>({ bhkOptions: [0, 2, 3, 4, 5, 6] });
   const [selectedBedroom, setSelectedBedroom] = useState<string>('Any');
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
@@ -40,6 +40,10 @@ export default function MobileFilterModal({
 
   // Location API state
   const [locations, setLocations] = useState<MobileLocationData[]>([]);
+  const [filteredLocations, setFilteredLocations] = useState<MobileLocationData[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [locationsLoading, setLocationsLoading] = useState(false);
+  const [hasMoreLocations, setHasMoreLocations] = useState(false);
 
   const router = useRouter();
 
@@ -73,15 +77,59 @@ export default function MobileFilterModal({
 
   const fetchLocations = async () => {
     try {
+      setLocationsLoading(true);
       const response = await fetch('/api/mobile/locations');
       if (!response.ok) {
         throw new Error('Failed to fetch locations');
       }
       const data = await response.json();
-      setLocations(data.locations || []);
-    } catch {
+      const locationsData = data.locations || [];
+      setLocations(locationsData);
+      setFilteredLocations(locationsData);
+      setHasMoreLocations(data.hasMore || false);
+    } catch (error) {
+      console.error('Error fetching locations:', error);
       setLocations([]);
+      setFilteredLocations([]);
+    } finally {
+      setLocationsLoading(false);
     }
+  };
+
+  // Filter locations based on search query
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredLocations(locations);
+    } else {
+      const filtered = locations.filter(location =>
+        location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (location.description && location.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+      setFilteredLocations(filtered);
+    }
+  }, [searchQuery, locations]);
+
+  // Handle location selection
+  const handleLocationSelect = (locationId: string) => {
+    setSelectedLocation(locationId);
+    setActiveDropdown('configuration'); // Move to next step
+  };
+
+  // Handle search
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  // Clear all filters
+  const handleClearAll = () => {
+    setSelectedLocation(null);
+    setSelectedBedroom('Any');
+    if (budgetData) {
+      setBudgetRange([budgetData.minPrice, budgetData.maxPrice]);
+      setMinBudgetInput(budgetData.minPrice.toString());
+      setMaxBudgetInput(budgetData.maxPrice.toString());
+    }
+    setSearchQuery('');
   };
 
   // --- Configuration (Bedrooms) ---
@@ -120,12 +168,31 @@ export default function MobileFilterModal({
   // --- Explore Button Handler ---
   const handleExplore = () => {
     const params = new URLSearchParams();
-    if (selectedLocation) params.append('location', selectedLocation);
-    if (selectedBedroom && selectedBedroom !== 'Any') params.append('bedrooms', selectedBedroom);
-    if (budgetData) {
-      if (budgetRange[0] > budgetData.minPrice) params.append('min_price', budgetRange[0].toString());
-      if (budgetRange[1] < budgetData.maxPrice) params.append('max_price', budgetRange[1].toString());
+    
+    // Add location filter
+    if (selectedLocation) {
+      const selectedLocationData = locations.find(l => l.id === selectedLocation);
+      if (selectedLocationData) {
+        params.append('location', selectedLocation);
+        params.append('locationName', encodeURIComponent(selectedLocationData.name));
+      }
     }
+    
+    // Add bedroom filter
+    if (selectedBedroom && selectedBedroom !== 'Any') {
+      params.append('bedrooms', selectedBedroom);
+    }
+    
+    // Add budget filters
+    if (budgetData) {
+      if (budgetRange[0] > budgetData.minPrice) {
+        params.append('min_price', budgetRange[0].toString());
+      }
+      if (budgetRange[1] < budgetData.maxPrice) {
+        params.append('max_price', budgetRange[1].toString());
+      }
+    }
+    
     onClose();
     router.push(`/m/properties?${params.toString()}`);
   };
@@ -148,14 +215,15 @@ export default function MobileFilterModal({
               <div className="mt-2 space-y-3 px-2 pb-3 transition-all duration-200">
                 <SearchBar 
                   placeholder="Search for Locations / Developers / Projects" 
-                  onSearch={() => {}} // Placeholder since searchQuery is not used
+                  onSearch={handleSearch}
                 />
-                {/* <LocationGrid
+                <LocationGrid
                   locations={filteredLocations}
                   selected={selectedLocation}
                   onSelect={handleLocationSelect}
                   loading={locationsLoading}
-                /> */}
+                  hasMore={hasMoreLocations}
+                />
               </div>
             )}
           </div>
@@ -258,7 +326,18 @@ export default function MobileFilterModal({
           </div>
         </div>
         <div className="p-4 bg-white border-t border-gray-100 sticky bottom-0 left-0 right-0 z-10">
-          <ExploreButton onClick={handleExplore} />
+          <div className="flex gap-3">
+            <button
+              onClick={handleClearAll}
+              className="flex-1 px-4 py-4 rounded-2xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+              type="button"
+            >
+              Clear All
+            </button>
+            <div className="flex-1">
+              <ExploreButton onClick={handleExplore} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
