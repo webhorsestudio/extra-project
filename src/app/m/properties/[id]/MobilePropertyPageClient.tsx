@@ -26,6 +26,9 @@ export default function MobilePropertyPageClient({
   const router = useRouter();
   const [enquiryModalOpen, setEnquiryModalOpen] = useState<'contact' | 'tour' | null>(null);
 
+  // Memoize the property object to prevent unnecessary re-renders
+  const memoizedProperty = React.useMemo(() => property, [property.id, property.title, property.location]);
+
   const handleBack = () => {
     router.push('/m/properties');
   };
@@ -34,10 +37,10 @@ export default function MobilePropertyPageClient({
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* Hero Section with Gallery and Info Card */}
       <div className="relative">
-        <MobilePropertyHeroGallery property={property} onBack={handleBack} />
+        <MobilePropertyHeroGallery property={memoizedProperty} onBack={handleBack} />
         <div className="relative -mt-8 z-10">
           <MobilePropertyInfoCard 
-            property={property} 
+            property={memoizedProperty} 
           />
         </div>
       </div>
@@ -45,36 +48,36 @@ export default function MobilePropertyPageClient({
       {/* Main Content */}
       <div className="py-6">
         {/* Key Highlights */}
-        {property.description && (
+        {memoizedProperty.description && (
           <section id="key-highlights" className="mb-6">
-            <MobilePropertyDescription property={property} />
+            <MobilePropertyDescription property={memoizedProperty} />
           </section>
         )}
 
         {/* Listed By Section */}
         <section id="listed-by" className="mb-6">
-          <MobileListingBySection property={property} />
+          <MobileListingBySection property={memoizedProperty} />
         </section>
 
         {/* Available Configurations */}
         <section id="configurations" className="mb-6">
-          <MobilePropertyConfigurations property={property} />
+          <MobilePropertyConfigurations property={memoizedProperty} />
         </section>
 
         {/* Location Map */}
-        {(property.latitude && property.longitude) ? (
+        {(memoizedProperty.latitude && memoizedProperty.longitude) ? (
           <section id="location" className="mb-6">
-            <MobilePropertyLocationMap property={property} />
+            <MobilePropertyLocationMap property={memoizedProperty} />
           </section>
-        ) : property.location_data?.name ? (
+        ) : memoizedProperty.location_data?.name ? (
           <section id="location" className="mb-6">
-            <MobilePropertyLocationMap property={property} locationName={property.location_data.name} />
+            <MobilePropertyLocationMap property={memoizedProperty} locationName={memoizedProperty.location_data.name} />
           </section>
         ) : null}
 
         {/* Property Features */}
         <section id="features" className="mb-6">
-          <MobilePropertyFeatures property={property} />
+          <MobilePropertyFeatures property={memoizedProperty} />
         </section>
 
         {/* Similar Properties */}
@@ -87,9 +90,10 @@ export default function MobilePropertyPageClient({
 
       </div>
       <MobileEnquiryModal
+        key={`${memoizedProperty.id}-${enquiryModalOpen}`}
         open={enquiryModalOpen !== null}
         type={enquiryModalOpen || 'contact'}
-        property={property}
+        property={memoizedProperty}
         onClose={() => setEnquiryModalOpen(null)}
       />
       <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t border-gray-200 flex gap-2 px-4 py-3 shadow-lg">

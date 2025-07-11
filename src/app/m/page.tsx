@@ -292,10 +292,10 @@ export default function MobileHomePage() {
                   <a
                     key={loc.id}
                     href={`/m/properties?location=${loc.id}&locationName=${encodeURIComponent(loc.name)}`}
-                    className="flex flex-col items-start bg-white rounded-2xl px-6 py-5 w-[40vw] max-w-[220px] sm:w-[20vw] shadow border border-gray-100 hover:shadow-xl hover:border-blue-400 transition-shadow duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 snap-center"
+                    className="flex flex-col items-start bg-white rounded-2xl px-6 py-5 w-[45vw] max-w-[220px] sm:w-[20vw] shadow border border-gray-100 hover:shadow-xl hover:border-blue-400 transition-shadow duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 snap-center"
                   >
                     {loc.image_url ? (
-                      <div className="relative w-full h-24 mb-3">
+                      <div className="relative w-full h-20 mb-3">
                         <Image 
                           src={loc.image_url} 
                           alt={loc.name} 
@@ -304,15 +304,15 @@ export default function MobileHomePage() {
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-24 bg-gray-100 rounded-xl mb-3 flex items-center justify-center text-gray-400">
+                      <div className="w-full h-20 bg-gray-100 rounded-xl mb-3 flex items-center justify-center text-gray-400">
                         <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 20V10a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v10M12 4v6m0 0-2-2m2 2 2-2"/></svg>
                       </div>
                     )}
                     <div className="flex items-center gap-2 mb-1 text-gray-700">
-                      <span className="font-semibold text-lg text-gray-900">{loc.property_count} {loc.property_count === 1 ? 'property' : 'properties'}</span>
+                      <span className="font-semibold text-sm text-gray-900 truncate">{loc.property_count} {loc.property_count === 1 ? 'property' : 'properties'}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2 text-gray-600">
-                      <span className="font-medium text-base">{loc.name}</span>
+                      <span className="font-medium text-sm truncate">{loc.name}</span>
                     </div>
                   </a>
                 ))}

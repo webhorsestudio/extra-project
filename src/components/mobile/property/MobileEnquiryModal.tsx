@@ -11,53 +11,17 @@ interface MobileEnquiryModalProps {
 }
 
 export default function MobileEnquiryModal({ open, type, property, onClose }: MobileEnquiryModalProps) {
-  // Contact form state
-  const configOptions = property.property_configurations?.map(config => `${config.bhk}BHK`) || ['3BHK', '4BHK'];
-  const configState = configOptions.reduce((acc, config) => {
-    acc[config] = false;
-    return acc;
-  }, {} as Record<string, boolean>);
-
-  // Reset form state when modal opens with different type
-  React.useEffect(() => {
-    if (open) {
-      // Reset forms when modal opens
-      setContactForm({
-        name: '',
-        email: '',
-        phone: '',
-        config: configState,
-        message: '',
-      });
-      setTourForm({
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        time: '',
-        siteVisit: false,
-        videoChat: false,
-      });
-      setContactMessage('');
-      setContactMessageType('');
-      setTourMessage('');
-      setTourMessageType('');
-      setTourValidationErrors([]);
-      setDateOffset(0);
-    }
-  }, [open, type, configState]);
+  // Simplified state management
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
     phone: '',
-    config: configState,
     message: '',
   });
   const [contactSubmitting, setContactSubmitting] = useState(false);
   const [contactMessage, setContactMessage] = useState('');
   const [contactMessageType, setContactMessageType] = useState<'success' | 'error' | ''>('');
 
-  // Tour form state
   const [tourForm, setTourForm] = useState({
     name: '',
     email: '',
@@ -73,11 +37,11 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
   const [tourValidationErrors, setTourValidationErrors] = useState<string[]>([]);
   const [dateOffset, setDateOffset] = useState(0);
 
-  // Generate dates for navigation (14 days starting from tomorrow)
-  const generateDates = (offset: number = 0) => {
+  // Memoized values
+  const dates = React.useMemo(() => {
     const dates = [];
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() + 1 + offset);
+    startDate.setDate(startDate.getDate() + 1 + dateOffset);
     for (let i = 0; i < 14; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
@@ -85,23 +49,14 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
         day: date.toLocaleDateString('en-US', { weekday: 'short' }),
         date: date.getDate().toString(),
         fullDate: date.toISOString().split('T')[0],
-        isToday: i === 0 && offset === 0,
+        isToday: i === 0 && dateOffset === 0,
         isWeekend: date.getDay() === 0 || date.getDay() === 6,
       });
     }
     return dates;
-  };
-  const dates = generateDates(dateOffset);
-  const handleDateNavigation = (direction: 'prev' | 'next') => {
-    if (direction === 'prev' && dateOffset > 0) {
-      setDateOffset(prev => prev - 7);
-    } else if (direction === 'next') {
-      setDateOffset(prev => prev + 7);
-    }
-  };
+  }, [dateOffset]);
 
-  // Time slots
-  const timeSlots = [
+  const timeSlots = React.useMemo(() => [
     { value: '09:00 AM', label: '9:00 AM' },
     { value: '10:00 AM', label: '10:00 AM' },
     { value: '11:00 AM', label: '11:00 AM' },
@@ -113,40 +68,45 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
     { value: '05:00 PM', label: '5:00 PM' },
     { value: '06:00 PM', label: '6:00 PM' },
     { value: '07:00 PM', label: '7:00 PM' },
-  ];
+  ], []);
 
-  // Handlers for contact form
-  const handleContactChange = (field: string, value: string | boolean | Record<string, boolean>) => {
-    if (field === 'config') {
-      setContactForm((prev) => ({
-        ...prev,
-        config: { ...prev.config, ...value as Record<string, boolean> },
-      }));
-    } else {
-      setContactForm((prev) => ({ ...prev, [field]: value }));
+  // Reset form when modal opens
+  React.useEffect(() => {
+    if (open) {
+      setContactForm({ name: '', email: '', phone: '', message: '' });
+      setTourForm({ name: '', email: '', phone: '', date: '', time: '', siteVisit: false, videoChat: false });
+      setContactMessage('');
+      setContactMessageType('');
+      setTourMessage('');
+      setTourMessageType('');
+      setTourValidationErrors([]);
+      setDateOffset(0);
+    }
+  }, [open]);
+
+  const handleDateNavigation = (direction: 'prev' | 'next') => {
+    if (direction === 'prev' && dateOffset > 0) {
+      setDateOffset(prev => prev - 7);
+    } else if (direction === 'next') {
+      setDateOffset(prev => prev + 7);
     }
   };
+
+  const handleContactChange = (field: string, value: string) => {
+    setContactForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setContactSubmitting(true);
     setContactMessage('');
     setContactMessageType('');
     try {
-      // Simulate API call
       await new Promise(res => setTimeout(res, 1000));
       setContactMessage('Enquiry submitted successfully!');
       setContactMessageType('success');
-      setContactForm({
-        name: '',
-        email: '',
-        phone: '',
-        config: configState,
-        message: '',
-      });
-      // Close modal after successful submission
-      setTimeout(() => {
-        onClose();
-      }, 1500);
+      setContactForm({ name: '', email: '', phone: '', message: '' });
+      setTimeout(() => onClose(), 1500);
     } catch {
       setContactMessage('Failed to submit enquiry. Please try again.');
       setContactMessageType('error');
@@ -155,46 +115,36 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
     }
   };
 
-  // Handlers for tour form
   const handleTourChange = (field: string, value: string | boolean) => {
     setTourForm((prev) => ({ ...prev, [field]: value }));
     if (tourValidationErrors.length > 0) setTourValidationErrors([]);
   };
+
   const handleTourSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTourMessage('');
     setTourMessageType('');
     setTourValidationErrors([]);
-    // Validate
+    
     const errors: string[] = [];
     if (!tourForm.name?.trim()) errors.push('Please enter your name');
     if (!tourForm.email?.trim()) errors.push('Please enter your email address');
     if (!tourForm.date) errors.push('Please select a date for your tour');
     if (!tourForm.time) errors.push('Please select a time for your tour');
     if (!tourForm.siteVisit && !tourForm.videoChat) errors.push('Please select at least one tour type');
+    
     if (errors.length > 0) {
       setTourValidationErrors(errors);
       return;
     }
+    
     setTourSubmitting(true);
     try {
-      // Simulate API call
       await new Promise(res => setTimeout(res, 1000));
       setTourMessage('Tour request submitted successfully!');
       setTourMessageType('success');
-      setTourForm({
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        time: '',
-        siteVisit: false,
-        videoChat: false,
-      });
-      // Close modal after successful submission
-      setTimeout(() => {
-        onClose();
-      }, 1500);
+      setTourForm({ name: '', email: '', phone: '', date: '', time: '', siteVisit: false, videoChat: false });
+      setTimeout(() => onClose(), 1500);
     } catch {
       setTourMessage('Failed to submit tour request. Please try again.');
       setTourMessageType('error');
@@ -204,7 +154,7 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
   };
 
   return (
-    <Dialog open={open} onOpenChange={v => { if (!v) onClose(); }}>
+    <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-sm w-[95vw] max-h-[90vh] rounded-2xl p-0 bg-white border border-gray-200 overflow-hidden flex flex-col">
         <DialogTitle className="sr-only">
           {type === 'contact' ? 'Contact Form' : 'Tour Request Form'}
@@ -246,24 +196,6 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
                 onChange={e => handleContactChange('phone', e.target.value)}
                 required
               />
-              {configOptions.length > 0 && (
-                <div>
-                  <div className="font-medium mb-2">Configuration (select 1 or more)</div>
-                  <div className="flex flex-wrap gap-4 mb-2">
-                    {configOptions.map((config) => (
-                      <label key={config} className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={contactForm.config[config]}
-                          onChange={e => handleContactChange('config', { [config]: e.target.checked })}
-                          className="w-5 h-5 rounded border-gray-300 focus:ring-[#0A1736]"
-                        />
-                        {config}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
               <textarea
                 placeholder={`I'm interested in learning more about ${property.title} in ${property.location_data?.name || property.location}.`}
                 className="w-full rounded-xl border border-gray-200 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#0A1736] resize-none"
@@ -321,7 +253,7 @@ export default function MobileEnquiryModal({ open, type, property, onClose }: Mo
                 value={tourForm.phone}
                 onChange={e => handleTourChange('phone', e.target.value)}
               />
-              {/* Date Selector with Navigation */}
+              {/* Date Selector */}
               <div className="space-y-2">
                 <div className="text-sm font-medium text-gray-700">Select Date</div>
                 <div className="flex items-center gap-1 justify-center">

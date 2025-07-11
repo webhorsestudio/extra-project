@@ -85,8 +85,9 @@ function MobileGalleryModal({ images, open, initialIndex, onClose, property }: {
               <Image
                 src={images[current]}
                 alt={`Gallery ${current + 1}`}
+                width={800}
+                height={600}
                 className="object-contain max-h-[60vh] max-w-full rounded-lg"
-                fill
                 style={{ objectFit: 'contain' }}
                 draggable={false}
               />
@@ -155,6 +156,8 @@ export default function MobilePropertyHeroGallery({ property, onBack }: MobilePr
           <Image
             src={images[current]}
             alt={property.title}
+            width={800}
+            height={600}
             className="w-full h-full object-cover cursor-pointer"
             draggable={false}
             style={{ borderBottomLeftRadius: '1.5rem', borderBottomRightRadius: '1.5rem' }}
