@@ -1,20 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Property } from '@/types/property';
 import { MapPin, Bed, Ruler, Calendar } from 'lucide-react';
+import MobileEmiCalculatorModal from './MobileEmiCalculatorModal';
 
 interface MobilePropertyInfoCardProps {
   property: Property;
 }
 
 export default function MobilePropertyInfoCard({ property }: MobilePropertyInfoCardProps) {
+  const [emiModalOpen, setEmiModalOpen] = useState(false);
+  
   const firstConfig = property.property_configurations?.[0];
   const price = firstConfig?.price ?? property.price;
   const beds = firstConfig?.bedrooms || firstConfig?.bhk || property.bedrooms;
   const area = firstConfig?.area || property.area;
   const status = property.property_collection || property.status;
   const location = property.location_data?.name || property.location;
+  
+  // Get ready_by date from first configuration
+  const readyBy = firstConfig?.ready_by;
 
   const formatCurrency = (amount: number | undefined) => {
     if (!amount) return "Contact for price";
@@ -28,8 +34,23 @@ export default function MobilePropertyInfoCard({ property }: MobilePropertyInfoC
     }).format(amount);
   };
 
-  // EMI calculation (dummy for now)
-  const emi = typeof price === 'number' ? `₹${Math.round((price * 0.009) / 100000) * 100000}` : null;
+  // Proper EMI calculation using the same logic as web
+  const calculateEMI = (price: number) => {
+    // Simple EMI calculation: 10% down payment, 8.5% interest rate, 20 years
+    const downPayment = price * 0.1;
+    const loanAmount = price - downPayment;
+    const monthlyRate = 0.085 / 12;
+    const totalMonths = 20 * 12;
+    
+    if (monthlyRate === 0) return loanAmount / totalMonths;
+    
+    const emi = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalMonths) / 
+                (Math.pow(1 + monthlyRate, totalMonths) - 1);
+    
+    return Math.round(emi);
+  };
+
+  const emiAmount = typeof price === 'number' && price > 0 ? calculateEMI(price) : 0;
 
   return (
     <div className="relative z-20 -mt-12 w-full flex justify-center">
@@ -44,19 +65,19 @@ export default function MobilePropertyInfoCard({ property }: MobilePropertyInfoC
       <div className="bg-white/70 backdrop-blur-md shadow-lg rounded-3xl w-full max-w-xl p-6 pt-7 pb-6 flex flex-col mx-1">
         {/* Price and Project Name */}
         <div className="mb-2">
-          <div className="text-2xl font-bold text-black leading-tight mb-1">
+          <div className="text-2xl font-bold text-black leading-tight mb-2">
             Starts At {formatCurrency(price)}
           </div>
-          <div className="text-lg font-semibold text-black leading-tight mb-2">
+          <div className="text-lg font-semibold text-black leading-tight mb-3">
             {property.title}
           </div>
-          <div className="flex items-center text-gray-700 text-sm mt-1 mb-1">
+          <div className="flex items-center text-gray-700 text-sm mt-1 mb-2">
             <MapPin className="w-4 h-4 mr-1 text-black/70" />
             <span>{location}</span>
           </div>
         </div>
         {/* Divider */}
-        <div className="border-b border-black/10 my-3" />
+        <div className="border-b border-black/10 my-2" />
         {/* Features Row */}
         <div className="flex items-center justify-between text-sm font-medium text-black mb-4">
           <div className="flex items-center gap-1">
@@ -69,19 +90,33 @@ export default function MobilePropertyInfoCard({ property }: MobilePropertyInfoC
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="w-5 h-5 mr-1 text-black/80" />
-            Ready
+            {readyBy ? new Date(readyBy).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long'
+            }) : 'Ready'}
           </div>
         </div>
         {/* EMI/Loan Info Row */}
         <div className="flex items-center gap-3 mt-2">
-          <div className="bg-black/80 backdrop-blur text-white font-bold rounded-full px-4 py-1.5 text-sm shadow-sm flex items-center" style={{ minHeight: '2.25rem' }}>
-            EMI starts at {emi || "Contact"}
-          </div>
+          <button 
+            onClick={() => setEmiModalOpen(true)}
+            className="bg-black/80 backdrop-blur text-white font-bold rounded-full px-4 py-1.5 text-sm shadow-sm flex items-center cursor-pointer hover:bg-black/90 transition-colors" 
+            style={{ minHeight: '2.25rem' }}
+          >
+            EMI starts at {emiAmount > 0 ? formatCurrency(emiAmount) : "Contact"}
+          </button>
           <div className="text-xs text-black/60 font-medium whitespace-nowrap ml-2">
             Exclusive Home Loan deals
           </div>
         </div>
       </div>
+      
+      {/* EMI Calculator Modal */}
+      <MobileEmiCalculatorModal 
+        open={emiModalOpen}
+        onClose={() => setEmiModalOpen(false)}
+        propertyPrice={typeof price === 'number' ? price : undefined}
+      />
     </div>
   );
 } 

@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { Property, BHKConfiguration } from "@/types/property";
-import { ChevronDown, Maximize2, ZoomIn, ZoomOut, Share2, X } from "lucide-react";
+import { ChevronDown, Maximize2, ZoomIn, ZoomOut, Share2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface MobilePropertyConfigurationsProps {
   property: Property;
@@ -227,72 +228,66 @@ export default function MobilePropertyConfigurations({ property }: MobilePropert
       </div>
 
       {/* Floor Plan Modal */}
-      {floorPlanModalOpen && floorPlanUrl && floorPlanUrl !== '' && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h3 className="text-lg font-bold text-black">Floor Plan</h3>
+      <Dialog open={floorPlanModalOpen} onOpenChange={setFloorPlanModalOpen}>
+        <DialogContent className="max-w-sm w-[95vw] max-h-[90vh] rounded-2xl p-0 bg-white border border-gray-200 overflow-hidden flex flex-col">
+          <DialogTitle className="sr-only">Floor Plan</DialogTitle>
+          
+          {/* Header */}
+          <div className="flex items-center justify-center px-4 py-3 border-b border-gray-100">
+            <h2 className="text-lg font-bold text-center">Floor Plan</h2>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 relative overflow-hidden">
+            {/* Zoom Controls */}
+            <div className="absolute top-2 right-2 flex gap-1 z-10">
               <button
-                onClick={() => setFloorPlanModalOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
+                onClick={handleZoomOut}
+                disabled={zoomLevel <= 0.5}
+                className="bg-white/90 hover:bg-white p-1.5 rounded-full shadow-sm disabled:opacity-50"
               >
-                <X className="w-5 h-5 text-black" />
+                <ZoomOut className="w-3 h-3 text-black" />
+              </button>
+              <button
+                onClick={handleZoomIn}
+                disabled={zoomLevel >= 3}
+                className="bg-white/90 hover:bg-white p-1.5 rounded-full shadow-sm disabled:opacity-50"
+              >
+                <ZoomIn className="w-3 h-3 text-black" />
+              </button>
+              <button
+                onClick={handleShare}
+                className="bg-white/90 hover:bg-white p-1.5 rounded-full shadow-sm"
+              >
+                <Share2 className="w-3 h-3 text-black" />
               </button>
             </div>
 
-            {/* Modal Content */}
-            <div className="flex-1 relative overflow-hidden">
-              <div className="absolute top-4 right-4 flex gap-2 z-10">
-                <button
-                  onClick={handleZoomOut}
-                  disabled={zoomLevel <= 0.5}
-                  className="bg-white/90 hover:bg-white p-2 rounded-full shadow-sm disabled:opacity-50"
-                >
-                  <ZoomOut className="w-4 h-4 text-black" />
-                </button>
-                <button
-                  onClick={handleZoomIn}
-                  disabled={zoomLevel >= 3}
-                  className="bg-white/90 hover:bg-white p-2 rounded-full shadow-sm disabled:opacity-50"
-                >
-                  <ZoomIn className="w-4 h-4 text-black" />
-                </button>
-                <button
-                  onClick={handleShare}
-                  className="bg-white/90 hover:bg-white p-2 rounded-full shadow-sm"
-                >
-                  <Share2 className="w-4 h-4 text-black" />
-                </button>
-              </div>
-
-              {/* Floor Plan Image Container with Scroll */}
-              <div className="w-full h-full overflow-auto">
-                <div 
-                  className="min-w-full min-h-full flex items-center justify-center"
+            {/* Floor Plan Image Container */}
+            <div className="w-full h-full overflow-auto">
+              <div 
+                className="w-full h-full flex items-center justify-center p-2"
+                style={{ 
+                  minWidth: `${zoomLevel * 100}%`,
+                  minHeight: `${zoomLevel * 100}%`
+                }}
+              >
+                <img
+                  src={floorPlanUrl}
+                  alt="Floor Plan"
+                  className="max-w-full max-h-full object-contain"
                   style={{ 
-                    minWidth: `${zoomLevel * 100}%`,
-                    minHeight: `${zoomLevel * 100}%`
+                    transform: `scale(${zoomLevel})`, 
+                    transformOrigin: 'center',
+                    cursor: zoomLevel > 1 ? 'grab' : 'default'
                   }}
-                >
-                  {/* Using <img> here for dynamic modal zoom and scroll support; Next.js <Image> is not suitable for this use case. */}
-                  <img
-                    src={floorPlanUrl}
-                    alt="Floor Plan"
-                    className="max-w-none"
-                    style={{ 
-                      transform: `scale(${zoomLevel})`, 
-                      transformOrigin: 'center',
-                      cursor: zoomLevel > 1 ? 'grab' : 'default'
-                    }}
-                    draggable={zoomLevel > 1}
-                  />
-                </div>
+                  draggable={zoomLevel > 1}
+                />
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 
