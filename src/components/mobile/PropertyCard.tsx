@@ -279,12 +279,23 @@ const PriceLocationRow = ({ price, locationData }: { price?: number; locationDat
   };
 
   return (
-    <div className="flex items-center justify-between mt-2 min-h-[1.75rem]">
-      <div className="flex items-center gap-1 flex-1 min-w-0">
-        <span className="text-gray-400 text-xs">Starts At</span>
-        <span className="text-black text-sm font-bold truncate">{price ? formatPrice(price) : 'Available on Request'}</span>
-      </div>
-      <span className="text-gray-600 text-xs truncate ml-2 flex-shrink-0 max-w-[40%]">{locationData?.name || ''}</span>
+    <div className="flex items-center justify-between mt-1 min-h-[1.75rem]">
+      {price ? (
+        <>
+          <div className="flex items-center gap-1 flex-1 min-w-0">
+            <span className="text-gray-400 text-xs">Starts At</span>
+            <span className="text-black text-sm font-bold truncate">{formatPrice(price)}</span>
+          </div>
+          <span className="text-gray-600 text-xs truncate ml-2 flex-shrink-0 max-w-[40%]">{locationData?.name || ''}</span>
+        </>
+      ) : (
+        <>
+          <div className="flex items-center gap-1 flex-1 min-w-0">
+            <span className="text-black text-sm font-bold truncate">Available on Request</span>
+          </div>
+          <span className="text-gray-600 text-xs truncate ml-2 flex-shrink-0 max-w-[40%]">{locationData?.name || ''}</span>
+        </>
+      )}
     </div>
   );
 };
@@ -347,7 +358,7 @@ const PropertyCardContent = ({ property, contentMargin = "mt-4" }: PropertyCardC
   return (
     <div className={`p-4 pb-5 flex flex-col ${contentMargin} min-h-[6rem]`}>
       <TitleRow title={property.title} />
-      <div className="mt-2">
+      <div className="mt-1">
         <PriceLocationRow price={property.price} locationData={property.location_data} />
       </div>
       <AmenitiesRow property={property} />
