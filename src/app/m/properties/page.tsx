@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/mobile/PropertyCard';
 import PropertyCardSkeleton from '@/components/mobile/PropertyCardSkeleton';
 import FloatingViewModeButtons from '@/components/mobile/FloatingViewModeButtons';
+import MobileMapView from '@/components/mobile/MobileMapView';
+import MapViewDrawer from '@/components/mobile/MapViewDrawer';
 import { useFooterVisible } from '@/components/mobile/FooterVisibleContext';
-// import MapViewDrawer from '@/components/mobile/MapViewDrawer';
 import MobileHeader from '@/components/mobile/Header';
 import type { Property } from '@/types/property';
 
@@ -16,22 +17,15 @@ const VIEW_MODES = {
   MAP: 'map',
 } as const;
 
-type ViewMode = typeof VIEW_MODES[keyof typeof VIEW_MODES];
+// type ViewMode = typeof VIEW_MODES[keyof typeof VIEW_MODES];
 
 interface ApiResponse {
   properties: Property[];
   count: number;
 }
 
-function MapViewPlaceholder() {
-  return (
-    <div className="flex items-center justify-center h-80 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-2xl mt-6">
-      <span className="text-blue-900 font-semibold text-lg">[Map View Placeholder]</span>
-    </div>
-  );
-}
-
 export default function MobilePropertiesPage() {
+  const router = useRouter();
   const footerVisible = useFooterVisible();
   const searchParams = useSearchParams();
   const [properties, setProperties] = useState<Property[]>([]);
@@ -39,8 +33,12 @@ export default function MobilePropertiesPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const [viewMode, setViewMode] = useState<ViewMode>(VIEW_MODES.GRID);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | undefined>();
+  const [mapDrawerOpen, setMapDrawerOpen] = useState(true);
   const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  // Determine view mode from query param
+  const viewMode = searchParams.get('view') === 'map' ? 'map' : 'grid';
 
   // Fetch properties
   const fetchProperties = useCallback(
@@ -98,6 +96,25 @@ export default function MobilePropertiesPage() {
     return () => observer.disconnect();
   }, [hasMore, loadingMore, page, fetchProperties]);
 
+  // Handle property selection in map view
+  const handlePropertySelect = useCallback((property: Property) => {
+    // Check if this is a grid view switch request (empty property object)
+    if (!property.id) {
+      // When switching to map view, update the URL
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('view', 'map');
+      router.replace(`/m/properties?${params.toString()}`);
+      return;
+    }
+    setSelectedPropertyId(property.id);
+  }, [searchParams, router]);
+
+  // Handle marker click in map view
+  const handleMarkerClick = useCallback((property: Property) => {
+    setSelectedPropertyId(property.id);
+    setMapDrawerOpen(true);
+  }, []);
+
   // Render view based on viewMode
   let content;
   if (viewMode === VIEW_MODES.GRID) {
@@ -130,22 +147,63 @@ export default function MobilePropertiesPage() {
       </div>
     );
   } else if (viewMode === VIEW_MODES.MAP) {
-    content = <MapViewPlaceholder />;
+    content = (
+      <div className="relative w-full h-full">
+        <MobileMapView
+          properties={properties}
+          onMarkerClick={handleMarkerClick}
+        />
+        <MapViewDrawer
+          properties={properties}
+          selectedPropertyId={selectedPropertyId}
+          onPropertySelect={handlePropertySelect}
+          onClose={() => setMapDrawerOpen(false)}
+          isOpen={mapDrawerOpen}
+        />
+      </div>
+    );
   }
 
+  // When switching to map view, update the URL
+  const handleSwitchToMapView = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('view', 'map');
+    router.replace(`/m/properties?${params.toString()}`);
+  };
+  // When switching to grid view, update the URL
+  const handleSwitchToGridView = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('view');
+    router.replace(`/m/properties?${params.toString()}`);
+  };
+
   return (
-    <div className="space-y-6 px-6 sm:px-10 relative">
-      {viewMode === VIEW_MODES.MAP ? (
-        <>
-          {/* Header always visible in Map View */}
-          <MobileHeader />
-          {/* Full-page map */}
-          {/* <PropertyMap properties={mapProperties} /> */}
-          {/* Closed drawer at bottom */}
-          {/* <MapViewDrawer count={mapProperties.length} onClick={() => setViewMode(VIEW_MODES.GRID)} /> */}
-        </>
+    <>
+      {viewMode === 'map' ? (
+        <div className="fixed inset-0 top-0 left-0 right-0 bottom-0 z-50 bg-white">
+          <div className="h-full flex flex-col overflow-hidden">
+            {/* Header */}
+            <MobileHeader />
+            {/* Map container */}
+            <div className="flex-1 relative">
+              {/* Pass handleSwitchToGridView to MapViewDrawer if needed */}
+              <MobileMapView
+                properties={properties}
+                onMarkerClick={handleMarkerClick}
+              />
+              <MapViewDrawer
+                properties={properties}
+                selectedPropertyId={selectedPropertyId}
+                onPropertySelect={handlePropertySelect}
+                onClose={() => setMapDrawerOpen(false)}
+                isOpen={mapDrawerOpen}
+                onSwitchToGridView={handleSwitchToGridView}
+              />
+            </div>
+          </div>
+        </div>
       ) : (
-        <>
+        <div className="space-y-6 px-6 sm:px-10 relative">
           <div className="flex items-center justify-between mt-6">
             <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">Properties</h2>
             <span className="text-sm text-gray-500">{properties.length} properties</span>
@@ -154,11 +212,14 @@ export default function MobilePropertiesPage() {
           {/* Floating View Mode Buttons (modular, scroll effect) */}
           <FloatingViewModeButtons
             viewMode={viewMode}
-            setViewMode={setViewMode}
+            setViewMode={mode => {
+              if (mode === 'map') handleSwitchToMapView();
+              else handleSwitchToGridView();
+            }}
             footerVisible={footerVisible}
           />
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 } 

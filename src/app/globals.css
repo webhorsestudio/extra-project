@@ -268,6 +268,39 @@
   z-index: 2;
 }
 
+/* Mobile map view specific styles */
+.mobile-map-container {
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+}
+
+.mobile-map-container .leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Ensure map controls are touch-friendly on mobile */
+.leaflet-control-zoom a {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile map drawer styles */
+.map-drawer {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Ensure proper touch targets */
+.map-drawer button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
 /* Property form specific styles */
 .property-form-container {
   /* Removed fixed height to allow natural scrolling */

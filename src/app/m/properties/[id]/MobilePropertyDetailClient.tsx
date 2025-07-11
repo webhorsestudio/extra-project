@@ -13,7 +13,7 @@ import Image from 'next/image'
 import type { Property, PropertyImage, BHKConfiguration } from '@/types/property'
 
 // Dynamic imports for map components
-const PropertyLocationMap = dynamic(() => import('@/components/web/property/PropertyLocationMap'), { ssr: false })
+const PropertyLocationMap = dynamic(() => import('@/components/mobile/property/MobilePropertyLocationMap'), { ssr: false })
 
 interface MobilePropertyDetailClientProps {
   property: Property;

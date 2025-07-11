@@ -8,6 +8,7 @@ import { useRef, useState, useEffect } from 'react'
 import { FooterVisibleProvider } from './FooterVisibleContext'
 import { FooterData } from '@/types/footer'
 import { usePathname } from 'next/navigation'
+import { useMobileViewMode } from './MobileViewModeContext';
 
 interface MobileLayoutClientProps {
   children: React.ReactNode
@@ -16,7 +17,7 @@ interface MobileLayoutClientProps {
 
 export default function MobileLayoutClient({ children, footerData }: MobileLayoutClientProps) {
   const pathname = usePathname()
-  
+  const contextViewMode = useMobileViewMode();
   // Smart scroll hide/show logic for FooterNav
   const [footerVisible, setFooterVisible] = useState(true)
   const [isTablet, setIsTablet] = useState(false)
@@ -60,6 +61,9 @@ export default function MobileLayoutClient({ children, footerData }: MobileLayou
     }
   }, [])
 
+  // Use context value if set, otherwise fallback to prop
+  // const effectiveViewMode = contextViewMode || viewMode;
+
   return (
     <FooterVisibleProvider value={footerVisible}>
       <div className="min-h-screen bg-white">
@@ -75,10 +79,10 @@ export default function MobileLayoutClient({ children, footerData }: MobileLayou
           </main>
           {/* Footer */}
           {footerData && <Footer footerData={footerData} />}
-          {/* Footer Navigation - Now included in layout */}
-          {!pathname.startsWith('/m/properties/') && (
-            <FooterNav visible={footerVisible} isTablet={isTablet} />
-          )}
+                      {/* Footer Navigation - Now included in layout */}
+            {!pathname.startsWith('/m/properties/') && contextViewMode !== 'map' && (
+              <FooterNav visible={footerVisible} isTablet={isTablet} />
+            )}
           {/* Mobile Filter Modal */}
           <MobileFilterModal
             isOpen={isFilterModalOpen}

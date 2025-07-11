@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Property } from '@/types/property';
-import { Icon } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 
 // Dynamically import react-leaflet components for client-side only rendering
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -12,6 +10,16 @@ const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLaye
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 const ZoomControl = dynamic(() => import('react-leaflet').then(mod => mod.ZoomControl), { ssr: false });
+
+// Dynamically import Leaflet utilities
+let Icon: typeof import('leaflet').Icon | null = null;
+
+// Load Leaflet utilities on client side
+if (typeof window !== 'undefined') {
+  import('leaflet').then((L) => {
+    Icon = L.Icon;
+  });
+}
 
 // Golden SVG pin as data URI (same as web layout)
 const goldenPinSVG = encodeURIComponent(`
@@ -22,12 +30,16 @@ const goldenPinSVG = encodeURIComponent(`
   </svg>
 `);
 
-const customIcon = new Icon({
-  iconUrl: `data:image/svg+xml,${goldenPinSVG}`,
-  iconSize: [32, 48],
-  iconAnchor: [16, 48],
-  popupAnchor: [0, -48],
-});
+// Create custom icon function to handle dynamic loading
+const createCustomIcon = () => {
+  if (!Icon) return undefined;
+  return new Icon({
+    iconUrl: `data:image/svg+xml,${goldenPinSVG}`,
+    iconSize: [32, 48],
+    iconAnchor: [16, 48],
+    popupAnchor: [0, -48],
+  });
+};
 
 
 
@@ -98,11 +110,13 @@ const MobilePropertyLocationMap: React.FC<MobilePropertyLocationMapProps> = ({ p
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <Marker position={position} icon={customIcon}>
-                  <Popup>
-                    {property.title}
-                  </Popup>
-                </Marker>
+                {createCustomIcon() && (
+                  <Marker position={position} icon={createCustomIcon()!}>
+                    <Popup>
+                      {property.title}
+                    </Popup>
+                  </Marker>
+                )}
                 <ZoomControl position="bottomright" />
               </MapContainer>
             )

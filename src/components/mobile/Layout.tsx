@@ -1,4 +1,5 @@
 import MobileLayoutClient from './MobileLayoutClient'
+import MobileViewModeDetector from './MobileViewModeDetector'
 import { getFooterData } from '@/lib/footer-data'
 
 interface MobileLayoutProps {
@@ -16,8 +17,10 @@ export default async function MobileLayout({ children }: MobileLayoutProps) {
   }
 
   return (
-    <MobileLayoutClient footerData={footerData}>
-      {children}
-    </MobileLayoutClient>
+    <MobileViewModeDetector>
+      <MobileLayoutClient footerData={footerData}>
+        {children}
+      </MobileLayoutClient>
+    </MobileViewModeDetector>
   )
 } 
