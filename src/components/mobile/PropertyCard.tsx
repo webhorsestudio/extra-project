@@ -259,7 +259,7 @@ const PropertyImageCarousel = ({ images }: { images?: { image_url: string }[] })
 
 // Title Row
 const TitleRow = ({ title }: { title: string }) => (
-  <div className="min-h-[2.5rem] flex items-start">
+  <div className="min-h-[2rem] flex items-start">
     <h3 className="text-base font-semibold text-gray-900 line-clamp-2 leading-tight">{title}</h3>
   </div>
 );
@@ -279,7 +279,7 @@ const PriceLocationRow = ({ price, locationData }: { price?: number; locationDat
   };
 
   return (
-    <div className="flex items-center justify-between mt-1 min-h-[1.75rem]">
+    <div className="flex items-center justify-between min-h-[1.75rem]">
       {price ? (
         <>
           <div className="flex items-center gap-1 flex-1 min-w-0">
@@ -332,18 +332,18 @@ const AmenitiesRow = ({ property }: { property: Property }) => {
   const readyBy = property.property_configurations?.[0]?.ready_by;
 
   return (
-    <div className="flex items-center justify-between mt-3 text-xs text-gray-700 min-h-[1.25rem]">
-      <div className="flex items-center gap-1 flex-1 min-w-0">
+    <div className="flex items-center justify-between mt-1 text-xs text-gray-700 min-h-[1.25rem]">
+      <div className="flex items-center gap-1 flex-1 min-w-0 justify-start">
         <Bed className="h-3 w-3 mr-1 text-blue-700 flex-shrink-0" />
-        <span className="truncate text-xs">{beds} Beds</span>
+        <span className="truncate text-xs text-left">{beds} Beds</span>
       </div>
-      <div className="flex items-center gap-1 flex-1 min-w-0 mx-1">
+      <div className="flex items-center gap-1 flex-1 min-w-0 justify-start">
         <Ruler className="h-3 w-3 mr-1 text-blue-700 flex-shrink-0" />
-        <span className="truncate text-xs">{area}</span>
+        <span className="truncate text-xs text-left">{area}</span>
       </div>
-      <div className="flex items-center gap-1 flex-1 min-w-0">
+      <div className="flex items-center gap-1 flex-1 min-w-0 justify-end">
         <Calendar className="h-3 w-3 mr-1 text-blue-700 flex-shrink-0" />
-        <span className="truncate text-xs">{formatReadyByDate(readyBy)}</span>
+        <span className="truncate text-xs text-right">{formatReadyByDate(readyBy)}</span>
       </div>
     </div>
   );
@@ -354,13 +354,11 @@ interface PropertyCardContentProps {
   property: Property;
   contentMargin?: string;
 }
-const PropertyCardContent = ({ property, contentMargin = "mt-4" }: PropertyCardContentProps) => {
+const PropertyCardContent = ({ property, contentMargin = "mt-0" }: PropertyCardContentProps) => {
   return (
     <div className={`p-4 pb-5 flex flex-col ${contentMargin} min-h-[6rem]`}>
       <TitleRow title={property.title} />
-      <div className="mt-1">
-        <PriceLocationRow price={property.price} locationData={property.location_data} />
-      </div>
+      <PriceLocationRow price={property.price} locationData={property.location_data} />
       <AmenitiesRow property={property} />
     </div>
   );
@@ -482,7 +480,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           personalizationReason={personalizationReason}
         />
       </div>
-      <PropertyCardContent property={property} contentMargin="mt-2" />
+      <PropertyCardContent property={property} contentMargin="mt-0" />
       <ShareDialog open={shareOpen} onClose={() => setShareOpen(false)} property={property} />
     </div>
   );
