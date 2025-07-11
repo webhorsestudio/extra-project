@@ -138,7 +138,7 @@ export class UserPreferenceService {
     totalFactors++;
 
     // Amenities preference
-    const propertyAmenities = new Set(property.amenities || []);
+    const propertyAmenities = new Set((property.amenities || []).map(amenity => amenity.name));
     const preferredAmenities = new Set(prefs.amenities);
     if (preferredAmenities.size > 0) {
       const intersection = new Set([...propertyAmenities].filter(x => preferredAmenities.has(x)));
@@ -243,8 +243,8 @@ export class UserPreferenceService {
     // Add amenities
     if (property.amenities) {
       property.amenities.forEach(amenity => {
-        if (!prefs.amenities.includes(amenity)) {
-          prefs.amenities.push(amenity);
+        if (!prefs.amenities.includes(amenity.name)) {
+          prefs.amenities.push(amenity.name);
         }
       });
     }

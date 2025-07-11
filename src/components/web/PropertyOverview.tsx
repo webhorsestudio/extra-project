@@ -29,8 +29,8 @@ export default function PropertyOverview({ property }: PropertyOverviewProps) {
         <div>
           <h2 className="text-2xl font-bold mb-4">Amenities</h2>
           <div className="flex flex-wrap gap-2">
-            {property.amenities.map((amenity: string) => (
-              <Badge key={amenity} variant="secondary">{amenity}</Badge>
+            {property.amenities.map((amenity) => (
+              <Badge key={amenity.name} variant="secondary">{amenity.name}</Badge>
             ))}
           </div>
         </div>

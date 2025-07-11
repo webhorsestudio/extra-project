@@ -177,9 +177,9 @@ function MobilePropertyFeatures({ property }: { property: Property }) {
           <div>
             <h4 className="text-sm font-medium text-gray-700 mb-2">Categories</h4>
             <div className="flex flex-wrap gap-2">
-              {categories.map((category: string, index: number) => (
+              {categories.map((category, index: number) => (
                 <Badge key={index} variant="secondary" className="text-xs">
-                  {category}
+                  {category.name}
                 </Badge>
               ))}
             </div>
@@ -191,9 +191,9 @@ function MobilePropertyFeatures({ property }: { property: Property }) {
           <div>
             <h4 className="text-sm font-medium text-gray-700 mb-2">Amenities</h4>
             <div className="flex flex-wrap gap-2">
-              {amenities.map((amenity: string, index: number) => (
+              {amenities.map((amenity, index: number) => (
                 <Badge key={index} variant="outline" className="text-xs">
-                  {amenity}
+                  {amenity.name}
                 </Badge>
               ))}
             </div>

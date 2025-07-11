@@ -24,8 +24,8 @@ export interface Property {
   location_data?: { id: string; name: string } | null
   developer?: PropertyDeveloper
   // Arrays for easy access to related data
-  amenities?: string[]
-  categories?: string[]
+  amenities?: Array<{ name: string; image_url?: string }>
+  categories?: Array<{ name: string; icon?: string }>
   
   // Additional properties used in components
   status?: string

@@ -7,8 +7,21 @@ import { Property } from '@/types/property';
 
 const LucideIcons = LucideIconsImport as unknown as Record<string, React.ComponentType<{ className?: string }>>;
 
+interface Amenity {
+  name: string;
+  image_url?: string;
+}
+
+interface Category {
+  name: string;
+  icon?: string;
+}
+
 interface MobilePropertyFeaturesProps {
-  property: Property;
+  property: Property & {
+    amenities?: Amenity[];
+    categories?: Category[];
+  };
 }
 
 // Pill-shaped tab navigation for two tabs (same as web layout)
@@ -77,19 +90,19 @@ function getAmenityImage(amenityName: string) {
 export default function MobilePropertyFeatures({ property }: MobilePropertyFeaturesProps) {
   const [activeTab, setActiveTab] = useState('amenities');
 
-  // Use real amenities data (same as web layout)
+  // Use real amenities data with proper structure
   const amenities = property.amenities && property.amenities.length > 0
-    ? property.amenities.map((amenity: string) => ({
-        title: amenity,
-        image: getAmenityImage(amenity),
+    ? property.amenities.map((amenity: Amenity) => ({
+        title: amenity.name,
+        image: amenity.image_url || getAmenityImage(amenity.name),
       }))
     : [];
 
-  // Use real categories data (same as web layout)
+  // Use real categories data with proper structure
   const categories = property.categories && property.categories.length > 0
-    ? property.categories.map((category: string) => ({
-        title: category,
-        icon: 'Home',
+    ? property.categories.map((category: Category) => ({
+        title: category.name,
+        icon: category.icon || 'Home',
       }))
     : [];
 

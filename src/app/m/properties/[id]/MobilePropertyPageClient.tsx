@@ -46,47 +46,46 @@ export default function MobilePropertyPageClient({
       </div>
 
       {/* Main Content */}
-      <div className="py-6">
+      <div className="pb-2">
         {/* Key Highlights */}
         {memoizedProperty.description && (
-          <section id="key-highlights" className="mb-6">
+          <section id="key-highlights" className="mb-1">
             <MobilePropertyDescription property={memoizedProperty} />
           </section>
         )}
 
         {/* Listed By Section */}
-        <section id="listed-by" className="mb-6">
+        <section id="listed-by" className="mb-1">
           <MobileListingBySection property={memoizedProperty} />
         </section>
 
         {/* Available Configurations */}
-        <section id="configurations" className="mb-6">
+        <section id="configurations" className="mb-1">
           <MobilePropertyConfigurations property={memoizedProperty} />
         </section>
 
         {/* Location Map */}
         {(memoizedProperty.latitude && memoizedProperty.longitude) ? (
-          <section id="location" className="mb-6">
+          <section id="location" className="mb-1">
             <MobilePropertyLocationMap property={memoizedProperty} />
           </section>
         ) : memoizedProperty.location_data?.name ? (
-          <section id="location" className="mb-6">
+          <section id="location" className="mb-1">
             <MobilePropertyLocationMap property={memoizedProperty} locationName={memoizedProperty.location_data.name} />
           </section>
         ) : null}
 
         {/* Property Features */}
-        <section id="features" className="mb-6">
+        <section id="features" className="mb-1">
           <MobilePropertyFeatures property={memoizedProperty} />
         </section>
 
         {/* Similar Properties */}
         {similarProperties.length > 0 && (
-          <section id="similar-projects">
+          <section id="similar-projects" className="mb-1">
             <MobileSimilarProperties properties={similarProperties} />
           </section>
         )}
-
 
       </div>
       <MobileEnquiryModal

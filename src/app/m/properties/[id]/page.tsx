@@ -73,14 +73,22 @@ export default async function MobilePropertyPage({ params }: PropertyPageProps) 
     );
   }
 
-  // Map relations to flat arrays for Features component (amenities and categories)
+  // Map relations to objects for Features component (amenities and categories)
+  type Amenity = { name: string; image_url?: string };
+  type Category = { name: string; icon?: string };
   if (property) {
-    property.amenities = property.property_amenity_relations?.map((rel: AmenityRelation) => 
-      rel.property_amenities?.name
-    ).filter((name: string | undefined) => name) || [];
-    property.categories = property.property_category_relations?.map((rel: CategoryRelation) => 
-      rel.property_categories?.name
-    ).filter((name: string | undefined) => name) || [];
+    property.amenities = property.property_amenity_relations?.map((rel: AmenityRelation) =>
+      rel.property_amenities?.name && {
+        name: rel.property_amenities.name,
+        image_url: rel.property_amenities.image_url || '',
+      }
+    ).filter((a: Amenity | false | undefined): a is Amenity => !!a && !!a.name) || [];
+    property.categories = property.property_category_relations?.map((rel: CategoryRelation) =>
+      rel.property_categories?.name && {
+        name: rel.property_categories.name,
+        icon: rel.property_categories.icon || 'Home',
+      }
+    ).filter((c: Category | false | undefined): c is Category => !!c && !!c.name) || [];
   }
 
   // Fetch similar properties

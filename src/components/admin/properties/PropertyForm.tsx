@@ -123,7 +123,7 @@ export function PropertyForm({
         location_id: property.location_id || '',
         location: property.location || '',
         amenities: property.features || [],
-        categories: property.categories || [],
+        categories: property.categories?.map(cat => cat.name) || [],
         has_rera: !!property.rera_number,
         rera_number: property.rera_number || '',
         bhk_configurations: property.bhk_configurations?.length

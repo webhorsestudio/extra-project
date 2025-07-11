@@ -55,20 +55,27 @@ function MobileGalleryModal({ images, open, initialIndex, onClose, property }: {
         
         {/* Close Button */}
         <button
-          className="absolute left-4 top-4 z-50 text-white/90 hover:text-white text-2xl"
+          className="absolute left-4 top-safe z-50 text-white/90 hover:text-white text-2xl"
           onClick={onClose}
           aria-label="Close"
+          style={{ top: 'calc(env(safe-area-inset-top, 1rem) + 0.5rem)' }}
         >
           <X className="w-8 h-8" />
         </button>
         
         {/* Counter */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white text-base font-medium z-50 select-none">
+        <div 
+          className="absolute left-1/2 -translate-x-1/2 text-white text-base font-medium z-50 select-none"
+          style={{ top: 'calc(env(safe-area-inset-top, 1rem) + 1rem)' }}
+        >
           {current + 1} / {total}
         </div>
         
         {/* Action Icons */}
-        <div className="absolute top-4 right-4 flex gap-2 z-50">
+        <div 
+          className="absolute right-4 flex gap-2 z-50"
+          style={{ top: 'calc(env(safe-area-inset-top, 1rem) + 0.5rem)' }}
+        >
           <button className="bg-white/10 hover:bg-white/20 rounded-lg p-2" onClick={handleCopy} title="Copy Link">
             <Copy className="w-5 h-5 text-white" />
           </button>

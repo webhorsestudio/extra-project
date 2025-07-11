@@ -100,7 +100,7 @@ export default function MobilePropertyInfoCard({ property }: MobilePropertyInfoC
         <div className="flex items-center gap-3 mt-2">
           <button 
             onClick={() => setEmiModalOpen(true)}
-            className="bg-black/80 backdrop-blur text-white font-bold rounded-full px-4 py-1.5 text-sm shadow-sm flex items-center cursor-pointer hover:bg-black/90 transition-colors" 
+            className="bg-black/80 backdrop-blur text-white font-bold rounded-full px-4 py-1.5 text-sm shadow-sm flex items-center cursor-pointer hover:bg-black/90 transition-colors whitespace-nowrap" 
             style={{ minHeight: '2.25rem' }}
           >
             EMI starts at {emiAmount > 0 ? formatCurrency(emiAmount) : "Contact"}
