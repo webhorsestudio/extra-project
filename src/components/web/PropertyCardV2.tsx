@@ -121,9 +121,37 @@ const FavoriteButton = ({ propertyId, initialIsFavorited, onToast, onUnfavorite,
 }) => {
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  // Check authentication status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/check', { 
+          method: 'GET',
+          credentials: 'include'
+        });
+        setIsAuthenticated(response.ok);
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
+    
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      onToast({
+        title: 'Authentication Required',
+        description: 'Please log in to add properties to your wishlist.'
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const method = isFavorited ? 'DELETE' : 'POST';
@@ -137,6 +165,11 @@ const FavoriteButton = ({ propertyId, initialIsFavorited, onToast, onUnfavorite,
         if (isWishlist && isFavorited && onUnfavorite) {
           onUnfavorite(propertyId);
         }
+      } else if (res.status === 401) {
+        onToast({
+          title: 'Authentication Required',
+          description: 'Please log in to manage your wishlist.'
+        });
       } else {
         const data = await res.json();
         onToast({ title: 'Error', description: data.error || 'Failed to update wishlist.' });
@@ -147,6 +180,20 @@ const FavoriteButton = ({ propertyId, initialIsFavorited, onToast, onUnfavorite,
       setLoading(false);
     }
   };
+
+  // Show loading state while checking authentication
+  if (isAuthenticated === null) {
+    return (
+      <button
+        className="bg-white/80 rounded-full p-2 shadow border border-gray-200"
+        disabled
+        aria-label="Loading"
+        type="button"
+      >
+        <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+      </button>
+    );
+  }
 
   return (
     <button

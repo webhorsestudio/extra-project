@@ -23,7 +23,10 @@ export interface Settings {
   sitemap_include_blog?: boolean
   
   // Theme fields
+  primary_color?: string
+  secondary_color?: string
   accent_color?: string
+  font_family?: string
   font_size_base?: string
   border_radius?: string
   enable_dark_mode?: boolean
@@ -94,7 +97,10 @@ export async function createDefaultSettings(): Promise<Settings | null> {
       whatsapp_url: '',
       default_og_image_url: '',
       default_og_image_storage_path: '',
+      primary_color: '#0ea5e9',
+      secondary_color: '#f8fafc',
       accent_color: '#06b6d4',
+      font_family: 'Inter',
       font_size_base: '16px',
       border_radius: '8px',
       enable_dark_mode: false,
@@ -196,7 +202,10 @@ export async function getPublicSettings(): Promise<Partial<Settings> | null> {
         logo_alt_text,
         favicon_url,
         default_og_image_url,
+        primary_color,
+        secondary_color,
         accent_color,
+        font_family,
         font_size_base,
         border_radius,
         enable_dark_mode,

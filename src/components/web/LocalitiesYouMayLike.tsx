@@ -2,7 +2,7 @@ import { getTopLocationsWithPropertyCount } from '@/lib/locations-data-server'
 import ClientLocalitiesCarousel from './LocalitiesYouMayLikeCarousel'
 
 export default async function LocalitiesYouMayLike() {
-  const locations = await getTopLocationsWithPropertyCount(20)
+  const locations = await getTopLocationsWithPropertyCount(20) // Fetch all 20 locations
   if (!locations || locations.length === 0) return null
 
   return (

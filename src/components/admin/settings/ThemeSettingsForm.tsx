@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -70,30 +70,75 @@ const borderRadiusOptions = [
 
 export function ThemeSettingsForm({ settings }: Props) {
   const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    primary_color: settings.primary_color || '#0ea5e9',
+    secondary_color: settings.secondary_color || '#f8fafc',
+    accent_color: settings.accent_color || '#06b6d4',
+    font_family: settings.font_family || 'Inter',
+    font_size_base: settings.font_size_base || '16px',
+    border_radius: settings.border_radius || '8px',
+    enable_dark_mode: settings.enable_dark_mode || false,
+    enable_animations: settings.enable_animations ?? true,
+    enable_shadows: settings.enable_shadows ?? true,
+  })
   const { toast } = useToast()
 
-  const handleChange = () => {
-    // Handle change logic
+  // Update form data when settings prop changes
+  useEffect(() => {
+    setFormData({
+      primary_color: settings.primary_color || '#0ea5e9',
+      secondary_color: settings.secondary_color || '#f8fafc',
+      accent_color: settings.accent_color || '#06b6d4',
+      font_family: settings.font_family || 'Inter',
+      font_size_base: settings.font_size_base || '16px',
+      border_radius: settings.border_radius || '8px',
+      enable_dark_mode: settings.enable_dark_mode || false,
+      enable_animations: settings.enable_animations ?? true,
+      enable_shadows: settings.enable_shadows ?? true,
+    })
+  }, [settings])
+
+  const handleColorChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
   }
 
-  const handleSelectChange = () => {
-    // Handle select change logic
+  const handleSelectChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
   }
 
-  const handleSwitchChange = () => {
-    // Handle switch change logic
+  const handleSwitchChange = (field: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: checked
+    }))
   }
 
-  const applyColorPreset = () => {
-    // Handle color preset application logic
+  const applyColorPreset = (preset: typeof colorPresets[0]) => {
+    setFormData(prev => ({
+      ...prev,
+      primary_color: preset.primary,
+      secondary_color: preset.secondary,
+      accent_color: preset.accent,
+    }))
+    
+    toast({
+      title: 'Color Preset Applied',
+      description: `${preset.name} color scheme has been applied`,
+    })
   }
 
-  const onSubmit = async (data: Record<string, unknown>) => {
+  const onSubmit = async () => {
     try {
       console.log('Starting theme settings update...')
       setIsLoading(true)
 
-      console.log('Attempting to update settings with:', data)
+      console.log('Attempting to update settings with:', formData)
 
       // Use API route to update settings
       const response = await fetch('/api/settings', {
@@ -102,12 +147,15 @@ export function ThemeSettingsForm({ settings }: Props) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          accent_color: data.accent_color,
-          font_size_base: data.font_size_base,
-          border_radius: data.border_radius,
-          enable_dark_mode: data.enable_dark_mode,
-          enable_animations: data.enable_animations,
-          enable_shadows: data.enable_shadows,
+          primary_color: formData.primary_color,
+          secondary_color: formData.secondary_color,
+          accent_color: formData.accent_color,
+          font_family: formData.font_family,
+          font_size_base: formData.font_size_base,
+          border_radius: formData.border_radius,
+          enable_dark_mode: formData.enable_dark_mode,
+          enable_animations: formData.enable_animations,
+          enable_shadows: formData.enable_shadows,
         }),
       })
 
@@ -161,7 +209,7 @@ export function ThemeSettingsForm({ settings }: Props) {
               {colorPresets.map((preset) => (
                 <button
                   key={preset.name}
-                  onClick={applyColorPreset}
+                  onClick={() => applyColorPreset(preset)}
                   className="p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors text-left"
                 >
                   <div className="flex items-center gap-2 mb-2">
@@ -202,14 +250,14 @@ export function ThemeSettingsForm({ settings }: Props) {
                     id="primary_color"
                     name="primary_color"
                     type="color"
-                    value={settings.accent_color || '#0ea5e9'}
-                    onChange={handleChange}
+                    value={formData.primary_color}
+                    onChange={(e) => handleColorChange('primary_color', e.target.value)}
                     className="w-12 h-10 p-1 rounded-lg border-gray-200"
                   />
                   <Input
                     type="text"
-                    value={settings.accent_color || '#0ea5e9'}
-                    onChange={handleChange}
+                    value={formData.primary_color}
+                    onChange={(e) => handleColorChange('primary_color', e.target.value)}
                     name="primary_color"
                     className="flex-1"
                     placeholder="#000000"
@@ -227,14 +275,14 @@ export function ThemeSettingsForm({ settings }: Props) {
                     id="secondary_color"
                     name="secondary_color"
                     type="color"
-                    value={settings.secondary_color || '#f8fafc'}
-                    onChange={handleChange}
+                    value={formData.secondary_color}
+                    onChange={(e) => handleColorChange('secondary_color', e.target.value)}
                     className="w-12 h-10 p-1 rounded-lg border-gray-200"
                   />
                   <Input
                     type="text"
-                    value={settings.secondary_color || '#f8fafc'}
-                    onChange={handleChange}
+                    value={formData.secondary_color}
+                    onChange={(e) => handleColorChange('secondary_color', e.target.value)}
                     name="secondary_color"
                     className="flex-1"
                     placeholder="#ffffff"
@@ -252,14 +300,14 @@ export function ThemeSettingsForm({ settings }: Props) {
                     id="accent_color"
                     name="accent_color"
                     type="color"
-                    value={settings.accent_color || '#06b6d4'}
-                    onChange={handleChange}
+                    value={formData.accent_color}
+                    onChange={(e) => handleColorChange('accent_color', e.target.value)}
                     className="w-12 h-10 p-1 rounded-lg border-gray-200"
                   />
                   <Input
                     type="text"
-                    value={settings.accent_color || '#06b6d4'}
-                    onChange={handleChange}
+                    value={formData.accent_color}
+                    onChange={(e) => handleColorChange('accent_color', e.target.value)}
                     name="accent_color"
                     className="flex-1"
                     placeholder="#000000"
@@ -296,8 +344,8 @@ export function ThemeSettingsForm({ settings }: Props) {
                 Font Family
               </Label>
               <Select
-                value={settings.font_family || 'Inter'}
-                onValueChange={handleSelectChange}
+                value={formData.font_family}
+                onValueChange={(value) => handleSelectChange('font_family', value)}
               >
                 <SelectTrigger className="border-gray-200">
                   <SelectValue placeholder="Select a font" />
@@ -318,8 +366,8 @@ export function ThemeSettingsForm({ settings }: Props) {
                 Base Font Size
               </Label>
               <Select
-                value={settings.font_size_base || '16px'}
-                onValueChange={handleSelectChange}
+                value={formData.font_size_base}
+                onValueChange={(value) => handleSelectChange('font_size_base', value)}
               >
                 <SelectTrigger className="border-gray-200">
                   <SelectValue placeholder="Select font size" />
@@ -341,8 +389,8 @@ export function ThemeSettingsForm({ settings }: Props) {
               Border Radius
             </Label>
             <Select
-              value={settings.border_radius || '8px'}
-              onValueChange={handleSelectChange}
+              value={formData.border_radius}
+              onValueChange={(value) => handleSelectChange('border_radius', value)}
             >
               <SelectTrigger className="border-gray-200">
                 <SelectValue placeholder="Select border radius" />
@@ -384,8 +432,8 @@ export function ThemeSettingsForm({ settings }: Props) {
               <p className="text-xs text-gray-500">Enable automatic dark/light theme switching</p>
             </div>
             <Switch
-              checked={settings.enable_dark_mode || false}
-              onCheckedChange={handleSwitchChange}
+              checked={formData.enable_dark_mode}
+              onCheckedChange={(checked) => handleSwitchChange('enable_dark_mode', checked)}
             />
           </div>
 
@@ -395,8 +443,8 @@ export function ThemeSettingsForm({ settings }: Props) {
               <p className="text-xs text-gray-500">Enable smooth transitions and hover effects</p>
             </div>
             <Switch
-              checked={settings.enable_animations || true}
-              onCheckedChange={handleSwitchChange}
+              checked={formData.enable_animations}
+              onCheckedChange={(checked) => handleSwitchChange('enable_animations', checked)}
             />
           </div>
 
@@ -406,8 +454,8 @@ export function ThemeSettingsForm({ settings }: Props) {
               <p className="text-xs text-gray-500">Add depth with box shadows on cards and buttons</p>
             </div>
             <Switch
-              checked={settings.enable_shadows || true}
-              onCheckedChange={handleSwitchChange}
+              checked={formData.enable_shadows}
+              onCheckedChange={(checked) => handleSwitchChange('enable_shadows', checked)}
             />
           </div>
         </CardContent>
@@ -441,35 +489,35 @@ export function ThemeSettingsForm({ settings }: Props) {
               <div 
                 className="border-2 border-gray-200 rounded-lg p-4 h-32 relative overflow-hidden"
                 style={{ 
-                  backgroundColor: settings.secondary_color || '#f8fafc',
-                  borderRadius: settings.border_radius || '8px',
-                  fontFamily: settings.font_family || 'Inter',
-                  fontSize: settings.font_size_base || '16px',
+                  backgroundColor: formData.secondary_color,
+                  borderRadius: formData.border_radius,
+                  fontFamily: formData.font_family,
+                  fontSize: formData.font_size_base,
                 }}
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div 
                     className="w-8 h-8 rounded-lg"
-                    style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
+                    style={{ backgroundColor: formData.primary_color }}
                   />
                   <div 
                     className="w-24 h-4 rounded"
-                    style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
+                    style={{ backgroundColor: formData.primary_color }}
                   />
                 </div>
                 <div className="space-y-2">
                   <div 
                     className="w-full h-3 rounded"
-                    style={{ backgroundColor: settings.accent_color || '#06b6d4' }}
+                    style={{ backgroundColor: formData.accent_color }}
                   />
                   <div 
                     className="w-3/4 h-3 rounded"
-                    style={{ backgroundColor: settings.accent_color || '#06b6d4' }}
+                    style={{ backgroundColor: formData.accent_color }}
                   />
                 </div>
                 <div 
                   className="absolute bottom-3 right-3 w-16 h-8 rounded-lg"
-                  style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
+                  style={{ backgroundColor: formData.primary_color }}
                 />
               </div>
             </div>
@@ -483,35 +531,35 @@ export function ThemeSettingsForm({ settings }: Props) {
               <div 
                 className="border-2 border-gray-200 rounded-lg p-3 h-32 relative overflow-hidden mx-auto w-24"
                 style={{ 
-                  backgroundColor: settings.secondary_color || '#f8fafc',
-                  borderRadius: settings.border_radius || '8px',
-                  fontFamily: settings.font_family || 'Inter',
-                  fontSize: settings.font_size_base || '16px',
+                  backgroundColor: formData.secondary_color,
+                  borderRadius: formData.border_radius,
+                  fontFamily: formData.font_family,
+                  fontSize: formData.font_size_base,
                 }}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <div 
                     className="w-4 h-4 rounded"
-                    style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
+                    style={{ backgroundColor: formData.primary_color }}
                   />
                   <div 
                     className="w-8 h-3 rounded"
-                    style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
+                    style={{ backgroundColor: formData.primary_color }}
                   />
                 </div>
                 <div className="space-y-1">
                   <div 
                     className="w-full h-2 rounded"
-                    style={{ backgroundColor: settings.accent_color || '#06b6d4' }}
+                    style={{ backgroundColor: formData.accent_color }}
                   />
                   <div 
                     className="w-2/3 h-2 rounded"
-                    style={{ backgroundColor: settings.accent_color || '#06b6d4' }}
+                    style={{ backgroundColor: formData.accent_color }}
                   />
                 </div>
                 <div 
                   className="absolute bottom-2 right-2 w-8 h-6 rounded"
-                  style={{ backgroundColor: settings.accent_color || '#0ea5e9' }}
+                  style={{ backgroundColor: formData.primary_color }}
                 />
               </div>
             </div>
@@ -522,7 +570,7 @@ export function ThemeSettingsForm({ settings }: Props) {
       {/* Save Button */}
       <div className="flex justify-end">
         <Button 
-          onClick={() => onSubmit(settings)} 
+          onClick={onSubmit} 
           disabled={isLoading}
           className="bg-black hover:bg-gray-800 text-white px-8 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
         >
