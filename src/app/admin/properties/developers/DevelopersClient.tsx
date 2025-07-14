@@ -82,10 +82,10 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
         const data = await res.json()
         setDevelopers(data.developers || [])
       } else {
-        toast.error('Failed to fetch developers')
+        toast.error('Failed to fetch sellers')
       }
     } catch {
-      toast.error('Error fetching developers')
+              toast.error('Error fetching sellers')
     }
   }
 
@@ -95,20 +95,20 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this developer?')) return
+    if (!confirm('Are you sure you want to delete this seller?')) return
 
     setDeletingId(id)
     try {
       const res = await fetch(`/api/developers/${id}`, { method: 'DELETE' })
       if (res.ok) {
-        toast.success('Developer deleted successfully')
+        toast.success('Seller deleted successfully')
         fetchDevelopers()
       } else {
         const data = await res.json()
-        toast.error(data.error || 'Failed to delete developer')
+        toast.error(data.error || 'Failed to delete seller')
       }
     } catch {
-      toast.error('Error deleting developer')
+      toast.error('Error deleting seller')
     } finally {
       setDeletingId(null)
     }
@@ -123,14 +123,14 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
       })
       
       if (res.ok) {
-        toast.success(`Developer ${developer.is_active ? 'deactivated' : 'activated'} successfully`)
+        toast.success(`Seller ${developer.is_active ? 'deactivated' : 'activated'} successfully`)
         fetchDevelopers()
       } else {
         const data = await res.json()
-        toast.error(data.error || 'Failed to update developer status')
+        toast.error(data.error || 'Failed to update seller status')
       }
     } catch {
-      toast.error('Error updating developer status')
+      toast.error('Error updating seller status')
     }
   }
 
@@ -139,14 +139,14 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Developers Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Sellers Management</h1>
           <p className="text-muted-foreground">
-            Manage property developers and brokers
+            Manage property sellers and brokers
           </p>
         </div>
         <Button onClick={() => setAddOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Developer
+          Add Seller
         </Button>
       </div>
 
@@ -154,7 +154,7 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search developers..."
+          placeholder="Search sellers..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
@@ -177,7 +177,7 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building className="h-5 w-5" />
-            Property Developers
+            Property Sellers
             <Badge variant="secondary">{filteredDevelopers.length}</Badge>
           </CardTitle>
         </CardHeader>
@@ -186,18 +186,18 @@ export default function DevelopersClient({ developers: initialDevelopers }: Deve
             <div className="text-center py-12">
               <Building className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">
-                {searchTerm ? 'No developers found' : 'No developers yet'}
+                {searchTerm ? 'No sellers found' : 'No sellers yet'}
               </h3>
               <p className="text-muted-foreground mb-4">
                 {searchTerm 
                   ? 'Try adjusting your search terms'
-                  : 'Start by adding your first property developer'
+                  : 'Start by adding your first property seller'
                 }
               </p>
               {!searchTerm && (
                 <Button onClick={() => setAddOpen(true)}>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add First Developer
+                  Add First Seller
                 </Button>
               )}
             </div>

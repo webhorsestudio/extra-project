@@ -84,7 +84,7 @@ export function DeveloperFormFields({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="developer-name">Developer Name *</Label>
+            <Label htmlFor="developer-name">Seller Name *</Label>
             <Input
               id="developer-name"
               value={formData.name}

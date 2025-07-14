@@ -88,7 +88,7 @@ export function AddDeveloperForm({ onDeveloperAdded, open, onOpenChange }: AddDe
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.name.trim()) {
-      toast({ title: 'Error', description: 'Developer name is required', variant: 'destructive' })
+      toast({ title: 'Error', description: 'Seller name is required', variant: 'destructive' })
       return
     }
 
@@ -120,10 +120,10 @@ export function AddDeveloperForm({ onDeveloperAdded, open, onOpenChange }: AddDe
       setIsLoading(false)
       if (!res.ok) {
         const data = await res.json()
-        toast({ title: 'Error', description: data.error || 'Failed to add developer', variant: 'destructive' })
+        toast({ title: 'Error', description: data.error || 'Failed to add seller', variant: 'destructive' })
         return
       }
-      toast({ title: 'Developer added successfully', variant: 'default' })
+      toast({ title: 'Seller added successfully', variant: 'default' })
       onDeveloperAdded()
       onOpenChange(false)
       // Reset form
@@ -153,7 +153,7 @@ export function AddDeveloperForm({ onDeveloperAdded, open, onOpenChange }: AddDe
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Add New Developer</CardTitle>
+          <CardTitle>Add New Seller</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -180,7 +180,7 @@ export function AddDeveloperForm({ onDeveloperAdded, open, onOpenChange }: AddDe
                 type="submit" 
                 disabled={isLoading || isUploading || !formData.name.trim()}
               >
-                {isLoading ? 'Adding...' : 'Add Developer'}
+                {isLoading ? 'Adding...' : 'Add Seller'}
               </Button>
             </div>
           </form>

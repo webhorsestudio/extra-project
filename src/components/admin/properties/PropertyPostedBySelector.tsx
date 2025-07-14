@@ -44,7 +44,7 @@ export function PropertyPostedBySelector({
       setIsLoading(true)
       setError(null)
       
-      console.log('PropertyPostedBySelector: Fetching developers...')
+      console.log('PropertyPostedBySelector: Fetching sellers...')
       const response = await fetch('/api/admin/properties/developer-selection', {
         method: 'GET',
         headers: {
@@ -66,17 +66,17 @@ export function PropertyPostedBySelector({
       
       if (data.developers) {
         setDevelopers(data.developers)
-        console.log('PropertyPostedBySelector: Set developers:', data.developers.length)
+        console.log('PropertyPostedBySelector: Set sellers:', data.developers.length)
       } else {
-        console.warn('PropertyPostedBySelector: No developers in response')
+        console.warn('PropertyPostedBySelector: No sellers in response')
         setDevelopers([])
       }
     } catch (error) {
-      console.error('PropertyPostedBySelector: Error fetching developers:', error)
-      setError(error instanceof Error ? error.message : 'Failed to fetch developers')
+              console.error('PropertyPostedBySelector: Error fetching sellers:', error)
+              setError(error instanceof Error ? error.message : 'Failed to fetch sellers')
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to fetch developers',
+                  description: error instanceof Error ? error.message : 'Failed to fetch sellers',
         variant: 'destructive',
       })
     } finally {
@@ -92,10 +92,10 @@ export function PropertyPostedBySelector({
       onChange(selectedDeveloper.name)
       setShowManualInput(false)
       
-      toast({
-        title: 'Success',
-        description: `Selected developer: ${selectedDeveloper.name}`,
-      })
+              toast({
+          title: 'Success',
+          description: `Selected seller: ${selectedDeveloper.name}`,
+        })
     }
   }
 
@@ -122,7 +122,7 @@ export function PropertyPostedBySelector({
             disabled={isLoading}
           >
             <SelectTrigger>
-              <SelectValue placeholder={isLoading ? "Loading developers..." : "Select developer"} />
+              <SelectValue placeholder={isLoading ? "Loading sellers..." : "Select seller"} />
             </SelectTrigger>
             <SelectContent>
               {developers.map((developer) => (
@@ -137,7 +137,7 @@ export function PropertyPostedBySelector({
             <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <span className="text-sm text-amber-800">
-                No developers available. You can enter the name manually.
+                No sellers available. You can enter the name manually.
               </span>
             </div>
             
@@ -154,7 +154,7 @@ export function PropertyPostedBySelector({
             ) : (
               <div className="space-y-2">
                 <Input
-                  placeholder="Enter developer/broker name"
+                  placeholder="Enter seller/broker name"
                   value={manualInput}
                   onChange={(e) => setManualInput(e.target.value)}
                 />
@@ -194,7 +194,7 @@ export function PropertyPostedBySelector({
         {/* Debug info */}
         {process.env.NODE_ENV === 'development' && (
           <div className="text-xs text-muted-foreground mt-1">
-            Developers loaded: {developers.length} | Loading: {isLoading.toString()} | Error: {error || 'none'}
+            Sellers loaded: {developers.length} | Loading: {isLoading.toString()} | Error: {error || 'none'}
           </div>
         )}
       </div>
@@ -202,7 +202,7 @@ export function PropertyPostedBySelector({
       {/* Display selected developer info */}
       {developerId && value && (
         <div className="p-3 bg-muted rounded-md">
-          <p className="text-sm font-medium">Selected Developer:</p>
+                        <p className="text-sm font-medium">Selected Seller:</p>
           <p className="text-sm text-muted-foreground">{value}</p>
         </div>
       )}

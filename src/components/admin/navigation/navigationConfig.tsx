@@ -19,7 +19,7 @@ export const navigationItems: NavigationItem[] = [
       { name: 'Location', href: '/admin/properties/location', icon: 'MapPin' },
       { name: 'Category', href: '/admin/properties/category', icon: 'Tag' },
       { name: 'Amenities', href: '/admin/properties/amenities', icon: 'Dumbbell' },
-      { name: 'Developer List', href: '/admin/properties/developers', icon: 'Building' },
+      { name: 'Seller List', href: '/admin/properties/developers', icon: 'Building' },
     ]
   },
   { name: 'Users', href: '/admin/users', icon: 'Users' },

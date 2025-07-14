@@ -116,7 +116,7 @@ export function EditDeveloperForm({ developer, open, onOpenChange, onDeveloperUp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.name.trim()) {
-      toast({ title: 'Error', description: 'Developer name is required', variant: 'destructive' })
+      toast({ title: 'Error', description: 'Seller name is required', variant: 'destructive' })
       return
     }
     setIsLoading(true)
@@ -156,7 +156,7 @@ export function EditDeveloperForm({ developer, open, onOpenChange, onDeveloperUp
       setIsLoading(false)
       if (!res.ok) {
         const data = await res.json()
-        toast({ title: 'Error', description: data.error || 'Failed to update developer', variant: 'destructive' })
+        toast({ title: 'Error', description: data.error || 'Failed to update seller', variant: 'destructive' })
         return
       }
       
@@ -172,7 +172,7 @@ export function EditDeveloperForm({ developer, open, onOpenChange, onDeveloperUp
         }
       }
       
-      toast({ title: 'Developer updated successfully', variant: 'default' })
+      toast({ title: 'Seller updated successfully', variant: 'default' })
       onDeveloperUpdated()
       onOpenChange(false)
       setSelectedFile(null)
@@ -189,7 +189,7 @@ export function EditDeveloperForm({ developer, open, onOpenChange, onDeveloperUp
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Edit Developer</CardTitle>
+          <CardTitle>Edit Seller</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">

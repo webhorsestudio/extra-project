@@ -228,7 +228,7 @@ export default function PropertyDetailsSection({ property }: PropertyDetailsSect
               </p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-500">Developer</label>
+                              <label className="text-sm font-medium text-gray-500">Seller</label>
               <p className="text-sm mt-1">
                 {property.developer?.name || 'Not specified'}
               </p>
