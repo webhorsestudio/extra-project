@@ -23,6 +23,7 @@ const mockProperty = {
   title: 'Luxury Apartment in Downtown',
   description: 'A beautiful luxury apartment in the heart of downtown',
   property_type: 'Apartment' as const,
+  property_nature: 'Sell' as const,
   property_collection: 'Featured' as const,
   location: 'Downtown, City',
   latitude: 12.9716,

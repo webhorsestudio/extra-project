@@ -51,6 +51,11 @@ async function getWishlistProperties() {
           ? property.property_collection
           : 'Featured'
       ) as Property['property_collection'];
+      const property_nature = (
+        typeof property.property_nature === 'string' && ['Sell', 'Rent'].includes(property.property_nature)
+          ? property.property_nature
+          : 'Sell'
+      ) as Property['property_nature'];
 
       const property_configurations =
         Array.isArray(property.property_configurations) ? property.property_configurations : [];
@@ -63,6 +68,7 @@ async function getWishlistProperties() {
         title: property.title as string,
         description: property.description as string,
         property_type,
+        property_nature,
         property_collection,
         location: property.location as string,
         latitude: (typeof property.latitude === 'number' ? property.latitude : 0),

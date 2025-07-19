@@ -91,6 +91,8 @@ async function addSampleProperties(locations) {
       latitude: 19.0760 + (Math.random() - 0.5) * 0.1,
       longitude: 72.8777 + (Math.random() - 0.5) * 0.1,
       status: 'active',
+      is_verified: true,
+      verified_at: new Date().toISOString(),
       parking: Math.random() > 0.5,
       parking_spots: Math.floor(Math.random() * 3) + 1,
       created_by: '00000000-0000-0000-0000-000000000000', // Placeholder

@@ -55,6 +55,7 @@ export default function AddPropertyPage() {
         title: data.title,
         description: data.description,
         property_type: data.property_type,
+        property_nature: data.property_nature,
         property_collection: data.property_collection || 'Featured',
         location_id: data.location_id,
         location: data.location,
@@ -64,6 +65,11 @@ export default function AddPropertyPage() {
         created_by: user.id,
         posted_by: data.posted_by,
         developer_id: data.developer_id || null,
+        // Admin-created properties are automatically active and verified
+        status: 'active',
+        is_verified: true,
+        verified_at: new Date().toISOString(),
+        verified_by: user.id,
       }
       
       const { data: property, error: propertyError } = await supabase

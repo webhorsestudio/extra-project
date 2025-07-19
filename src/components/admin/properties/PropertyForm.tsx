@@ -37,6 +37,9 @@ export const formSchema = z.object({
   property_type: z.enum(['House', 'Apartment', 'Commercial', 'Land', 'Villa', 'Penthouse'], {
     required_error: 'Property type is required',
   }),
+  property_nature: z.enum(['Sell', 'Rent'], {
+    required_error: 'Property nature is required',
+  }),
   property_collection: z.enum(['Newly Launched', 'Featured', 'Ready to Move', 'Under Construction'], {
     required_error: 'Property collection is required',
   }),
@@ -87,6 +90,7 @@ export function PropertyForm({
       title: '',
       description: '',
       property_type: 'House',
+      property_nature: 'Sell',
       property_collection: 'Featured',
       location_id: '',
       location: '',
@@ -119,6 +123,7 @@ export function PropertyForm({
         title: property.title || '',
         description: property.description || '',
         property_type: property.property_type || 'House',
+        property_nature: property.property_nature || 'Sell',
         property_collection: property.property_collection || 'Featured',
         location_id: property.location_id || '',
         location: property.location || '',

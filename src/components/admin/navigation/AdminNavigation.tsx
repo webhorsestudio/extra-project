@@ -30,7 +30,8 @@ import {
   FileCheck,
   Building,
   Calendar,
-  HomeIcon
+  HomeIcon,
+  Clock
 } from 'lucide-react'
 
 interface AdminNavigationProps {
@@ -65,7 +66,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   FileCheck,
   Building,
   Calendar,
-  HomeIcon
+  HomeIcon,
+  Clock
 };
 
 export function AdminNavigation({ 

@@ -89,6 +89,7 @@ export default async function ServerLayout({ children, showCategoryBar = false }
     name?: string
     avatar?: string | null
     role?: string
+    email?: string
   } | null = null
   
   if (userResult.status === 'fulfilled' && userResult.value.user && userResult.value.userProfile) {
@@ -97,6 +98,7 @@ export default async function ServerLayout({ children, showCategoryBar = false }
       name: userProfile.full_name || user.user_metadata?.full_name || user.email || 'Unknown User',
       avatar: userProfile.avatar_data || null,
       role: userProfile.role,
+      email: user.email || '',
     }
   }
 

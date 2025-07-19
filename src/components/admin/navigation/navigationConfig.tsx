@@ -15,6 +15,7 @@ export const navigationItems: NavigationItem[] = [
     icon: 'Building2',
     subItems: [
       { name: 'All Properties', href: '/admin/properties', icon: 'Building2' },
+      { name: 'Pending Properties', href: '/admin/properties/pending', icon: 'Clock' },
       { name: 'Add New Property', href: '/admin/properties/add', icon: 'Plus' },
       { name: 'Location', href: '/admin/properties/location', icon: 'MapPin' },
       { name: 'Category', href: '/admin/properties/category', icon: 'Tag' },

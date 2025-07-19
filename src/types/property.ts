@@ -4,6 +4,7 @@ export interface Property {
   title: string
   description: string
   property_type: 'House' | 'Apartment' | 'Commercial' | 'Land' | 'Villa' | 'Penthouse'
+  property_nature: 'Sell' | 'Rent'
   property_collection: 'Newly Launched' | 'Featured' | 'Ready to Move' | 'Under Construction'
   location_id?: string
   location: string

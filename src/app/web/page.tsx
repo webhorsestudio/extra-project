@@ -62,6 +62,11 @@ export default async function HomePage() {
         ? prop.property_collection
         : 'Featured'
     ) as Property['property_collection'];
+    const property_nature = (
+      typeof prop.property_nature === 'string' && ['Sell', 'Rent'].includes(prop.property_nature)
+        ? prop.property_nature
+        : 'Sell'
+    ) as Property['property_nature'];
     const property_configurations = Array.isArray(prop.property_configurations) ? prop.property_configurations : [];
     const property_images = Array.isArray(prop.property_images) ? prop.property_images : [];
     return {
@@ -69,6 +74,7 @@ export default async function HomePage() {
       title: prop.title as string,
       description: prop.description as string || '',
       property_type,
+      property_nature,
       property_collection,
       location: prop.location as string || '',
       latitude: typeof prop.latitude === 'number' ? prop.latitude : 0,

@@ -18,6 +18,9 @@ const formSchema = z.object({
   property_type: z.enum(['House', 'Apartment', 'Commercial', 'Land', 'Villa', 'Penthouse'], {
     required_error: 'Property type is required',
   }),
+  property_nature: z.enum(['Sell', 'Rent'], {
+    required_error: 'Property nature is required',
+  }),
   property_collection: z.enum(['Newly Launched', 'Featured', 'Ready to Move', 'Under Construction'], {
     required_error: 'Property collection is required',
   }),
@@ -62,6 +65,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
         title: values.title,
         description: values.description,
         property_type: values.property_type,
+        property_nature: values.property_nature,
         property_collection: values.property_collection,
         location_id: values.location_id,
         location: values.location || '',

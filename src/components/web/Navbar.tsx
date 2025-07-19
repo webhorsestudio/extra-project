@@ -50,6 +50,7 @@ interface NavbarProps {
     name?: string
     avatar?: string | null
     role?: string
+    email?: string
   } | null
 }
 
@@ -78,7 +79,6 @@ export default function Navbar({
     try {
       setUserState(prev => ({ ...prev, loading: true, error: null }));
       
-      console.log('Fetching user and profile...');
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError) {
@@ -93,7 +93,6 @@ export default function Navbar({
       }
       
       if (!user) {
-        console.log('No user found');
         setUserState({
           user: null,
           profile: null,
@@ -103,7 +102,6 @@ export default function Navbar({
         return;
       }
 
-      console.log('User found, fetching profile...');
       // Fetch user profile to get role
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -133,7 +131,6 @@ export default function Navbar({
         return;
       }
 
-      console.log('Profile fetched successfully:', profile.role);
       setUserState({
         user,
         profile,
@@ -153,8 +150,6 @@ export default function Navbar({
 
   // Improved auth state change handler
   const handleAuthChange = useCallback(async (event: string, session: Session | null) => {
-    console.log('Auth state changed:', event, session?.user?.email);
-    
     try {
       const currentUser = session?.user || null;
       
@@ -217,7 +212,11 @@ export default function Navbar({
     // If we have initial user data from SSR, use it
     if (initialUser) {
       setUserState({
-        user: { id: 'initial', email: initialUser.name || '', user_metadata: { full_name: initialUser.name } },
+        user: { 
+          id: 'initial', 
+          email: initialUser.email || initialUser.name || '', 
+          user_metadata: { full_name: initialUser.name } 
+        },
         profile: {
           id: 'initial',
           full_name: initialUser.name || '',
@@ -242,10 +241,12 @@ export default function Navbar({
 
   const userObj = useMemo(() => {
     if (!userState.user || !userState.profile) return null;
+    
     return {
       name: userState.profile.full_name || userState.user.user_metadata?.full_name || userState.user.email || 'Unknown User',
       avatar: userState.profile.avatar_data || null,
       role: userState.profile.role as 'admin' | 'agent' | 'customer' | undefined,
+      email: userState.user.email || '',
     };
   }, [userState.user, userState.profile]);
 

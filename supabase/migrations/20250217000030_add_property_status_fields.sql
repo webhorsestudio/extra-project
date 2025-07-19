@@ -2,7 +2,7 @@
 
 -- Add status field
 ALTER TABLE properties 
-ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'sold', 'rented', 'under_construction'));
+ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'sold', 'rented', 'under_construction', 'pending'));
 
 -- Add verification fields
 ALTER TABLE properties 

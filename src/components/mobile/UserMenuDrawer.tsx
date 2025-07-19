@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, User, Phone, Headphones, FileText, HelpCircle, LogOut, MessageSquare, Heart } from 'lucide-react';
+import { X, User, Phone, Headphones, FileText, HelpCircle, LogOut, MessageSquare, Heart, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
@@ -33,6 +33,7 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [isCheckingSeller, setIsCheckingSeller] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -120,11 +121,69 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
     }
   };
 
+  const handleAddProperty = async () => {
+    if (!user?.email) {
+      toast({
+        title: 'Error',
+        description: 'Email address is required to add properties.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setIsCheckingSeller(true)
+    try {
+      const response = await fetch('/api/check-seller-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: user.email }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        if (data.isSeller) {
+          // User is a seller, redirect to property creation
+          router.push('/properties/add')
+          toast({
+            title: 'Welcome back!',
+            description: 'Redirecting to property creation form.',
+          })
+        } else {
+          // User is not a seller, redirect to seller registration
+          router.push('/seller-registration')
+          toast({
+            title: 'Seller Registration Required',
+            description: 'Please register as a seller to add properties.',
+          })
+        }
+      } else {
+        toast({
+          title: 'Error',
+          description: data.error || 'Failed to check seller status.',
+          variant: 'destructive',
+        })
+      }
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to check seller status. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsCheckingSeller(false)
+      onClose()
+    }
+  }
+
   const menuItems = [
     ...(user ? [
       { label: 'Wishlist', icon: <Heart className="w-6 h-6" />, href: '/m/wishlist' },
       { label: 'Profile', icon: <User className="w-6 h-6" />, href: '/m/profile' },
       { label: 'Notifications', icon: <MessageSquare className="w-6 h-6" />, href: '/m/notifications' },
+      { label: 'Add Property', icon: <Plus className="w-6 h-6" />, action: handleAddProperty },
     ] : []),
     { label: 'Contact Us', icon: <Phone className="w-6 h-6" />, href: '/m/contact' },
     { label: 'Support', icon: <Headphones className="w-6 h-6" />, href: '/m/support' },
@@ -190,15 +249,28 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           <ul className="flex flex-col divide-y divide-gray-200/50">
             {menuItems.map((item) => (
               <li key={item.label}>
-                <a
-                  href={item.href}
-                  className="flex items-center gap-4 px-6 py-5 text-base text-gray-700 hover:bg-gray-50/80 hover:text-gray-900 transition-all duration-200 focus:bg-gray-100/80 outline-none"
-                  tabIndex={0}
-                  onClick={onClose}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </a>
+                {item.action ? (
+                  <button
+                    type="button"
+                    onClick={item.action}
+                    disabled={isCheckingSeller}
+                    className="flex items-center gap-4 px-6 py-5 text-base text-gray-700 hover:bg-gray-50/80 hover:text-gray-900 transition-all duration-200 focus:bg-gray-100/80 outline-none w-full text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                    tabIndex={0}
+                  >
+                    {item.icon}
+                    <span>{isCheckingSeller && item.label === 'Add Property' ? 'Checking...' : item.label}</span>
+                  </button>
+                ) : (
+                  <a
+                    href={item.href}
+                    className="flex items-center gap-4 px-6 py-5 text-base text-gray-700 hover:bg-gray-50/80 hover:text-gray-900 transition-all duration-200 focus:bg-gray-100/80 outline-none"
+                    tabIndex={0}
+                    onClick={onClose}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </a>
+                )}
               </li>
             ))}
           </ul>

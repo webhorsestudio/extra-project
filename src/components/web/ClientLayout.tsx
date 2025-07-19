@@ -22,6 +22,7 @@ interface User {
   name?: string
   avatar?: string | null
   role?: string
+  email?: string
 }
 
 interface ClientLayoutProps {

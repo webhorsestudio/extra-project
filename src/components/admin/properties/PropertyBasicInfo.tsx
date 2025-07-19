@@ -99,6 +99,28 @@ export function PropertyBasicInfo() {
             </FormItem>
           )}
         />
+        {/* Property Nature field */}
+        <FormField
+          control={control}
+          name="property_nature"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Property Nature <span className="text-destructive">*</span></FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select property nature" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Sell">Sell</SelectItem>
+                  <SelectItem value="Rent">Rent</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={control}
           name="property_collection"

@@ -19,6 +19,7 @@ export default async function NewlyLaunchedProperties() {
     title: property.title,
     description: property.description,
     property_type: 'Apartment' as const, // Default type since not in query
+    property_nature: 'Sell' as const, // Default nature since not in query
     property_collection: property.property_collection || 'Newly Launched' as const,
     location: property.location,
     latitude: 0, // Default value since not in query

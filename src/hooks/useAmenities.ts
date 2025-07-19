@@ -20,6 +20,7 @@ export function useAmenities() {
       }
     } catch {
       setError('Failed to fetch amenities')
+    } finally {
       setLoading(false)
     }
   }

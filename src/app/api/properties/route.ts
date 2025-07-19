@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
         title,
         description,
         location,
+        property_nature,
         created_at,
         updated_at,
         status,
