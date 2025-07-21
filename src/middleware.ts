@@ -93,6 +93,23 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // --- GLOBAL ADMIN ROLE CHECK FOR /admin ROUTES ---
+  if (pathname.startsWith('/admin')) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.redirect(new URL('/users/login', request.url));
+    }
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    if (!profile || profile.role !== 'admin') {
+      return NextResponse.redirect(new URL('/users/login', request.url));
+    }
+  }
+  // --- END ADMIN ROLE CHECK ---
+
   // Refresh session if expired - required for Server Components
   // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
   try {

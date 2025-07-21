@@ -276,8 +276,8 @@ const PropertyImageNav = ({ onPrev, onNext, disabledPrev, disabledNext }: { onPr
 
 // Image Carousel (interactive)
 const PropertyImageCarousel = ({ images }: { images?: { image_url: string }[] }) => {
-  const fallback = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80';
-  const imageList = images && images.length > 0 ? images.map(img => img.image_url) : [fallback];
+  const hasImages = images && images.length > 0;
+  const imageList = hasImages ? images.map(img => img.image_url) : [];
   const [current, setCurrent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const total = imageList.length;
@@ -292,10 +292,16 @@ const PropertyImageCarousel = ({ images }: { images?: { image_url: string }[] })
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <PropertyImageSlide src={imageList[current]} alt={`Property image ${current + 1}`} />
-      {total > 1 && (
+      {hasImages ? (
+        <PropertyImageSlide src={imageList[current]} alt={`Property image ${current + 1}`} />
+      ) : (
+        <div className="flex items-center justify-center w-full h-full bg-gray-200 text-gray-600 text-lg font-semibold">
+          No Image Available
+        </div>
+      )}
+      {hasImages && total > 1 && (
         <>
-          <div className={`transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}> 
             <PropertyImageNav
               onPrev={goPrev}
               onNext={goNext}

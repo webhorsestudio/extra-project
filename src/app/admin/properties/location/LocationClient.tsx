@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
 import { Edit, List } from 'lucide-react'
 import { AddLocationForm } from '@/components/admin/properties/locations/AddLocationForm'
 import { LocationList } from '@/components/admin/properties/locations/LocationList'
@@ -19,12 +18,10 @@ interface Location {
   updated_at: string
 }
 
-export default function LocationClient({ locations: initialLocations }: { locations: Location[] }) {
+export default function LocationClient() {
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [editingLocation, setEditingLocation] = useState<Location | null>(null)
   const [activeTab, setActiveTab] = useState('list')
-  // Optionally, you can keep a local copy of locations if you want to use it for fallback or display
-  // const [locations, setLocations] = useState<Location[]>(initialLocations)
 
   const handleLocationAdded = () => {
     setRefreshTrigger(prev => prev + 1)
