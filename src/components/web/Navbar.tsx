@@ -76,80 +76,128 @@ export default function Navbar({
 
   // Improved user and profile fetching with proper error handling
   const fetchUserAndProfile = useCallback(async () => {
+    setUserState(prev => ({ ...prev, loading: true, error: null }));
+    console.log('Navbar: Starting fetchUserAndProfile');
+    let loadingCleared = false;
+    const clearLoading = () => {
+      if (!loadingCleared) {
+        setUserState(prev => ({ ...prev, loading: false }));
+        loadingCleared = true;
+        console.log('Navbar: Loading state cleared by fallback');
+      }
+    };
+    const timeout = setTimeout(clearLoading, 5000);
     try {
-      setUserState(prev => ({ ...prev, loading: true, error: null }));
-      
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) {
-        console.error('Error getting user:', userError);
+      console.log('Navbar: supabase.auth.getUser result', { user, userError });
+      if (userError || !user) {
         setUserState({
           user: null,
           profile: null,
           loading: false,
-          error: userError.message
+          error: 'Not authenticated',
         });
+        clearTimeout(timeout);
+        loadingCleared = true;
+        console.log('Navbar: No user found or userError');
         return;
       }
-      
-      if (!user) {
-        setUserState({
-          user: null,
-          profile: null,
-          loading: false,
-          error: null
-        });
-        return;
-      }
-
-      // Fetch user profile to get role
+      // Try to fetch the profile
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
-
-      if (profileError) {
-        console.error('Error fetching user profile:', profileError);
+      console.log('Navbar: profile fetch result', { profile, profileError });
+      if (profileError || !profile) {
+        // Call secure API route to create profile
+        const profileRes = await fetch('/api/create-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            full_name: user.user_metadata?.full_name || user.email || '',
+            role: 'customer',
+          }),
+        });
+        console.log('Navbar: /api/create-profile response', profileRes.status);
+        if (!profileRes.ok) {
+          const { error } = await profileRes.json();
+          setUserState({
+            user,
+            profile: null,
+            loading: false,
+            error: error || 'Profile creation failed',
+          });
+          clearTimeout(timeout);
+          loadingCleared = true;
+          console.log('Navbar: Profile creation failed', error);
+          return;
+        }
+        // Refetch the profile after API call
+        const { data: newProfile, error: newProfileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        console.log('Navbar: profile refetch after API', { newProfile, newProfileError });
+        if (newProfile && !newProfileError) {
+          setUserState({
+            user,
+            profile: newProfile,
+            loading: false,
+            error: null,
+          });
+          clearTimeout(timeout);
+          loadingCleared = true;
+          console.log('Navbar: Profile created and set');
+          return;
+        }
         setUserState({
           user,
           profile: null,
           loading: false,
-          error: profileError.message
+          error: 'Profile not found',
         });
+        clearTimeout(timeout);
+        loadingCleared = true;
+        console.log('Navbar: Profile not found after API');
         return;
       }
-
-      if (!profile) {
-        console.error('No profile found for user');
-        setUserState({
-          user,
-          profile: null,
-          loading: false,
-          error: 'Profile not found'
-        });
-        return;
-      }
-
       setUserState({
         user,
         profile,
         loading: false,
-        error: null
+        error: null,
       });
-    } catch (error) {
-      console.error('Error fetching user data:', error);
+      clearTimeout(timeout);
+      loadingCleared = true;
+      console.log('Navbar: Profile fetched and set', profile);
+    } catch (err) {
       setUserState({
         user: null,
         profile: null,
         loading: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Error fetching user/profile',
       });
+      clearTimeout(timeout);
+      loadingCleared = true;
+      console.log('Navbar: Error in fetchUserAndProfile', err);
     }
   }, []);
 
   // Improved auth state change handler
   const handleAuthChange = useCallback(async (event: string, session: Session | null) => {
+    console.log('Navbar: handleAuthChange', event, session?.user?.email);
+    let loadingCleared = false;
+    const clearLoading = () => {
+      if (!loadingCleared) {
+        setUserState(prev => ({ ...prev, loading: false }));
+        loadingCleared = true;
+        console.log('Navbar: Loading state cleared by fallback (auth change)');
+      }
+    };
+    const timeout = setTimeout(clearLoading, 5000);
     try {
       const currentUser = session?.user || null;
       
@@ -160,6 +208,9 @@ export default function Navbar({
           loading: false,
           error: null
         });
+        clearTimeout(timeout);
+        loadingCleared = true;
+        console.log('Navbar: No currentUser in handleAuthChange');
         return;
       }
 
@@ -169,25 +220,60 @@ export default function Navbar({
         .select('*')
         .eq('id', currentUser.id)
         .single();
-
-      if (error) {
-        console.error('Error fetching user profile:', error);
+      console.log('Navbar: handleAuthChange profile fetch', { profile, error });
+      if (error || !profile) {
+        // Try to create the profile via API route
+        const profileRes = await fetch('/api/create-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            full_name: currentUser.user_metadata?.full_name || currentUser.email || '',
+            role: 'customer',
+          }),
+        });
+        console.log('Navbar: handleAuthChange /api/create-profile response', profileRes.status);
+        if (!profileRes.ok) {
+          const { error: apiError } = await profileRes.json();
+          setUserState({
+            user: currentUser,
+            profile: null,
+            loading: false,
+            error: apiError || 'Profile creation failed',
+          });
+          clearTimeout(timeout);
+          loadingCleared = true;
+          console.log('Navbar: handleAuthChange profile creation failed', apiError);
+          return;
+        }
+        // Refetch the profile after API call
+        const { data: newProfile, error: newProfileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        console.log('Navbar: handleAuthChange profile refetch after API', { newProfile, newProfileError });
+        if (newProfile && !newProfileError) {
+          setUserState({
+            user: currentUser,
+            profile: newProfile,
+            loading: false,
+            error: null,
+          });
+          clearTimeout(timeout);
+          loadingCleared = true;
+          console.log('Navbar: handleAuthChange profile created and set');
+          return;
+        }
         setUserState({
           user: currentUser,
           profile: null,
           loading: false,
-          error: error.message
+          error: 'Profile not found',
         });
-        return;
-      }
-
-      if (!profile) {
-        setUserState({
-          user: currentUser,
-          profile: null,
-          loading: false,
-          error: 'Profile not found'
-        });
+        clearTimeout(timeout);
+        loadingCleared = true;
+        console.log('Navbar: handleAuthChange profile not found after API');
         return;
       }
 
@@ -197,14 +283,19 @@ export default function Navbar({
         loading: false,
         error: null
       });
+      clearTimeout(timeout);
+      loadingCleared = true;
+      console.log('Navbar: handleAuthChange profile fetched and set', profile);
     } catch (error) {
-      console.error('Error in auth state change:', error);
       setUserState({
         user: null,
         profile: null,
         loading: false,
         error: error instanceof Error ? error.message : 'Unknown error'
       });
+      clearTimeout(timeout);
+      loadingCleared = true;
+      console.log('Navbar: handleAuthChange error', error);
     }
   }, []);
 

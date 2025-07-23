@@ -65,22 +65,21 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       }
 
       if (authData.user) {
-        // Create profile immediately after signup
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            email: authData.user.email,
+        // Create profile via secure API route
+        const profileRes = await fetch('/api/create-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
             full_name: values.full_name,
             role: 'customer',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
-
-        if (profileError) {
+          }),
+        });
+        if (!profileRes.ok) {
+          const { error } = await profileRes.json();
           toast({
             title: 'Profile creation failed',
-            description: profileError.message || 'Could not create user profile. Please contact support if you have issues logging in.',
+            description: error || 'Could not create user profile. Please contact support if you have issues logging in.',
             variant: 'destructive',
           });
         }

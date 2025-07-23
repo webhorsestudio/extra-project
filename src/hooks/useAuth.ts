@@ -79,14 +79,42 @@ export function useAuth() {
       }
 
       if (!profile) {
-        console.error('useAuth: No profile found for user')
+        console.error('useAuth: No profile found for user, attempting to create...')
+        // Try to create the profile automatically
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            email: user.email,
+            full_name: user.user_metadata?.full_name || '',
+            role: 'customer',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+        if (!insertError) {
+          // Try fetching the profile again
+          const { data: newProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          if (newProfile) {
+            setState({
+              user,
+              profile: newProfile,
+              loading: false,
+              error: null
+            });
+            return;
+          }
+        }
         setState({
           user,
           profile: null,
           loading: false,
           error: 'Profile not found'
-        })
-        return
+        });
+        return;
       }
 
       console.log('useAuth: Profile fetched successfully:', profile.role)

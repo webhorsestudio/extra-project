@@ -56,37 +56,42 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       // 2. Check if the user has a profile and get their role
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('role, full_name')
+        .select('*')
         .eq('id', authData.user.id)
-        .single()
+        .single();
       
-      if (profileError) {
+      if (profileError || !profile) {
         // If profile doesn't exist, try to create one automatically
         console.log('Profile not found, attempting to create one...')
-        
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            email: authData.user.email,
-            full_name: authData.user.user_metadata?.full_name || '',
-            role: 'customer',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-
-        if (insertError) {
-          console.error('Failed to create profile:', insertError)
-          await supabase.auth.signOut()
-          throw new Error('Account setup incomplete. Please contact an administrator for assistance.')
+        let profileCreated = false;
+        for (let attempt = 0; attempt < 2; attempt++) {
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: authData.user.id,
+              email: authData.user.email,
+              full_name: authData.user.user_metadata?.full_name || '',
+              role: 'customer',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
+          if (!insertError) {
+            profileCreated = true;
+            break;
+          }
         }
-
-        // Profile created successfully, continue with login
-        toast({
-          title: 'Welcome!',
-          description: 'Your account has been set up successfully.',
-        })
-        
+        if (!profileCreated) {
+          toast({
+            title: 'Profile setup warning',
+            description: 'Your account was created, but we could not set up your profile automatically. You can still use the site, but some features may be limited. Please contact support if you have issues.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Welcome!',
+            description: 'Your account has been set up successfully.',
+          });
+        }
         // Redirect all users to home page - device detection will handle routing
         router.push('/')
         router.refresh()
