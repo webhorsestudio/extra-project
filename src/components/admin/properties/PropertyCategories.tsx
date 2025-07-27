@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
@@ -15,289 +15,290 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tag, Loader2 } from 'lucide-react'
 import { useCategories } from '@/hooks/useCategories'
 
-// Safe icon mapping - only include icons we know work
-const SAFE_ICON_MAP: Record<string, () => React.ReactElement> = {
+// Import actual Lucide icons
+import {
+  Home,
+  Building2,
+  Star,
+  Heart,
+  MapPin,
+  Users,
+  Calendar,
+  DollarSign,
+  Car,
+  Trees,
+  Sun,
+  Moon,
+  Cloud,
+  Wifi,
+  Battery,
+  Camera,
+  Phone,
+  Mail,
+  MessageSquare,
+  Settings,
+  User,
+  Lock,
+  Unlock,
+  Eye,
+  EyeOff,
+  Plus,
+  Minus,
+  Check,
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Download,
+  Upload,
+  Edit,
+  Trash2,
+  Save,
+  RefreshCw,
+  Clock,
+  AlertCircle,
+  Info,
+  HelpCircle,
+  ExternalLink,
+  Link,
+  Share2,
+  Bookmark,
+  BookOpen,
+  FileText,
+  Image,
+  Video,
+  Music,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  RotateCcw,
+  RotateCw,
+  ZoomIn,
+  ZoomOut,
+  Move,
+  Crop,
+  Scissors,
+  Type,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  Grid,
+  Columns,
+  Rows,
+  PieChart,
+  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  Zap,
+  Target,
+  Award,
+  Gift,
+  ShoppingCart,
+  CreditCard,
+  Wallet,
+  PiggyBank,
+  Coins,
+  Building,
+  Bed,
+  Bath,
+  Mountain,
+  Map,
+  Navigation,
+  Compass,
+  Globe,
+  Briefcase,
+  Store,
+  Factory,
+  Warehouse,
+  Receipt,
+  Calculator,
+  Smartphone,
+  Laptop,
+  Monitor,
+  Printer,
+  Server,
+  Database,
+  Signal,
+  Bluetooth,
+  Satellite,
+  Router,
+  Coffee,
+  Utensils,
+  ShoppingBag,
+  Dumbbell
+} from 'lucide-react'
+
+// Type definitions
+interface CategoryObject {
+  name: string;
+  icon?: string;
+}
+
+interface IconComponentProps {
+  className?: string;
+}
+
+// Safe icon mapping with actual Lucide icons
+const SAFE_ICON_MAP: Record<string, React.ComponentType<IconComponentProps>> = {
   // Original Icons
-  Home: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Building2: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Star: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Heart: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  MapPin: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Users: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Calendar: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Tag: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  DollarSign: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Car: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Trees: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Sun: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Moon: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Cloud: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Wifi: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Battery: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Camera: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Phone: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Mail: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  MessageSquare: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Settings: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  User: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Lock: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Unlock: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Eye: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  EyeOff: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Plus: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Minus: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Check: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  X: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  ArrowRight: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  ArrowLeft: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Search: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Filter: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  SortAsc: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  SortDesc: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Download: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Upload: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Edit: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Trash2: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Save: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  RefreshCw: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Clock: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  AlertCircle: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Info: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  HelpCircle: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  ExternalLink: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Link: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Share2: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Bookmark: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  BookOpen: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  FileText: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Image: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Video: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Music: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Volume2: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  VolumeX: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Play: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Pause: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  SkipBack: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  SkipForward: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  RotateCcw: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  RotateCw: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  ZoomIn: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  ZoomOut: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Move: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Crop: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Scissors: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Type: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Bold: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Italic: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Underline: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  List: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Grid: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Columns: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Rows: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  PieChart: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  BarChart3: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  TrendingUp: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  TrendingDown: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Activity: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Zap: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Target: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Award: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Gift: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  ShoppingCart: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  CreditCard: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Wallet: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  PiggyBank: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Coins: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Real Estate & Property Icons
-  Building: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  HomeIcon: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Bed: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Bath: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Kitchen: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Garage: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Pool: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Garden: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Mountain: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Beach: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  City: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Map: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Navigation: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Compass: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Globe: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Business & Finance Icons
-  Briefcase: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Office: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Store: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Factory: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Warehouse: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Bank: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Savings: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Payment: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Receipt: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Calculator: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Growth: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Decline: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Technology & Communication Icons
-  Smartphone: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Laptop: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Monitor: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Printer: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Server: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Database: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Internet: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Signal: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Bluetooth: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Satellite: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Router: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Lifestyle & Amenities Icons
-  Coffee: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Utensils: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  ShoppingBag: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Gym: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Dumbbell: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Tennis: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Golf: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Swimming: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Bike: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Vehicle: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Plane: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Train: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Nature & Environment Icons
-  Leaf: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Flower: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Nature: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Waves: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Snowflake: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Umbrella: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Security & Safety Icons
-  Shield: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  AlertTriangle: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Fire: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  FirstAid: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  LifeBuoy: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Utilities & Services Icons
-  Lightbulb: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Plug: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Water: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  GasPump: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Tools: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Wrench: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Social & Community Icons
-  Community: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  UserPlus: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  UserMinus: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  UserCheck: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  MessageCircle: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Contact: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Email: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Media & Entertainment Icons
-  Tv: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Radio: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Headphones: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Gamepad2: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Film: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Photo: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Food & Dining Icons
-  UtensilsCrossed: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Wine: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Beer: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Pizza: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Hamburger: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Cafe: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Transportation Icons
-  Bus: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Taxi: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Ship: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Rocket: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Bicycle: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Motorcycle: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Weather & Time Icons
-  Sunrise: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Sunset: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  CloudRain: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  CloudLightning: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Wind: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Thermometer: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Miscellaneous Icons
-  Package: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Box: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Archive: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Folder: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  File: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Paperclip: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Additional Business Icons
-  BarChart: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Analytics: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  LineChart: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Stats: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Goal: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Achievement: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Trophy: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Medal: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Additional Property Icons
-  Key: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Door: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Window: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Stairs: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Elevator: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Parking: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Security: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Additional Technology Icons
-  Cpu: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  HardDrive: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Memory: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Network: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Storage: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Backup: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  
-  // Additional Lifestyle Icons
-  Health: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Smile: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  ThumbsUp: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Favorite: () => <Tag className="h-4 w-4 text-muted-foreground" />,
-  Saved: () => <Tag className="h-4 w-4 text-muted-foreground" />
+  Home,
+  Building2,
+  Star,
+  Heart,
+  MapPin,
+  Users,
+  Calendar,
+  DollarSign,
+  Car,
+  Trees,
+  Sun,
+  Moon,
+  Cloud,
+  Wifi,
+  Battery,
+  Camera,
+  Phone,
+  Mail,
+  MessageSquare,
+  Settings,
+  User,
+  Lock,
+  Unlock,
+  Eye,
+  EyeOff,
+  Plus,
+  Minus,
+  Check,
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Download,
+  Upload,
+  Edit,
+  Trash2,
+  Save,
+  RefreshCw,
+  Clock,
+  AlertCircle,
+  Info,
+  HelpCircle,
+  ExternalLink,
+  Link,
+  Share2,
+  Bookmark,
+  BookOpen,
+  FileText,
+  Image,
+  Video,
+  Music,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  RotateCcw,
+  RotateCw,
+  ZoomIn,
+  ZoomOut,
+  Move,
+  Crop,
+  Scissors,
+  Type,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  Grid,
+  Columns,
+  Rows,
+  PieChart,
+  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  Zap,
+  Target,
+  Award,
+  Gift,
+  ShoppingCart,
+  CreditCard,
+  Wallet,
+  PiggyBank,
+  Coins,
+  Building,
+  Bed,
+  Bath,
+  Mountain,
+  Map,
+  Navigation,
+  Compass,
+  Globe,
+  Briefcase,
+  Store,
+  Factory,
+  Warehouse,
+  Receipt,
+  Calculator,
+  Smartphone,
+  Laptop,
+  Monitor,
+  Printer,
+  Server,
+  Database,
+  Signal,
+  Bluetooth,
+  Satellite,
+  Router,
+  Coffee,
+  Utensils,
+  ShoppingBag,
+  Dumbbell
 }
 
 export function PropertyCategories() {
   const form = useFormContext()
   const { categories, loading, error, refetch } = useCategories({ includeInactive: false })
+  const [isClient, setIsClient] = useState(false)
 
-  const renderIcon = (iconName: string) => {
-    // Debug log
-    if (typeof window !== 'undefined') {
-      // eslint-disable-next-line no-console
-      console.log('Category icon:', iconName)
+  // Ensure we're on the client side to avoid hydration issues
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  const renderIcon = (iconName?: string) => {
+    if (!iconName || typeof iconName !== 'string') {
+      return <Tag className="h-4 w-4 text-muted-foreground" />
     }
-    if (typeof iconName === 'string' && iconName in SAFE_ICON_MAP) {
+    
+    // Direct match
+    if (iconName in SAFE_ICON_MAP) {
       const IconComponent = SAFE_ICON_MAP[iconName]
-      return <IconComponent />
+      return <IconComponent className="h-4 w-4 text-muted-foreground" />
     }
-    // Try case-insensitive match
-    if (typeof iconName === 'string') {
-      const foundKey = Object.keys(SAFE_ICON_MAP).find(
-        key => key.toLowerCase() === iconName.toLowerCase()
-      )
-      if (foundKey) {
-        const IconComponent = SAFE_ICON_MAP[foundKey]
-        return <IconComponent />
-      }
+    
+    // Case-insensitive match
+    const foundKey = Object.keys(SAFE_ICON_MAP).find(
+      key => key.toLowerCase() === iconName.toLowerCase()
+    )
+    if (foundKey) {
+      const IconComponent = SAFE_ICON_MAP[foundKey]
+      return <IconComponent className="h-4 w-4 text-muted-foreground" />
     }
+    
+    // Fallback to Tag icon
     return <Tag className="h-4 w-4 text-muted-foreground" />
   }
 
@@ -384,6 +385,29 @@ export function PropertyCategories() {
     )
   }
 
+  // Don't render form content during SSR to avoid hydration issues
+  if (!isClient) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Tag className="h-5 w-5" />
+            Property Categories
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Select relevant categories to help buyers find your property
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm text-muted-foreground">Loading...</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -399,39 +423,32 @@ export function PropertyCategories() {
         <FormField
           control={form.control}
           name="categories"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <ScrollArea className="h-[300px] rounded-md border p-4">
                 <div className="space-y-2">
                   {categories.map((category) => (
-                    <FormField
-                      key={category.id}
-                      control={form.control}
-                      name="categories"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center gap-3 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(category.name)}
-                              onCheckedChange={(checked) => {
-                                const currentValue = field.value || []
-                                if (checked) {
-                                  field.onChange([...currentValue, category.name])
-                                } else {
-                                  field.onChange(
-                                    currentValue.filter((value: string) => value !== category.name)
-                                  )
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal text-sm cursor-pointer mb-0 flex-1">
-                            {category.name}
-                          </FormLabel>
-                          {renderIcon(category.icon)}
-                        </FormItem>
-                      )}
-                    />
+                    <div key={category.id} className="flex flex-row items-center gap-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value?.some((cat: CategoryObject) => cat.name === category.name)}
+                          onCheckedChange={(checked) => {
+                            const currentValue = field.value || []
+                            if (checked) {
+                              field.onChange([...currentValue, { name: category.name, icon: category.icon }])
+                            } else {
+                              field.onChange(
+                                currentValue.filter((cat: CategoryObject) => cat.name !== category.name)
+                              )
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      {renderIcon(category.icon)}
+                      <FormLabel className="font-normal text-sm cursor-pointer mb-0 flex-1">
+                        {category.name}
+                      </FormLabel>
+                    </div>
                   ))}
                 </div>
               </ScrollArea>
@@ -447,9 +464,10 @@ export function PropertyCategories() {
               <Badge variant="secondary">{form.watch('categories').length}</Badge>
             </div>
             <div className="flex flex-wrap gap-2">
-              {form.watch('categories').map((category: string) => (
-                <Badge key={category} variant="outline" className="text-xs">
-                  {category}
+              {form.watch('categories').map((category: CategoryObject, index: number) => (
+                <Badge key={`${category.name}-${index}`} variant="outline" className="text-xs flex items-center gap-1">
+                  {renderIcon(category.icon)}
+                  {category.name}
                 </Badge>
               ))}
             </div>
@@ -458,4 +476,4 @@ export function PropertyCategories() {
       </CardContent>
     </Card>
   )
-} 
+}

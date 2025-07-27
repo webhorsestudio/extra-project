@@ -1,10 +1,16 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Wifi, Car, Waves, Dumbbell as GymIcon, Trees, Shield, ArrowUpDown, Flower2, Car as ParkingIcon } from 'lucide-react';
+import { Dumbbell, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
+
+interface Amenity {
+  name: string;
+  image_url?: string;
+}
 
 interface PropertyAmenitiesDisplayProps {
-  amenities: string[];
+  amenities: Amenity[];
 }
 
 export default function PropertyAmenitiesDisplay({ amenities }: PropertyAmenitiesDisplayProps) {
@@ -24,20 +30,6 @@ export default function PropertyAmenitiesDisplay({ amenities }: PropertyAmenitie
     );
   }
 
-  const getAmenityIcon = (amenity: string) => {
-    const lowerAmenity = amenity.toLowerCase();
-    if (lowerAmenity.includes('wifi') || lowerAmenity.includes('internet')) return Wifi;
-    if (lowerAmenity.includes('parking') || lowerAmenity.includes('garage')) return ParkingIcon;
-    if (lowerAmenity.includes('pool') || lowerAmenity.includes('swimming')) return Waves;
-    if (lowerAmenity.includes('gym') || lowerAmenity.includes('fitness')) return GymIcon;
-    if (lowerAmenity.includes('garden') || lowerAmenity.includes('lawn')) return Flower2;
-    if (lowerAmenity.includes('security') || lowerAmenity.includes('guard')) return Shield;
-    if (lowerAmenity.includes('elevator') || lowerAmenity.includes('lift')) return ArrowUpDown;
-    if (lowerAmenity.includes('park') || lowerAmenity.includes('playground')) return Trees;
-    if (lowerAmenity.includes('car') || lowerAmenity.includes('vehicle')) return Car;
-    return Dumbbell;
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -51,15 +43,22 @@ export default function PropertyAmenitiesDisplay({ amenities }: PropertyAmenitie
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {amenities.map((amenity, index) => {
-            const IconComponent = getAmenityIcon(amenity);
-            return (
-              <div key={index} className="flex items-center gap-2 p-3 rounded-lg border bg-muted/30">
-                <IconComponent className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{amenity}</span>
-              </div>
-            );
-          })}
+          {amenities.map((amenity, index) => (
+            <div key={index} className="flex items-center gap-2 p-3 rounded-lg border bg-muted/30">
+              {amenity.image_url ? (
+                <Image 
+                  src={amenity.image_url} 
+                  alt={amenity.name} 
+                  width={24} 
+                  height={24} 
+                  className="rounded object-cover"
+                />
+              ) : (
+                <ImageIcon className="h-6 w-6 text-muted-foreground" />
+              )}
+              <span className="text-sm font-medium">{amenity.name}</span>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>

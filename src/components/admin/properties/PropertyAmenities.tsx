@@ -16,6 +16,12 @@ import Image from 'next/image'
 import { useState, useMemo } from 'react'
 import { Dumbbell, Search } from 'lucide-react'
 
+// Type definitions
+interface AmenityObject {
+  name: string;
+  image_url?: string;
+}
+
 export function PropertyAmenities() {
   const form = useFormContext()
   const { amenities, loading, error } = useAmenities()
@@ -69,13 +75,13 @@ export function PropertyAmenities() {
                     <FormItem key={amenity.id} className="flex flex-row items-center gap-3 space-y-0">
                       <FormControl>
                         <Checkbox
-                          checked={field.value?.includes(amenity.name)}
+                          checked={field.value?.some((a: AmenityObject) => a.name === amenity.name)}
                           onCheckedChange={(checked) => {
                             const currentValue = field.value || []
                             if (checked) {
-                              field.onChange([...currentValue, amenity.name])
+                              field.onChange([...currentValue, { name: amenity.name, image_url: amenity.image_url }])
                             } else {
-                              field.onChange(currentValue.filter((value: string) => value !== amenity.name))
+                              field.onChange(currentValue.filter((a: AmenityObject) => a.name !== amenity.name))
                             }
                           }}
                         />
@@ -103,9 +109,9 @@ export function PropertyAmenities() {
               <Badge variant="secondary">{form.watch('amenities').length}</Badge>
             </div>
             <div className="flex flex-wrap gap-2">
-              {form.watch('amenities').map((amenity: string) => (
-                <Badge key={amenity} variant="outline" className="text-xs">
-                  {amenity}
+              {form.watch('amenities').map((amenity: AmenityObject, index: number) => (
+                <Badge key={`${amenity.name}-${index}`} variant="outline" className="text-xs">
+                  {amenity.name}
                 </Badge>
               ))}
             </div>

@@ -26,8 +26,14 @@ const formSchema = z.object({
   }),
   location_id: z.string().min(1, 'Location selection is required'),
   location: z.string().optional(),
-  amenities: z.array(z.string()).optional(),
-  categories: z.array(z.string()).optional(),
+  amenities: z.array(z.object({
+    name: z.string(),
+    image_url: z.string().optional(),
+  })).optional(),
+  categories: z.array(z.object({
+    name: z.string(),
+    icon: z.string().optional(),
+  })).optional(),
   has_rera: z.boolean(),
   rera_number: z.string().optional(),
   bhk_configurations: z.array(z.object({
@@ -93,7 +99,9 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
       // Update amenities using helper function
       console.log('Edit Property - Updating amenities:', values.amenities)
       if (values.amenities) {
-        const amenityResult = await updatePropertyAmenityRelations(property.id, values.amenities)
+        // Extract amenity names from objects for the update function
+        const amenityNames = values.amenities.map(amenity => amenity.name)
+        const amenityResult = await updatePropertyAmenityRelations(property.id, amenityNames)
         if (!amenityResult.success) {
           console.error('Error updating amenity relationships:', amenityResult.error)
           toast({
@@ -107,7 +115,9 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
       // Update categories using helper function
       console.log('Edit Property - Updating categories:', values.categories)
       if (values.categories) {
-        const categoryResult = await updatePropertyCategoryRelations(property.id, values.categories)
+        // Extract category names from objects for the update function
+        const categoryNames = values.categories.map(cat => cat.name)
+        const categoryResult = await updatePropertyCategoryRelations(property.id, categoryNames)
         if (!categoryResult.success) {
           console.error('Error updating category relationships:', categoryResult.error)
           toast({

@@ -45,8 +45,14 @@ export const formSchema = z.object({
   }),
   location_id: z.string().min(1, 'Location selection is required'),
   location: z.string().optional(),
-  amenities: z.array(z.string()).optional(),
-  categories: z.array(z.string()).optional(),
+  amenities: z.array(z.object({
+    name: z.string(),
+    image_url: z.string().optional(),
+  })).optional(),
+  categories: z.array(z.object({
+    name: z.string(),
+    icon: z.string().optional(),
+  })).optional(),
   has_rera: z.boolean(),
   rera_number: z.string().optional(),
   bhk_configurations: z.array(z.object({
@@ -119,7 +125,7 @@ export function PropertyForm({
 
   useEffect(() => {
     if (property) {
-      form.reset({
+      const formData = {
         title: property.title || '',
         description: property.description || '',
         property_type: property.property_type || 'House',
@@ -127,8 +133,8 @@ export function PropertyForm({
         property_collection: property.property_collection || 'Featured',
         location_id: property.location_id || '',
         location: property.location || '',
-        amenities: property.features || [],
-        categories: property.categories?.map(cat => cat.name) || [],
+        amenities: property.amenities || [], // Keep as objects instead of transforming to strings
+        categories: property.categories || [], // Keep as objects instead of transforming to strings
         has_rera: !!property.rera_number,
         rera_number: property.rera_number || '',
         bhk_configurations: property.bhk_configurations?.length
@@ -159,7 +165,9 @@ export function PropertyForm({
         longitude: property.longitude || 0,
         posted_by: property.posted_by || '',
         developer_id: property.developer_id || '',
-      });
+      };
+      
+      form.reset(formData);
     }
   }, [property, form]);
 

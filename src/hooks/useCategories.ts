@@ -35,7 +35,6 @@ export function useCategories(options: UseCategoriesOptions = {}): UseCategories
 
   const fetchCategories = useCallback(async () => {
     try {
-      console.log('useCategories: Starting fetch')
       setLoading(true)
       setError(null)
       
@@ -45,8 +44,6 @@ export function useCategories(options: UseCategoriesOptions = {}): UseCategories
       if (!response.ok) {
         throw new Error(data.error || 'Failed to fetch categories')
       }
-      
-      console.log('useCategories: Fetched categories:', data.categories?.length || 0)
       
       // Update cache
       categoriesCache = data.categories || []
@@ -67,7 +64,6 @@ export function useCategories(options: UseCategoriesOptions = {}): UseCategories
   }, [includeInactive])
 
   const refetch = useCallback(async () => {
-    console.log('useCategories: Refetching categories')
     // Clear cache to force fresh fetch
     categoriesCache = null
     await fetchCategories()

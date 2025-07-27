@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { ArrowLeft, Mail } from 'lucide-react'
 
@@ -33,14 +32,15 @@ export default function ForgotPasswordPage() {
     setIsLoading(true)
     
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
-        redirectTo: `${window.location.origin}/users/reset-password`,
-      })
-
-      if (error) {
-        throw new Error(error.message)
+      const response = await fetch('/api/auth/request-password-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: values.email }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to send reset email.');
       }
-
       setIsEmailSent(true)
       toast({
         title: 'Reset email sent',

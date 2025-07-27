@@ -16,6 +16,128 @@ import { useAmenities } from '@/hooks/useAmenities';
 import { useCategories } from '@/hooks/useCategories';
 import dynamic from 'next/dynamic';
 
+// Import Lucide icons for categories
+import {
+  Home,
+  Building2,
+  Star,
+  Heart,
+  MapPin,
+  Users,
+  Calendar,
+  DollarSign,
+  Car,
+  Trees,
+  Sun,
+  Moon,
+  Cloud,
+  Wifi,
+  Battery,
+  Camera,
+  Phone,
+  Mail,
+  MessageSquare,
+  Settings,
+  User,
+  Lock,
+  Unlock,
+  Eye,
+  EyeOff,
+  Plus,
+  Minus,
+  Check,
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Download,
+  Upload,
+  Edit,
+  Trash2,
+  Save,
+  RefreshCw,
+  Clock,
+  AlertCircle,
+  Info,
+  HelpCircle,
+  ExternalLink,
+  Link,
+  Share2,
+  Bookmark,
+  BookOpen,
+  FileText,
+  Image,
+  Video,
+  Music,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  RotateCcw,
+  RotateCw,
+  ZoomIn,
+  ZoomOut,
+  Move,
+  Crop,
+  Scissors,
+  Type,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  Grid,
+  Columns,
+  Rows,
+  PieChart,
+  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  Zap,
+  Target,
+  Award,
+  Gift,
+  ShoppingCart,
+  CreditCard,
+  Wallet,
+  PiggyBank,
+  Coins,
+  Building,
+  Bed,
+  Bath,
+  Mountain,
+  Map,
+  Navigation,
+  Compass,
+  Globe,
+  Briefcase,
+  Store,
+  Factory,
+  Warehouse,
+  Receipt,
+  Calculator,
+  Smartphone,
+  Laptop,
+  Monitor,
+  Printer,
+  Server,
+  Database,
+  Signal,
+  Bluetooth,
+  Satellite,
+  Router,
+  Coffee,
+  Utensils,
+  ShoppingBag,
+  Dumbbell,
+  Tag
+} from 'lucide-react';
+
 // Dynamically import the map component to avoid SSR issues
 const PublicPropertyMapPicker = dynamic(() => import('./PublicPropertyMapPicker'), {
   ssr: false,
@@ -28,6 +150,128 @@ const PublicPropertyMapPicker = dynamic(() => import('./PublicPropertyMapPicker'
     </div>
   )
 });
+
+// Safe icon mapping with actual Lucide icons
+const SAFE_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Home,
+  Building2,
+  Star,
+  Heart,
+  MapPin,
+  Users,
+  Calendar,
+  DollarSign,
+  Car,
+  Trees,
+  Sun,
+  Moon,
+  Cloud,
+  Wifi,
+  Battery,
+  Camera,
+  Phone,
+  Mail,
+  MessageSquare,
+  Settings,
+  User,
+  Lock,
+  Unlock,
+  Eye,
+  EyeOff,
+  Plus,
+  Minus,
+  Check,
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Download,
+  Upload,
+  Edit,
+  Trash2,
+  Save,
+  RefreshCw,
+  Clock,
+  AlertCircle,
+  Info,
+  HelpCircle,
+  ExternalLink,
+  Link,
+  Share2,
+  Bookmark,
+  BookOpen,
+  FileText,
+  Image,
+  Video,
+  Music,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  RotateCcw,
+  RotateCw,
+  ZoomIn,
+  ZoomOut,
+  Move,
+  Crop,
+  Scissors,
+  Type,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  Grid,
+  Columns,
+  Rows,
+  PieChart,
+  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  Zap,
+  Target,
+  Award,
+  Gift,
+  ShoppingCart,
+  CreditCard,
+  Wallet,
+  PiggyBank,
+  Coins,
+  Building,
+  Bed,
+  Bath,
+  Mountain,
+  Map,
+  Navigation,
+  Compass,
+  Globe,
+  Briefcase,
+  Store,
+  Factory,
+  Warehouse,
+  Receipt,
+  Calculator,
+  Smartphone,
+  Laptop,
+  Monitor,
+  Printer,
+  Server,
+  Database,
+  Signal,
+  Bluetooth,
+  Satellite,
+  Router,
+  Coffee,
+  Utensils,
+  ShoppingBag,
+  Dumbbell,
+  Tag
+};
 
 const steps = [
   { id: 1, title: 'Basic Info', description: 'Property details' },
@@ -66,8 +310,14 @@ interface FormData {
   images: File[];
   
   // Details
-  amenities: string[];
-  categories: string[];
+  amenities: Array<{
+    name: string;
+    image_url?: string;
+  }>;
+  categories: Array<{
+    name: string;
+    icon?: string;
+  }>;
   bhkConfigurations: Array<{
     bhk: number;
     price: number;
@@ -128,6 +378,31 @@ export const PublicPropertyForm: React.FC = () => {
   const { locations, loading: locationsLoading } = useLocations();
   const { amenities, loading: amenitiesLoading } = useAmenities();
   const { categories, loading: categoriesLoading } = useCategories();
+
+  // Icon rendering function for categories
+  const renderCategoryIcon = (iconName?: string) => {
+    if (!iconName || typeof iconName !== 'string') {
+      return <Tag className="h-4 w-4 text-gray-500" />
+    }
+    
+    // Direct match
+    if (iconName in SAFE_ICON_MAP) {
+      const IconComponent = SAFE_ICON_MAP[iconName]
+      return <IconComponent className="h-4 w-4 text-gray-600" />
+    }
+    
+    // Case-insensitive match
+    const foundKey = Object.keys(SAFE_ICON_MAP).find(
+      key => key.toLowerCase() === iconName.toLowerCase()
+    )
+    if (foundKey) {
+      const IconComponent = SAFE_ICON_MAP[foundKey]
+      return <IconComponent className="h-4 w-4 text-gray-600" />
+    }
+    
+    // Fallback to Tag icon
+    return <Tag className="h-4 w-4 text-gray-500" />
+  };
 
   // Check authentication and seller status on mount
   useEffect(() => {
@@ -570,7 +845,9 @@ export const PublicPropertyForm: React.FC = () => {
 
       // Handle amenities relationships
       if (formData.amenities.length > 0) {
-        const amenityResult = await createPropertyAmenityRelations(property.id, formData.amenities);
+        // Extract amenity names from objects for the backend function
+        const amenityNames = formData.amenities.map(amenity => amenity.name)
+        const amenityResult = await createPropertyAmenityRelations(property.id, amenityNames);
         if (!amenityResult.success) {
           console.error('Error creating amenity relationships:', amenityResult.error);
         }
@@ -578,7 +855,9 @@ export const PublicPropertyForm: React.FC = () => {
 
       // Handle categories relationships
       if (formData.categories.length > 0) {
-        const categoryResult = await createPropertyCategoryRelations(property.id, formData.categories);
+        // Extract category names from objects for the backend function
+        const categoryNames = formData.categories.map(category => category.name)
+        const categoryResult = await createPropertyCategoryRelations(property.id, categoryNames);
         if (!categoryResult.success) {
           console.error('Error creating category relationships:', categoryResult.error);
         }
@@ -817,16 +1096,27 @@ export const PublicPropertyForm: React.FC = () => {
               <label key={amenity.id} className="flex items-center space-x-2 cursor-pointer">
                 <input 
                   type="checkbox" 
-                  checked={formData.amenities.includes(amenity.name)}
+                  checked={formData.amenities.some(a => a.name === amenity.name)}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      updateFormData('amenities', [...formData.amenities, amenity.name]);
+                      updateFormData('amenities', [...formData.amenities, { name: amenity.name, image_url: amenity.image_url }]);
                     } else {
-                      updateFormData('amenities', formData.amenities.filter(a => a !== amenity.name));
+                      updateFormData('amenities', formData.amenities.filter(a => a.name !== amenity.name));
                     }
                   }}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
                 />
+                {amenity.image_url ? (
+                  <img 
+                    src={amenity.image_url} 
+                    alt={amenity.name} 
+                    className="w-6 h-6 rounded object-cover"
+                  />
+                ) : (
+                  <div className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center">
+                    <span className="text-xs text-gray-500">🏠</span>
+                  </div>
+                )}
                 <span className="text-sm text-gray-700">{amenity.name}</span>
             </label>
             ))
@@ -845,16 +1135,19 @@ export const PublicPropertyForm: React.FC = () => {
               <label key={category.id} className="flex items-center space-x-2 cursor-pointer">
                 <input 
                   type="checkbox" 
-                  checked={formData.categories.includes(category.name)}
+                  checked={formData.categories.some(c => c.name === category.name)}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      updateFormData('categories', [...formData.categories, category.name]);
+                      updateFormData('categories', [...formData.categories, { name: category.name, icon: category.icon }]);
                     } else {
-                      updateFormData('categories', formData.categories.filter(c => c !== category.name));
+                      updateFormData('categories', formData.categories.filter(c => c.name !== category.name));
                     }
                   }}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
                 />
+                <div className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+                  {renderCategoryIcon(category.icon)}
+                </div>
                 <span className="text-sm text-gray-700">{category.name}</span>
             </label>
             ))
@@ -1152,8 +1445,8 @@ export const PublicPropertyForm: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               {formData.amenities.length > 0 ? (
                 formData.amenities.map((amenity) => (
-                  <span key={amenity} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
-                    {amenity}
+                  <span key={amenity.name} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                    {amenity.name}
                   </span>
                 ))
               ) : (
@@ -1166,8 +1459,9 @@ export const PublicPropertyForm: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               {formData.categories.length > 0 ? (
                 formData.categories.map((category) => (
-                  <span key={category} className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
-                    {category}
+                  <span key={category.name} className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs flex items-center gap-1">
+                    {renderCategoryIcon(category.icon)}
+                    {category.name}
                   </span>
                 ))
               ) : (

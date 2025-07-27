@@ -44,7 +44,6 @@ export function PropertyPostedBySelector({
       setIsLoading(true)
       setError(null)
       
-      console.log('PropertyPostedBySelector: Fetching sellers...')
       const response = await fetch('/api/admin/properties/developer-selection', {
         method: 'GET',
         headers: {
@@ -53,30 +52,24 @@ export function PropertyPostedBySelector({
         credentials: 'include', // Include cookies for SSR authentication
       })
       
-      console.log('PropertyPostedBySelector: Response status:', response.status)
-      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        console.error('PropertyPostedBySelector: API error:', errorData)
         throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
       }
       
       const data = await response.json()
-      console.log('PropertyPostedBySelector: Received data:', data)
       
       if (data.developers) {
         setDevelopers(data.developers)
-        console.log('PropertyPostedBySelector: Set sellers:', data.developers.length)
       } else {
-        console.warn('PropertyPostedBySelector: No sellers in response')
         setDevelopers([])
       }
     } catch (error) {
-              console.error('PropertyPostedBySelector: Error fetching sellers:', error)
-              setError(error instanceof Error ? error.message : 'Failed to fetch sellers')
+      console.error('PropertyPostedBySelector: Error fetching sellers:', error)
+      setError(error instanceof Error ? error.message : 'Failed to fetch sellers')
       toast({
         title: 'Error',
-                  description: error instanceof Error ? error.message : 'Failed to fetch sellers',
+        description: error instanceof Error ? error.message : 'Failed to fetch sellers',
         variant: 'destructive',
       })
     } finally {

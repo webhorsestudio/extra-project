@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { ArrowLeft, Lock, CheckCircle } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 
 const formSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -25,9 +26,10 @@ const formSchema = z.object({
 export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const [isValidSession, setIsValidSession] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,9 +43,7 @@ export default function ResetPasswordPage() {
     // Check if we have a valid session for password reset
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        setIsValidSession(true)
-      } else {
+      if (!session?.user) {
         toast({
           title: 'Invalid reset link',
           description: 'This password reset link is invalid or has expired.',
@@ -60,14 +60,18 @@ export default function ResetPasswordPage() {
     setIsLoading(true)
     
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: values.password
-      })
-
-      if (error) {
-        throw new Error(error.message)
+      if (!token) {
+        throw new Error('Invalid or missing reset token.');
       }
-
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, password: values.password }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to reset password.');
+      }
       setIsSuccess(true)
       toast({
         title: 'Password updated successfully!',
@@ -84,14 +88,14 @@ export default function ResetPasswordPage() {
     }
   }
 
-  if (!isValidSession) {
+  if (!token) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Verifying reset link...</p>
+              <p className="mt-4 text-gray-600">Invalid or expired reset link.</p>
             </div>
           </CardContent>
         </Card>

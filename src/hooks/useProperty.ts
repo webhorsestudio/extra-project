@@ -3,6 +3,39 @@ import { useToast } from '@/components/ui/use-toast'
 import { Property } from '@/types/property'
 import { supabase } from '@/lib/supabaseClient'
 
+// Interfaces for Supabase query results
+interface AmenityRelationResult {
+  amenity_id: string
+  property_amenities: {
+    id: string
+    name: string
+    image_url?: string
+    image_storage_path?: string
+    is_active: boolean
+  } | {
+    id: string
+    name: string
+    image_url?: string
+    image_storage_path?: string
+    is_active: boolean
+  }[]
+}
+
+interface CategoryRelationResult {
+  category_id: string
+  property_categories: {
+    id: string
+    name: string
+    icon: string
+    is_active: boolean
+  } | {
+    id: string
+    name: string
+    icon: string
+    is_active: boolean
+  }[]
+}
+
 export function useProperty(id: string) {
   const [property, setProperty] = useState<Property | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -65,6 +98,9 @@ export function useProperty(id: string) {
 
       if (amenitiesError) {
         console.warn('Amenities error:', amenitiesError)
+      } else {
+        console.log('🔍 useProperty: Amenities data fetched:', amenitiesData?.length || 0, 'relations')
+        console.log('🔍 useProperty: Amenities raw data:', amenitiesData)
       }
 
       // Fetch categories relationships
@@ -83,6 +119,9 @@ export function useProperty(id: string) {
 
       if (categoriesError) {
         console.warn('Categories error:', categoriesError)
+      } else {
+        console.log('🔍 useProperty: Categories data fetched:', categoriesData?.length || 0, 'relations')
+        console.log('🔍 useProperty: Categories raw data:', categoriesData)
       }
 
       // Transform the data
@@ -91,20 +130,41 @@ export function useProperty(id: string) {
         bhk_configurations: configsData || [],
         images: imagesData || [],
         property_images: imagesData || [],
-        // Extract amenity names from relationships
-        features: amenitiesData?.map((rel: unknown) => {
-          const relation = rel as Record<string, unknown>
-          const amenities = relation.property_amenities as Record<string, unknown>[] | undefined
-          return amenities?.[0]?.name as string | undefined
+        // Extract amenity objects from relationships with better type safety
+        amenities: amenitiesData?.map((rel) => {
+          const typedRel = rel as AmenityRelationResult
+          if (typedRel && typedRel.property_amenities) {
+            // Handle both array and single object cases
+            const amenity = Array.isArray(typedRel.property_amenities) 
+              ? typedRel.property_amenities[0] 
+              : typedRel.property_amenities
+            return amenity ? {
+              name: amenity.name,
+              image_url: amenity.image_url
+            } : null
+          }
+          return null
         }).filter(Boolean) || [],
-        // Extract category names from relationships
-        categories: categoriesData?.map((rel: unknown) => {
-          const relation = rel as Record<string, unknown>
-          const categories = relation.property_categories as Record<string, unknown>[] | undefined
-          return categories?.[0]?.name as string | undefined
-        }).filter(Boolean) || [],
+        // Extract category objects from relationships with better type safety
+        categories: categoriesData?.map((rel) => {
+          const typedRel = rel as CategoryRelationResult
+          if (typedRel && typedRel.property_categories) {
+            // Handle both array and single object cases
+            const category = Array.isArray(typedRel.property_categories) 
+              ? typedRel.property_categories[0] 
+              : typedRel.property_categories
+            return category ? {
+              name: category.name,
+              icon: category.icon
+            } : null
+          }
+          return null
+        }).filter((cat): cat is { name: string; icon: string } => Boolean(cat)) || [],
       }
 
+      console.log('🔍 useProperty: Transformed amenities:', transformedData.amenities)
+      console.log('🔍 useProperty: Transformed categories:', transformedData.categories)
+      console.log('🔍 useProperty: Final property data:', transformedData)
       setProperty(transformedData)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to fetch property'

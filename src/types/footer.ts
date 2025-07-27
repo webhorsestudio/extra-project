@@ -21,6 +21,8 @@ export interface FooterContent {
   whatsapp_url: string
   copyright_text: string
   designed_by_text: string
+  footer_main_title: string
+  footer_main_subtitle: string
 }
 
 export interface FooterLayout {

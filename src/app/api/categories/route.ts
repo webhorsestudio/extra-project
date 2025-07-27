@@ -3,10 +3,7 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
 export async function GET() {
   try {
-    console.log('Categories API: Starting request')
-    
     const supabase = await createSupabaseAdminClient()
-    console.log('Categories API: Supabase client created')
 
     const { data, error } = await supabase
       .from('property_categories')
@@ -20,8 +17,6 @@ export async function GET() {
         details: 'Failed to fetch property categories'
       }, { status: 500 })
     }
-
-    console.log('Categories API: Found categories:', data?.length || 0)
 
     return NextResponse.json({ 
       categories: data || [],
@@ -39,8 +34,6 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    console.log('Categories API: Starting POST request')
-    
     const { name, icon, is_active } = await req.json()
     
     // Validate required fields
@@ -59,7 +52,6 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = await createSupabaseAdminClient()
-    console.log('Categories API: Creating category with data:', { name, icon, is_active })
 
     const { data, error } = await supabase
       .from('property_categories')
@@ -74,8 +66,6 @@ export async function POST(req: NextRequest) {
         details: 'Failed to create category'
       }, { status: 500 })
     }
-
-    console.log('Categories API: Category created successfully:', data?.id)
 
     return NextResponse.json({ category: data })
 

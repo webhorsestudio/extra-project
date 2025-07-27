@@ -53,7 +53,20 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         throw new Error('Authentication failed')
       }
 
-      // 2. Check if the user has a profile and get their role
+      // 2. Check if email is confirmed
+      if (!authData.user.email_confirmed_at) {
+        // Sign out the user since email is not confirmed
+        await supabase.auth.signOut()
+        
+        toast({
+          title: 'Email Not Confirmed',
+          description: 'Please check your email and confirm your account before signing in.',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      // 3. Check if the user has a profile
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -61,26 +74,21 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         .single();
       
       if (profileError || !profile) {
-        // If profile doesn't exist, try to create one automatically
-        console.log('Profile not found, attempting to create one...')
-        let profileCreated = false;
-        for (let attempt = 0; attempt < 2; attempt++) {
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert({
-              id: authData.user.id,
-              email: authData.user.email,
-              full_name: authData.user.user_metadata?.full_name || '',
-              role: 'customer',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            });
-          if (!insertError) {
-            profileCreated = true;
-            break;
-          }
-        }
-        if (!profileCreated) {
+        // Profile doesn't exist, create one (first-time login)
+        console.log('Profile not found, creating one for first-time login...')
+        
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            id: authData.user.id,
+            full_name: authData.user.user_metadata?.full_name || '',
+            role: 'customer',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+
+        if (insertError) {
+          console.error('Profile creation error:', insertError);
           toast({
             title: 'Profile setup warning',
             description: 'Your account was created, but we could not set up your profile automatically. You can still use the site, but some features may be limited. Please contact support if you have issues.',
@@ -92,21 +100,17 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
             description: 'Your account has been set up successfully.',
           });
         }
-        // Redirect all users to home page - device detection will handle routing
-        router.push('/')
-        router.refresh()
-        return
+      } else {
+        // Profile exists, show welcome back message
+        toast({
+          title: 'Welcome back!',
+          description: `Hello ${profile.full_name || 'there'}!`,
+        })
       }
 
-      // 3. Redirect all users to home page - device detection will handle routing
-      // This ensures consistent behavior across all user types
+      // 4. Redirect all users to home page - device detection will handle routing
       router.push('/')
       router.refresh()
-
-      toast({
-        title: 'Welcome back!',
-        description: `Hello ${profile.full_name || 'there'}!`,
-      })
 
     } catch (error) {
       console.error('Login error:', error)
@@ -122,12 +126,6 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
 
   return (
     <div className="space-y-4 lg:space-y-6">
-      {/* Header - removed to avoid duplicate */}
-      {/* <div className="text-center">
-        <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-        <p className="text-sm lg:text-base text-gray-600">Sign in to your account to continue</p>
-      </div> */}
-
       {/* Form */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 lg:space-y-6">
@@ -193,46 +191,48 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
             )}
           />
 
-          <div className="flex items-center justify-between text-xs lg:text-sm">
-            <button 
-              type="button"
-              onClick={() => window.location.href = '/users/forgot-password'}
-              className="text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              Forgot your password?
-            </button>
-          </div>
-
-          <Button 
-            type="submit" 
-            className="w-full h-11 lg:h-12 text-sm lg:text-base font-medium bg-blue-600 hover:bg-blue-700 text-white"
+          <Button
+            type="submit"
+            className="w-full h-11 lg:h-12 text-sm lg:text-base font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
             disabled={isLoading}
           >
             {isLoading ? (
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Signing in...
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Signing in...</span>
               </div>
             ) : (
-              <div className="flex items-center justify-center">
-                Sign In
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </div>
+              <>
+                <span>Sign In</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
             )}
           </Button>
-
-          <div className="text-center text-xs lg:text-sm text-gray-600">
-            Don&apos;t have an account?{' '}
-            <button
-              type="button"
-              onClick={onSwitchToRegister}
-              className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-            >
-              Sign up here
-            </button>
-          </div>
         </form>
       </Form>
+
+      {/* Links */}
+      <div className="text-center space-y-2">
+        <p className="text-sm text-gray-600">
+          Don&apos;t have an account?{' '}
+          <button
+            type="button"
+            onClick={onSwitchToRegister}
+            className="text-blue-600 hover:text-blue-500 font-medium transition-colors duration-200"
+            disabled={isLoading}
+          >
+            Sign up here
+          </button>
+        </p>
+        <p className="text-sm text-gray-600">
+          <a
+            href="/users/forgot-password"
+            className="text-blue-600 hover:text-blue-500 font-medium transition-colors duration-200"
+          >
+            Forgot your password?
+          </a>
+        </p>
+      </div>
     </div>
   )
 } 

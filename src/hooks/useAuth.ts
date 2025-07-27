@@ -59,6 +59,18 @@ export function useAuth() {
         return
       }
 
+      // Check if email is confirmed
+      if (!user.email_confirmed_at) {
+        console.log('useAuth: Email not confirmed')
+        setState({
+          user: null,
+          profile: null,
+          loading: false,
+          error: 'Email not confirmed'
+        })
+        return
+      }
+
       console.log('useAuth: User found, fetching profile...')
       // Fetch user profile to get role
       const { data: profile, error: profileError } = await supabase
@@ -85,7 +97,6 @@ export function useAuth() {
           .from('profiles')
           .insert({
             id: user.id,
-            email: user.email,
             full_name: user.user_metadata?.full_name || '',
             role: 'customer',
             created_at: new Date().toISOString(),
@@ -151,6 +162,18 @@ export function useAuth() {
         return
       }
 
+      // Check if email is confirmed
+      if (!currentUser.email_confirmed_at) {
+        console.log('useAuth: Email not confirmed in auth change')
+        setState({
+          user: null,
+          profile: null,
+          loading: false,
+          error: 'Email not confirmed'
+        })
+        return
+      }
+
       // Fetch user profile to get role
       const { data: profile, error } = await supabase
         .from('profiles')
@@ -170,11 +193,51 @@ export function useAuth() {
       }
 
       if (!profile) {
+        // Profile doesn't exist, create one (first-time login)
+        console.log('useAuth: Profile not found, creating one for first-time login...')
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            id: currentUser.id,
+            full_name: currentUser.user_metadata?.full_name || '',
+            role: 'customer',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+
+        if (insertError) {
+          console.error('useAuth: Profile creation error:', insertError);
+          setState({
+            user: currentUser,
+            profile: null,
+            loading: false,
+            error: 'Profile creation failed'
+          })
+          return
+        }
+
+        // Fetch the newly created profile
+        const { data: newProfile, error: newProfileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+
+        if (newProfileError || !newProfile) {
+          setState({
+            user: currentUser,
+            profile: null,
+            loading: false,
+            error: 'Profile not found after creation'
+          })
+          return
+        }
+
         setState({
           user: currentUser,
-          profile: null,
+          profile: newProfile,
           loading: false,
-          error: 'Profile not found'
+          error: null
         })
         return
       }

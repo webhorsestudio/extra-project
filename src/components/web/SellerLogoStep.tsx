@@ -31,11 +31,29 @@ export default function SellerLogoStep({ formData, updateFormData }: Props) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFileSelect = (file: File) => {
-    if (file && file.type.startsWith('image/')) {
-      updateFormData({ logo: file });
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (PNG, JPG, JPEG, SVG)');
+      return;
     }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    // Validate file extension
+    const allowedExtensions = ['png', 'jpg', 'jpeg', 'svg', 'webp'];
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+      alert('Please select a valid image file (PNG, JPG, JPEG, SVG, WEBP)');
+      return;
+    }
+
+    updateFormData({ logo: file });
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +112,7 @@ export default function SellerLogoStep({ formData, updateFormData }: Props) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
             onChange={handleFileChange}
             className="hidden"
           />
@@ -125,7 +143,7 @@ export default function SellerLogoStep({ formData, updateFormData }: Props) {
                 </Button>
               </div>
               <div className="text-xs text-gray-500">
-                Supported formats: PNG, JPG, JPEG, SVG (Max 5MB)
+                Supported formats: PNG, JPG, JPEG, SVG, WEBP (Max 5MB)
               </div>
             </div>
           ) : (
@@ -176,7 +194,7 @@ export default function SellerLogoStep({ formData, updateFormData }: Props) {
           </h4>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• Recommended size: 300x300 pixels or larger</li>
-            <li>• Format: PNG, JPG, JPEG, or SVG</li>
+            <li>• Format: PNG, JPG, JPEG, SVG, or WEBP</li>
             <li>• Maximum file size: 5MB</li>
             <li>• Logo should be clear and recognizable at small sizes</li>
             <li>• Transparent background is preferred</li>

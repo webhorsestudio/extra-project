@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     // Simple check: does the email exist in property_developers table?
     const { data: developer, error } = await supabase
       .from('property_developers')
-      .select('id, name, contact_info')
+      .select('id, name, contact_info, logo_url')
       .eq('is_active', true)
       .ilike('contact_info->>email', email)
       .single()
@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
       seller: {
         id: developer.id,
         name: developer.name,
-        email: developer.contact_info?.email || email
+        email: developer.contact_info?.email || email,
+        logo_url: developer.logo_url
       },
       message: 'User is a registered seller'
     })

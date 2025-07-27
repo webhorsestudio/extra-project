@@ -18,10 +18,7 @@ interface Category {
 }
 
 interface MobilePropertyFeaturesProps {
-  property: Property & {
-    amenities?: Amenity[];
-    categories?: Category[];
-  };
+  property: Property;
 }
 
 // Pill-shaped tab navigation for two tabs (same as web layout)
@@ -102,7 +99,7 @@ export default function MobilePropertyFeatures({ property }: MobilePropertyFeatu
   const categories = property.categories && property.categories.length > 0
     ? property.categories.map((category: Category) => ({
         title: category.name,
-        icon: category.icon || 'Home',
+        icon: category.icon || 'Home', // Default icon for string categories
       }))
     : [];
 

@@ -70,6 +70,8 @@ interface FooterData {
     whatsapp_url?: string
     copyright_text?: string
     designed_by_text?: string
+    footer_main_title?: string
+    footer_main_subtitle?: string
     policy_links?: Record<string, unknown>[]
   }
   logo: {
@@ -172,8 +174,8 @@ export default function Footer({ footerData }: FooterProps) {
         {data.layout.show_contact && (
           <div className="flex-1 flex items-center justify-end">
             <FooterLetsTalk 
-              title={data.content.cta_title}
-              subtitle={data.content.cta_subtitle}
+              title={data.content.footer_main_title}
+              subtitle={data.content.footer_main_subtitle}
             />
           </div>
         )}
@@ -220,7 +222,7 @@ export default function Footer({ footerData }: FooterProps) {
         >
           <span>{data.content.copyright_text}</span>
           {data.content.designed_by_text && (
-            <span className="ml-2">| {data.content.designed_by_text}</span>
+            <span className="ml-2" dangerouslySetInnerHTML={{ __html: `| ${data.content.designed_by_text}` }} />
           )}
         </div>
       )}

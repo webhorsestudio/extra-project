@@ -15,7 +15,6 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
     
-    console.log('Amenities API: Fetched', data?.length || 0, 'amenities')
     return NextResponse.json({ amenities: data || [] })
   } catch (error) {
     console.error('Amenities API exception:', error)

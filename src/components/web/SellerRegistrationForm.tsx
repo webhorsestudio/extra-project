@@ -4,10 +4,12 @@ import React from 'react';
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 import { CheckCircle, ChevronRight, ChevronLeft, Building2, Upload, Phone } from 'lucide-react';
 import SellerBasicInfoStep from './SellerBasicInfoStep';
 import SellerLogoStep from './SellerLogoStep';
 import SellerContactStep from './SellerContactStep';
+import { supabase } from '@/lib/supabaseClient';
 
 interface SellerFormData {
   name: string;
@@ -32,6 +34,7 @@ const steps = [
 
 export default function SellerRegistrationForm() {
   const router = useRouter();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<SellerFormData>({
@@ -69,9 +72,15 @@ export default function SellerRegistrationForm() {
     setIsSubmitting(true);
     try {
       const formDataToSend = new FormData();
+      
+      // Add all form fields to FormData
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== null && value !== '') {
-          formDataToSend.append(key, value);
+          if (value instanceof File) {
+            formDataToSend.append(key, value);
+          } else {
+            formDataToSend.append(key, String(value));
+          }
         }
       });
 
@@ -80,15 +89,68 @@ export default function SellerRegistrationForm() {
         body: formDataToSend,
       });
 
+      const result = await response.json();
+
       if (response.ok) {
-        router.push('/users/login?message=seller-registered');
+        // Show success toast message
+        toast({
+          title: 'Developer Registration Successful!',
+          description: 'Your developer account has been created successfully. You can now start adding properties.',
+        });
+        
+        // Auto-login the user after successful registration
+        try {
+          const { error: authError } = await supabase.auth.signInWithPassword({
+            email: formData.email,
+            password: result.user?.password || '', // Use the password returned from API
+          });
+
+          if (authError) {
+            console.error('Auto-login error:', authError);
+            // If auto-login fails, redirect to login page
+            toast({
+              title: 'Account Created',
+              description: 'Please log in with your email to start adding properties.',
+            });
+            setTimeout(() => {
+              router.push('/users/login');
+            }, 2000);
+          } else {
+            // Auto-login successful, redirect to property form
+            toast({
+              title: 'Welcome!',
+              description: 'You have been automatically logged in. Redirecting to property form...',
+            });
+            setTimeout(() => {
+              router.push('/properties/add');
+            }, 2000);
+          }
+        } catch (loginError) {
+          console.error('Auto-login error:', loginError);
+          // Fallback to login page
+          toast({
+            title: 'Account Created',
+            description: 'Please log in with your email to start adding properties.',
+          });
+          setTimeout(() => {
+            router.push('/users/login');
+          }, 2000);
+        }
       } else {
-        const error = await response.json();
-        alert(error.error || 'Failed to register seller');
+        // Show error toast message
+        toast({
+          title: 'Registration Failed',
+          description: result.error || 'Failed to register developer. Please try again.',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
-      console.error('Error registering seller:', error);
-      alert('Failed to register seller');
+      console.error('Error registering developer:', error);
+      toast({
+        title: 'Network Error',
+        description: 'Please check your connection and try again.',
+        variant: 'destructive',
+      });
     } finally {
       setIsSubmitting(false);
     }

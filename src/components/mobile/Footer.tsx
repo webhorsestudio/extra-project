@@ -103,7 +103,7 @@ export default function Footer({ footerData }: FooterProps) {
             <p className="text-sm text-gray-400">
               {content.copyright_text || "© 2024 Extra Realty. All rights reserved."}
               {content.designed_by_text && (
-                <span className="ml-2">| {content.designed_by_text}</span>
+                <span className="ml-2" dangerouslySetInnerHTML={{ __html: `| ${content.designed_by_text}` }} />
               )}
             </p>
           </div>

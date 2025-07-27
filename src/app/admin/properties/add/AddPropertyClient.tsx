@@ -130,7 +130,9 @@ export default function AddPropertyClient({ user }: { user: User }) {
       }
       // Handle amenities relationships
       if (data.amenities && data.amenities.length > 0) {
-        const amenityResult = await createPropertyAmenityRelations(property.id, data.amenities)
+        // Extract amenity names from objects for the backend function
+        const amenityNames = data.amenities.map(amenity => amenity.name)
+        const amenityResult = await createPropertyAmenityRelations(property.id, amenityNames)
         if (!amenityResult.success) {
           console.error('Error creating amenity relationships:', amenityResult.error)
           toast({
@@ -142,7 +144,9 @@ export default function AddPropertyClient({ user }: { user: User }) {
       }
       // Handle categories relationships
       if (data.categories && data.categories.length > 0) {
-        const categoryResult = await createPropertyCategoryRelations(property.id, data.categories)
+        // Extract category names from objects for the backend function
+        const categoryNames = data.categories.map(category => category.name)
+        const categoryResult = await createPropertyCategoryRelations(property.id, categoryNames)
         if (!categoryResult.success) {
           console.error('Error creating category relationships:', categoryResult.error)
           toast({

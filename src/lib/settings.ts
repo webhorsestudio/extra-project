@@ -51,6 +51,20 @@ export interface Settings {
   tiktok_url?: string
   whatsapp_url?: string
   
+  // SMTP fields
+  smtp_host?: string
+  smtp_port?: number
+  smtp_username?: string
+  smtp_password?: string
+  smtp_secure?: boolean
+  email_from?: string
+  email_from_name?: string
+  signup_confirmation_subject?: string
+  signup_confirmation_body?: string
+  password_reset_subject?: string
+  password_reset_body?: string
+  email_confirmation_enabled?: boolean
+  
   // Timestamps
   created_at?: string
   updated_at?: string
@@ -59,9 +73,11 @@ export interface Settings {
 export async function getSettings(): Promise<Settings | null> {
   try {
     const supabase = await createSupabaseAdminUserClient()
+    const SETTINGS_UUID = 'ed4ebb8c-40cd-4173-b492-fef97713217b';
     const { data, error } = await supabase
       .from('settings')
       .select('*')
+      .eq('id', SETTINGS_UUID)
       .single()
 
     if (error) {

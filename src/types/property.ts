@@ -26,7 +26,7 @@ export interface Property {
   developer?: PropertyDeveloper
   // Arrays for easy access to related data
   amenities?: Array<{ name: string; image_url?: string }>
-  categories?: Array<{ name: string; icon?: string }>
+  categories?: Array<{ name: string; icon?: string }> // Updated: categories are objects with name and icon
   
   // Additional properties used in components
   status?: string

@@ -285,8 +285,23 @@ export default function CategoryForm({
     setLoading(true)
     setError(null)
     
-    if (!icon || !ICON_NAMES.includes(icon as keyof typeof ICON_MAP)) {
-      setError('Please select a valid icon.')
+    // Validate icon selection
+    if (!icon) {
+      setError('Please select an icon for the category.')
+      setLoading(false)
+      return
+    }
+    
+    // Check if the selected icon exists in our icon map
+    if (!ICON_NAMES.includes(icon as keyof typeof ICON_MAP)) {
+      setError('Please select a valid icon from the list.')
+      setLoading(false)
+      return
+    }
+    
+    // Validate name
+    if (!name.trim()) {
+      setError('Category name is required.')
       setLoading(false)
       return
     }
@@ -297,14 +312,14 @@ export default function CategoryForm({
         res = await fetch(`/api/categories/${initialData.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, icon, is_active: isActive }),
+          body: JSON.stringify({ name: name.trim(), icon, is_active: isActive }),
         })
         data = await res.json()
       } else {
         res = await fetch('/api/categories', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, icon })
+          body: JSON.stringify({ name: name.trim(), icon })
         })
         data = await res.json()
       }
@@ -371,8 +386,9 @@ export default function CategoryForm({
                 disabled={loading}
                 className="w-1/2"
               />
-              {SelectedIcon && <SelectedIcon className="h-6 w-6 text-muted-foreground" />}
+              {SelectedIcon && <SelectedIcon className="h-6 w-6 text-green-600" />}
               {icon && !SelectedIcon && <span className="text-xs text-red-500">Invalid icon</span>}
+              {!icon && <span className="text-xs text-muted-foreground">No icon selected</span>}
             </div>
             <ScrollArea className="h-40 border rounded p-2 bg-muted">
               <div className="grid grid-cols-6 gap-2">
@@ -383,9 +399,14 @@ export default function CategoryForm({
                     <button
                       type="button"
                       key={iconName}
-                      className={`flex flex-col items-center gap-1 p-2 rounded hover:bg-primary/10 transition border ${icon === iconName ? 'border-primary' : 'border-transparent'}`}
+                      className={`flex flex-col items-center gap-1 p-2 rounded hover:bg-primary/10 transition border ${
+                        icon === iconName 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-transparent hover:border-gray-300'
+                      }`}
                       onClick={() => setIcon(iconName)}
                       tabIndex={0}
+                      title={iconName}
                     >
                       <IconComponent className="h-5 w-5" />
                       <span className="text-[10px] truncate max-w-[48px]">{iconName}</span>
@@ -394,6 +415,11 @@ export default function CategoryForm({
                 })}
               </div>
             </ScrollArea>
+            {icon && !SelectedIcon && (
+              <p className="text-xs text-red-500 mt-1">
+                Warning: The selected icon &quot;{icon}&quot; is not available. Please choose a different icon.
+              </p>
+            )}
           </div>
           {mode === 'edit' && (
             <div className="flex items-center gap-2">

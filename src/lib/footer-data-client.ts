@@ -34,6 +34,8 @@ export interface FooterData {
     cta_button_url: string
     copyright_text: string
     designed_by_text: string
+    footer_main_title: string
+    footer_main_subtitle: string
     navigation_columns: Array<{
       title: string
       links: Array<{
@@ -251,7 +253,9 @@ function getDefaultContent() {
     cta_button_text: 'Contact Us',
     cta_button_url: '/contact',
     copyright_text: '© 2025 Extra Realty Private Limited - All Rights Reserved',
-    designed_by_text: 'Designed by Webhorse Studio',
+    designed_by_text: 'Designed by <a href="https://webhorsestudio.com" target="_blank">Webhorse Studio</a>',
+    footer_main_title: 'Searching for your Dream Home?',
+    footer_main_subtitle: 'GET IN TOUCH WITH OUR EXPERT TEAM TODAY',
     navigation_columns: [
       {
         title: 'Company',

@@ -25,12 +25,7 @@ import { PropertyPostedBySelector } from './PropertyPostedBySelector'
 export function PropertyBasicInfo() {
   const { control, watch, setValue } = useFormContext()
   const hasRera = watch('has_rera')
-  const postedBy = watch('posted_by')
   const developerId = watch('developer_id')
-
-  // Debug logging
-  console.log('PropertyBasicInfo - posted_by:', postedBy)
-  console.log('PropertyBasicInfo - developer_id:', developerId)
 
   return (
     <Card>
@@ -200,11 +195,9 @@ export function PropertyBasicInfo() {
                 value={field.value}
                 onChange={(value) => {
                   field.onChange(value)
-                  console.log('PropertyPostedBySelector onChange:', value)
                 }}
                 developerId={developerId}
                 onDeveloperIdChange={(developerId) => {
-                  console.log('PropertyPostedBySelector onDeveloperIdChange:', developerId)
                   setValue('developer_id', developerId)
                 }}
               />

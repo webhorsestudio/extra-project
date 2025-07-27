@@ -364,15 +364,15 @@ export default function MobileContactClient({ contactInfo }: MobileContactClient
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Monday - Friday</span>
-                      <span className="font-medium text-gray-900">9:00 AM - 6:00 PM</span>
+                      <span className="font-medium text-gray-900">Open (24 Hours)</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Saturday</span>
-                      <span className="font-medium text-gray-900">10:00 AM - 4:00 PM</span>
+                      <span className="font-medium text-gray-900">Open (24 Hours)</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Sunday</span>
-                      <span className="font-medium text-gray-900">Closed</span>
+                      <span className="font-medium text-gray-900">Open (24 Hours)</span>
                     </div>
                   </div>
                 </div>

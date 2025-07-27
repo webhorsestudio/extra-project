@@ -170,8 +170,25 @@ export default function FooterContentTab() {
               <Input value={String(form.copyright_text || "")} onChange={e => handleChange("copyright_text", e.target.value)} disabled={!isAdmin} />
             </div>
             <div className="md:col-span-2">
-              <label className="block font-medium mb-1">Designed By Text</label>
-              <Input value={String(form.designed_by_text || "")} onChange={e => handleChange("designed_by_text", e.target.value)} disabled={!isAdmin} />
+              <label className="block font-medium mb-1">Designed By Text (Supports HTML)</label>
+              <Textarea 
+                value={String(form.designed_by_text || "")} 
+                onChange={e => handleChange("designed_by_text", e.target.value)} 
+                disabled={!isAdmin} 
+                placeholder="e.g., Designed by <a href='https://webhorsestudio.com' target='_blank'>Webhorse Studio</a>"
+                rows={3}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                You can use HTML tags like &lt;a href=&quot;url&quot;&gt;link text&lt;/a&gt; for clickable links
+              </p>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-medium mb-1">Footer Main Title</label>
+              <Input value={String(form.footer_main_title || "")} onChange={e => handleChange("footer_main_title", e.target.value)} disabled={!isAdmin} placeholder="e.g., Searching for your Dream Home?" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-medium mb-1">Footer Main Subtitle</label>
+              <Input value={String(form.footer_main_subtitle || "")} onChange={e => handleChange("footer_main_subtitle", e.target.value)} disabled={!isAdmin} placeholder="e.g., GET IN TOUCH WITH OUR EXPERT TEAM TODAY" />
             </div>
             <div className="md:col-span-2">
               <label className="block font-medium mb-1">Navigation Columns (JSON)</label>

@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS footer_content (
   
   -- Copyright Information
   copyright_text TEXT DEFAULT '© 2025 Extra Realty Private Limited - All Rights Reserved',
-  designed_by_text TEXT DEFAULT 'Designed by Webhorse Studio',
+  designed_by_text TEXT DEFAULT 'Designed by <a href="https://webhorsestudio.com" target="_blank">Webhorse Studio</a>',
   
   -- Navigation Columns (JSON)
   navigation_columns JSONB DEFAULT '[
@@ -187,7 +187,7 @@ INSERT INTO footer_content (
   'Contact Us',
   '/contact',
   '© 2025 Extra Realty Private Limited - All Rights Reserved',
-  'Designed by Webhorse Studio',
+  'Designed by <a href="https://webhorsestudio.com" target="_blank">Webhorse Studio</a>',
   '[
     {
       "title": "Company",

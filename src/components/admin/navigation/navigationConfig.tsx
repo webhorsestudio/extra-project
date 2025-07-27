@@ -77,6 +77,7 @@ export const navigationItems: NavigationItem[] = [
       { name: 'Contact Info', href: '/admin/settings/contact', icon: 'Phone' },
       { name: 'SEO & Sitemap', href: '/admin/settings/seo', icon: 'Search' },
       { name: 'Keys & Credentials', href: '/admin/settings/api-keys', icon: 'Key' },
+      { name: 'SMTP Settings', href: '/admin/settings/smtp', icon: 'Mail' },
     ]
   },
 ] 

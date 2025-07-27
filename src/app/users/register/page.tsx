@@ -65,11 +65,27 @@ export default function RegisterPage() {
       }
 
       if (authData.user) {
+        // Fetch settings to check if email confirmation is enabled
+        const settingsRes = await fetch('/api/settings/public', { method: 'GET' });
+        let emailConfirmationEnabled = false;
+        if (settingsRes.ok) {
+          const { settings } = await settingsRes.json();
+          emailConfirmationEnabled = !!settings.email_confirmation_enabled;
+        }
+        // Send custom confirmation email only if enabled
+        if (emailConfirmationEnabled) {
+          await fetch('/api/auth/request-email-confirmation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: values.email }),
+          });
+        }
         toast({
           title: 'Account created successfully!',
-          description: 'Please check your email to confirm your account before signing in.',
+          description: emailConfirmationEnabled
+            ? 'Please check your email to confirm your account before signing in.'
+            : 'You can now sign in with your new account.',
         })
-        
         // Redirect to login page
         router.push('/users/login')
       }
