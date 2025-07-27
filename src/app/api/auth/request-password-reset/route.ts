@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     socketTimeout: 15000,
   });
 
-  const resetLink = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/users/reset-password?token=${token}`;
+  const resetLink = `${settings.website_url || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/users/reset-password?token=${token}`;
   const subject = settings.password_reset_subject || 'Reset your password';
   let body = settings.password_reset_body || '';
   body = body

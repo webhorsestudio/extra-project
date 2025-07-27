@@ -161,7 +161,7 @@ Sent at: ${new Date().toISOString()}`,
 
     // 4. Testing confirmation email template...
     console.log('\n4. Testing confirmation email template...');
-    const confirmLink = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/users/confirm-email?token=test-token-123`;
+    const confirmLink = `${settings.website_url || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/users/confirm-email?token=test-token-123`;
     const subject = settings.signup_confirmation_subject || 'Confirm your email address';
     let body = settings.signup_confirmation_body || '';
     body = body

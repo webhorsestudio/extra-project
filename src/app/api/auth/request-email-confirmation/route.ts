@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
     logger: false
   });
 
-  const confirmLink = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/users/confirm-email?token=${token}`;
+  const confirmLink = `${settings.website_url || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/users/confirm-email?token=${token}`;
   const subject = settings.signup_confirmation_subject || 'Confirm your email address';
   let body = settings.signup_confirmation_body || '';
   body = body
