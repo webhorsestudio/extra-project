@@ -11,7 +11,24 @@ export const metadata: Metadata = {
   title: "Property Management System",
   description: "A comprehensive property management system",
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      {
+        url: '/favicon.ico',
+        type: 'image/x-icon',
+      },
+      {
+        url: '/icon',
+        sizes: '32x32',
+        type: 'image/png',
+      },
+      {
+        url: '/icon',
+        sizes: '16x16',
+        type: 'image/png',
+      },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/icon',
   },
 };
 
