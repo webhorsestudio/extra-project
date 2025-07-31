@@ -46,10 +46,10 @@ export async function getBudgetDataClient(): Promise<BudgetData> {
 // Utility functions for price formatting
 export const formatPrice = (value: number): string => {
   if (value >= 1_00_00_000) {
-    return `₹${(value / 1_00_00_000).toFixed(2)} Cr`
+    return `₹${(value / 1_00_00_000).toFixed(1)} Cr`
   }
   if (value >= 1_00_000) {
-    return `₹${(value / 1_00_000).toFixed(2)} Lac`
+    return `₹${(value / 1_00_000).toFixed(1)} Lac`
   }
   return `₹${value.toLocaleString('en-IN')}`
 }

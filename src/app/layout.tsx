@@ -17,18 +17,18 @@ export const metadata: Metadata = {
         type: 'image/x-icon',
       },
       {
-        url: '/icon',
+        url: '/favicon',
         sizes: '32x32',
         type: 'image/png',
       },
       {
-        url: '/icon',
+        url: '/favicon',
         sizes: '16x16',
         type: 'image/png',
       },
     ],
     shortcut: '/favicon.ico',
-    apple: '/icon',
+    apple: '/favicon',
   },
 };
 
