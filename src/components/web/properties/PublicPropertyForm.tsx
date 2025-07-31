@@ -518,11 +518,11 @@ export const PublicPropertyForm: React.FC = () => {
     if (price >= 10000000) {
       // Convert to crores
       const crores = price / 10000000;
-      return `${crores.toFixed(1)} Crores`;
+      return `${crores.toFixed(2)} Crores`;
     } else if (price >= 100000) {
       // Convert to lakhs
       const lakhs = price / 100000;
-      return `${lakhs.toFixed(1)} Lakhs`;
+      return `${lakhs.toFixed(2)} Lakhs`;
     } else {
       // For amounts less than 1 lakh, show in thousands
       const thousands = price / 1000;

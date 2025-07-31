@@ -290,11 +290,11 @@ export function PropertyCategories() {
     }
     
     // Case-insensitive match
-    const foundKey = Object.keys(SAFE_ICON_MAP).find(
-      key => key.toLowerCase() === iconName.toLowerCase()
-    )
-    if (foundKey) {
-      const IconComponent = SAFE_ICON_MAP[foundKey]
+      const foundKey = Object.keys(SAFE_ICON_MAP).find(
+        key => key.toLowerCase() === iconName.toLowerCase()
+      )
+      if (foundKey) {
+        const IconComponent = SAFE_ICON_MAP[foundKey]
       return <IconComponent className="h-4 w-4 text-muted-foreground" />
     }
     
@@ -476,4 +476,4 @@ export function PropertyCategories() {
       </CardContent>
     </Card>
   )
-}
+} 

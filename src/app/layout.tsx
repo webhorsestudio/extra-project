@@ -4,33 +4,53 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import DeviceDetectionLoader from "@/components/DeviceDetectionLoader";
 import Script from "next/script";
+import { createSupabaseApiClient } from "@/lib/supabase/api";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Property Management System",
-  description: "A comprehensive property management system",
-  icons: {
-    icon: [
-      {
-        url: '/favicon.ico',
-        type: 'image/x-icon',
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const supabase = await createSupabaseApiClient();
+    const { data } = await supabase
+      .from('settings')
+      .select('favicon_url')
+      .single();
+    
+    const faviconUrl = data?.favicon_url ? `/favicon?t=${Date.now()}` : '/favicon.ico';
+    
+    return {
+      title: "Property Management System",
+      description: "A comprehensive property management system",
+      icons: {
+        icon: [
+          {
+            url: faviconUrl,
+            sizes: '32x32',
+            type: 'image/png',
+          },
+          {
+            url: faviconUrl,
+            sizes: '16x16',
+            type: 'image/png',
+          },
+        ],
+        shortcut: faviconUrl,
+        apple: faviconUrl,
       },
-      {
-        url: '/favicon',
-        sizes: '32x32',
-        type: 'image/png',
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: "Property Management System",
+      description: "A comprehensive property management system",
+      icons: {
+        icon: '/favicon.ico',
+        shortcut: '/favicon.ico',
+        apple: '/favicon.ico',
       },
-      {
-        url: '/favicon',
-        sizes: '16x16',
-        type: 'image/png',
-      },
-    ],
-    shortcut: '/favicon.ico',
-    apple: '/favicon',
-  },
-};
+    };
+  }
+}
 
 export const viewport = {
   width: 'device-width',

@@ -11,9 +11,18 @@ interface PropertyEnquiryFormProps {
 export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormProps) {
   const [activeTab, setActiveTab] = useState<'contact' | 'tour'>('contact');
   // Contact form state
-  const configOptions = property.property_configurations?.map(config => `${config.bhk}BHK`) || ['1BHK', '2BHK'];
-  const configState = configOptions.reduce((acc, config) => {
-    acc[config] = false;
+  const configOptions = property.property_configurations 
+    ? property.property_configurations.map((config, index) => ({
+        key: `${config.bhk}BHK-${index}`,
+        label: `${config.bhk}BHK`,
+        config: config
+      }))
+    : [
+        { key: '1BHK-0', label: '1BHK', config: null },
+        { key: '2BHK-0', label: '2BHK', config: null }
+      ];
+  const configState = configOptions.reduce((acc, option) => {
+    acc[option.key] = false;
     return acc;
   }, {} as Record<string, boolean>);
   const [contactForm, setContactForm] = useState({
@@ -105,7 +114,10 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
       // Prepare config selection as comma-separated string
       const selectedConfigs = Object.entries(contactForm.config)
         .filter((entry) => entry[1])
-        .map((entry) => entry[0])
+        .map((entry) => {
+          const option = configOptions.find(opt => opt.key === entry[0]);
+          return option ? option.label : entry[0];
+        })
         .join(', ');
       // Convert to Postgres array literal if not empty
       const propertyConfigurationsArray = selectedConfigs
@@ -279,15 +291,15 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
             <div>
               <div className="font-medium mb-2">Configuration (select 1 or more)</div>
               <div className="flex flex-wrap gap-4 mb-2">
-                {configOptions.map((config) => (
-                  <label key={config} className="flex items-center gap-2 cursor-pointer">
+                {configOptions.map((option) => (
+                  <label key={option.key} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={contactForm.config[config]}
-                      onChange={e => handleContactChange('config', { [config]: e.target.checked })}
+                      checked={contactForm.config[option.key]}
+                      onChange={e => handleContactChange('config', { [option.key]: e.target.checked })}
                       className="w-5 h-5 rounded border-gray-300 focus:ring-[#0A1736]"
                     />
-                    {config}
+                    {option.label}
                   </label>
                 ))}
               </div>

@@ -24,8 +24,8 @@ export default function MobilePropertyInfoCard({ property }: MobilePropertyInfoC
 
   const formatCurrency = (amount: number | undefined) => {
     if (!amount) return "Contact for price";
-    if (amount >= 1e7) return `₹${(amount / 1e7).toFixed(1)} Cr`;
-    if (amount >= 1e5) return `₹${(amount / 1e5).toFixed(1)} Lacs`;
+    if (amount >= 1e7) return `₹${(amount / 1e7).toFixed(2)} Cr`;
+    if (amount >= 1e5) return `₹${(amount / 1e5).toFixed(2)} Lacs`;
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
