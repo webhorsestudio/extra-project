@@ -15,13 +15,6 @@ export async function middleware(request: NextRequest) {
     timestamp: new Date().toISOString()
   })
 
-  // Only redirect root path for mobile devices (initial load)
-  // Client-side detection will handle responsive changes
-  if (pathname === '/' && isMobile) {
-    console.log('MIDDLEWARE: Redirecting mobile device from / to /m')
-    return NextResponse.redirect(new URL('/m', request.url))
-  }
-
   // Skip middleware for API routes and static files
   if (
     pathname.startsWith('/api') ||
@@ -29,6 +22,33 @@ export async function middleware(request: NextRequest) {
     pathname.includes('.')
   ) {
     return NextResponse.next()
+  }
+
+  // --- SMART URL SHARING REDIRECTS ---
+  // Handle mobile-to-web redirects (desktop users accessing mobile URLs)
+  if (pathname.startsWith('/m/') && !isMobile) {
+    const webPath = pathname.replace('/m/', '/')
+    console.log('MIDDLEWARE: Desktop user accessing mobile URL, redirecting to web version:', pathname, '->', webPath)
+    return NextResponse.redirect(new URL(webPath, request.url))
+  }
+
+  // Handle web-to-mobile redirects (mobile users accessing web URLs)
+  // Exclude admin, users, and other protected routes
+  if (!pathname.startsWith('/m/') && isMobile && 
+      !pathname.startsWith('/admin') && 
+      !pathname.startsWith('/users') && 
+      !pathname.startsWith('/agent') &&
+      !pathname.startsWith('/customer') &&
+      !pathname.startsWith('/api') &&
+      pathname !== '/') {
+    console.log('MIDDLEWARE: Mobile user accessing web URL, redirecting to mobile version:', pathname, '->', '/m' + pathname)
+    return NextResponse.redirect(new URL('/m' + pathname, request.url))
+  }
+
+  // Keep existing root path redirect for mobile devices
+  if (pathname === '/' && isMobile) {
+    console.log('MIDDLEWARE: Redirecting mobile device from / to /m')
+    return NextResponse.redirect(new URL('/m', request.url))
   }
 
   // For mobile devices, we'll let the page handle the device detection
