@@ -40,7 +40,8 @@ export async function middleware(request: NextRequest) {
       !pathname.startsWith('/agent') &&
       !pathname.startsWith('/customer') &&
       !pathname.startsWith('/api') &&
-      pathname !== '/') {
+      pathname !== '/' &&
+      pathname !== '/m') {
     console.log('MIDDLEWARE: Mobile user accessing web URL, redirecting to mobile version:', pathname, '->', '/m' + pathname)
     return NextResponse.redirect(new URL('/m' + pathname, request.url))
   }
