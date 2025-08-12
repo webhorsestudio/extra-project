@@ -191,6 +191,7 @@ export function SitemapSeoSettingsForm({ settings }: Props) {
         body: JSON.stringify({
           google_analytics_id: data.google_analytics_id,
           google_tag_manager_id: data.google_tag_manager_id,
+          meta_pixel_id: data.meta_pixel_id,
           site_url: data.site_url,
           robots_txt: data.robots_txt,
           sitemap_schedule: data.sitemap_schedule,
