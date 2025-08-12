@@ -27,7 +27,8 @@ export async function getFeaturedProperties() {
       ),
       property_images (
         id,
-        image_url
+        image_url,
+        display_order
       ),
       property_locations (
         id,
@@ -89,7 +90,8 @@ export async function getNewlyLaunchedProperties() {
       ),
       property_images (
         id,
-        image_url
+        image_url,
+        display_order
       ),
       property_locations (
         id,

@@ -85,7 +85,7 @@ export default function AddPropertyClient({ user }: { user: User }) {
       }
       // Upload temporary images if any
       if (data.tempImages && data.tempImages.length > 0) {
-        const uploadPromises = data.tempImages.map(async (file: File) => {
+        const uploadPromises = data.tempImages.map(async (file: File, index: number) => {
           try {
             const fileExt = file.name.split('.').pop()
             const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
@@ -106,7 +106,8 @@ export default function AddPropertyClient({ user }: { user: User }) {
               .from('property_images')
               .insert([{ 
                 property_id: property.id, 
-                image_url: publicUrl 
+                image_url: publicUrl,
+                display_order: index + 1 // Preserve the order from tempImages array
               }])
               .select()
               .single()

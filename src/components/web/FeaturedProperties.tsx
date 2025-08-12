@@ -4,7 +4,7 @@ import type { Property, BHKConfiguration, PropertyImage } from '@/types/property
 
 // Type for Supabase result (fields selected in the query)
 type SupabaseBHKConfig = Omit<BHKConfiguration, 'property_id' | 'floor_plan_url' | 'brochure_url'>;
-type SupabasePropertyImage = Pick<PropertyImage, 'id' | 'image_url'>;
+type SupabasePropertyImage = Pick<PropertyImage, 'id' | 'image_url' | 'display_order'>;
 
 export default async function FeaturedProperties() {
   const properties = await getFeaturedProperties()
@@ -38,6 +38,7 @@ export default async function FeaturedProperties() {
     property_images: property.property_images?.map((img: SupabasePropertyImage) => ({
       ...img,
       property_id: property.id,
+      display_order: img.display_order || 0,
       created_at: property.created_at || ''
     })) || [],
     // Add other required fields with defaults

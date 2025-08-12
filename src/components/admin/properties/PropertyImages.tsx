@@ -2,10 +2,11 @@
 
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { ImageUploader } from './ImageUploader'
 import { ImageGallery } from './ImageGallery'
 import { PropertyImage, usePropertyImages } from '@/hooks/usePropertyImages'
-import { Image, Upload, AlertCircle } from 'lucide-react'
+import { Image, Upload, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
 interface PropertyImagesProps {
@@ -23,7 +24,7 @@ export function PropertyImages({
   onTempImagesChange,
   tempImages = []
 }: PropertyImagesProps) {
-  const { images, isLoading, error, deleteImage } = usePropertyImages(propertyId || '')
+  const { images, isLoading, error, deleteImage, reorderImage } = usePropertyImages(propertyId || '')
 
   // Use images from hook if propertyId is provided, otherwise use prop images
   const displayImages = propertyId ? images : propImages
@@ -51,6 +52,25 @@ export function PropertyImages({
     if (propertyId && deleteImage) {
       await deleteImage(imageId)
     }
+  }
+
+  const handleReorderTempImage = (index: number, direction: 'up' | 'down') => {
+    if (!onTempImagesChange) return
+    
+    const newFiles = [...tempImages]
+    let targetIndex: number
+    
+    if (direction === 'up' && index > 0) {
+      targetIndex = index - 1
+    } else if (direction === 'down' && index < tempImages.length - 1) {
+      targetIndex = index + 1
+    } else {
+      return // Can't move further in that direction
+    }
+    
+    // Swap files
+    [newFiles[index], newFiles[targetIndex]] = [newFiles[targetIndex], newFiles[index]]
+    onTempImagesChange(newFiles)
   }
 
   // Show upload interface for new properties with temporary images
@@ -108,10 +128,37 @@ export function PropertyImages({
                       />
                       
                       {/* Overlay */}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                        <button
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
+                        {/* Reorder buttons */}
+                        <Button
                           type="button"
-                          className="h-8 w-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                          variant="secondary"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => handleReorderTempImage(index, 'up')}
+                          disabled={index === 0}
+                          title="Move up"
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </Button>
+                        
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => handleReorderTempImage(index, 'down')}
+                          disabled={index === tempImages.length - 1}
+                          title="Move down"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                        
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="h-8 w-8"
                           onClick={() => {
                             const newFiles = tempImages.filter((_, i) => i !== index)
                             onTempImagesChange?.(newFiles)
@@ -120,7 +167,7 @@ export function PropertyImages({
                           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
-                        </button>
+                        </Button>
                       </div>
                     </div>
                     
@@ -200,6 +247,7 @@ export function PropertyImages({
               images={displayImages}
               onImagesChange={handleGalleryChange}
               onDeleteImage={handleDeleteImage}
+              onReorderImage={reorderImage}
             />
           </div>
         )}

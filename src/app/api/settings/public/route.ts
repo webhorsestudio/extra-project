@@ -1,22 +1,48 @@
-import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { NextResponse } from 'next/server'
+import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
 export async function GET() {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { get: () => undefined } }
-  );
+  try {
+    console.log('Public Settings API: Starting GET request')
+    
+    const supabase = await createSupabaseAdminClient()
+    const { data, error } = await supabase
+      .from('settings')
+      .select('google_analytics_id, google_tag_manager_id, meta_pixel_id')
+      .single()
+    
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No settings found, return empty tracking settings
+        console.log('Public Settings API: No settings found, returning empty tracking settings')
+        return NextResponse.json({ 
+          settings: {
+            google_analytics_id: '',
+            google_tag_manager_id: ''
+          }
+        })
+      }
+      
+      console.error('Public Settings API: Error fetching settings:', error)
+      return NextResponse.json(
+        { error: 'Failed to fetch tracking settings' },
+        { status: 500 }
+      )
+    }
 
-  const SETTINGS_UUID = 'ed4ebb8c-40cd-4173-b492-fef97713217b';
-  const { data: settings, error } = await supabase
-    .from('settings')
-    .select('email_confirmation_enabled')
-    .eq('id', SETTINGS_UUID)
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.log('Public Settings API: Successfully fetched tracking settings')
+    return NextResponse.json({ 
+      settings: {
+        google_analytics_id: data.google_analytics_id || '',
+        google_tag_manager_id: data.google_tag_manager_id || '',
+        meta_pixel_id: data.meta_pixel_id || ''
+      }
+    })
+  } catch (error) {
+    console.error('Public Settings API: Unexpected error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
-  return NextResponse.json({ settings });
 } 

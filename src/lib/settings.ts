@@ -15,6 +15,8 @@ export interface Settings {
   // SEO fields
   google_analytics_id?: string
   google_tag_manager_id?: string
+  meta_pixel_id?: string
+  site_url?: string
   robots_txt?: string
   sitemap_schedule?: string
   sitemap_enabled?: boolean
@@ -104,6 +106,7 @@ export async function createDefaultSettings(): Promise<Settings | null> {
       site_title: '',
       meta_description: '',
       website_url: '',
+      site_url: '',
       facebook_url: '',
       twitter_url: '',
       instagram_url: '',
@@ -122,6 +125,10 @@ export async function createDefaultSettings(): Promise<Settings | null> {
       enable_dark_mode: false,
       enable_animations: true,
       enable_shadows: true,
+      google_analytics_id: '',
+      google_tag_manager_id: '',
+      meta_pixel_id: '',
+      robots_txt: '',
       sitemap_schedule: 'daily',
       sitemap_enabled: true,
       sitemap_include_properties: true,

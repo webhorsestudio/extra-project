@@ -13,13 +13,18 @@ export async function GET(request: Request) {
     const supabase = await createSupabaseApiClient()
     
     // Get sitemap settings
-    const { data: settings } = await supabase
+    const { data: settings, error: settingsError } = await supabase
       .from('settings')
       .select('site_url, sitemap_schedule, sitemap_enabled, sitemap_include_properties, sitemap_include_users, sitemap_include_blog')
       .single()
 
+    if (settingsError) {
+      console.error('Error fetching sitemap settings:', settingsError)
+      return NextResponse.json({ error: 'Failed to fetch sitemap settings' }, { status: 500 })
+    }
+
     if (!settings?.site_url || !settings.sitemap_enabled) {
-      return NextResponse.json({ message: 'Sitemap generation not enabled' })
+      return NextResponse.json({ message: 'Sitemap generation not enabled or site URL not configured' })
     }
 
     const baseUrl = settings.site_url
@@ -37,12 +42,14 @@ export async function GET(request: Request) {
 
     // Add properties if enabled
     if (settings.sitemap_include_properties) {
-      const { data: properties } = await supabase
+      const { data: properties, error: propertiesError } = await supabase
         .from('properties')
         .select('id, updated_at')
-        .eq('status', 'published')
+        .eq('status', 'active')  // Changed from 'published' to 'active'
 
-      if (properties) {
+      if (propertiesError) {
+        console.error('Error fetching properties:', propertiesError)
+      } else if (properties) {
         properties.forEach(property => {
           urls.push({
             url: {
@@ -58,16 +65,18 @@ export async function GET(request: Request) {
 
     // Add users if enabled
     if (settings.sitemap_include_users) {
-      const { data: users } = await supabase
-        .from('users')
-        .select('id, updated_at')
+      const { data: users, error: usersError } = await supabase
+        .from('profiles')  // Changed from 'users' to 'profiles'
+        .select('id, updated_at, is_public')
         .eq('is_public', true)
 
-      if (users) {
+      if (usersError) {
+        console.error('Error fetching users:', usersError)
+      } else if (users) {
         users.forEach(user => {
           urls.push({
             url: {
-              loc: `${baseUrl}/users/${user.id}`,
+              loc: `${baseUrl}/profile/${user.id}`,
               lastmod: new Date(user.updated_at).toISOString(),
               changefreq: 'weekly',
               priority: '0.6'
@@ -79,16 +88,18 @@ export async function GET(request: Request) {
 
     // Add blog posts if enabled
     if (settings.sitemap_include_blog) {
-      const { data: posts } = await supabase
-        .from('blog_posts')
-        .select('id, updated_at')
+      const { data: posts, error: postsError } = await supabase
+        .from('blogs')  // Changed from 'blog_posts' to 'blogs'
+        .select('id, updated_at, status')
         .eq('status', 'published')
 
-      if (posts) {
+      if (postsError) {
+        console.error('Error fetching blog posts:', postsError)
+      } else if (posts) {
         posts.forEach(post => {
           urls.push({
             url: {
-              loc: `${baseUrl}/blog/${post.id}`,
+              loc: `${baseUrl}/blogs/${post.id}`,
               lastmod: new Date(post.updated_at).toISOString(),
               changefreq: 'monthly',
               priority: '0.7'
@@ -98,23 +109,35 @@ export async function GET(request: Request) {
       }
     }
 
-    // Generate sitemap XML
+    // Generate sitemap XML - FIXED: Properly iterate through URLs
     const sitemap = create({ version: '1.0', encoding: 'UTF-8' })
       .ele('urlset', { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' })
-      .ele(urls)
-      .end({ prettyPrint: true })
+      
+    urls.forEach(urlData => {
+      sitemap.ele('url')
+        .ele('loc').txt(urlData.url.loc).up()
+        .ele('lastmod').txt(urlData.url.lastmod).up()
+        .ele('changefreq').txt(urlData.url.changefreq).up()
+        .ele('priority').txt(urlData.url.priority).up()
+        .up()
+    })
 
-    // Upload sitemap to storage
-    const { error: uploadError } = await supabase
-      .storage
-      .from('public')
-      .upload('sitemap.xml', sitemap, {
-        contentType: 'application/xml',
-        upsert: true
+    const sitemapXml = sitemap.end({ prettyPrint: true })
+
+    // Upload the sitemap to Supabase storage
+    const { error: uploadError } = await supabase.storage
+      .from('sitemap')
+      .upload('sitemap.xml', sitemapXml, { 
+        upsert: true,
+        contentType: 'application/xml'
       })
 
     if (uploadError) {
-      throw new Error(`Failed to upload sitemap: ${uploadError.message}`)
+      console.error('Error uploading sitemap:', uploadError)
+      return NextResponse.json(
+        { error: 'Failed to upload sitemap to storage' },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json({ success: true })

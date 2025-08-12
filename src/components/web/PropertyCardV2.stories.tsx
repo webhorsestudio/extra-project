@@ -39,6 +39,7 @@ const mockProperty = {
       id: '1',
       property_id: '1',
       image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
+      display_order: 1,
       created_at: '2024-01-01T00:00:00Z'
     }
   ],

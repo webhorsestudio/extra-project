@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { X, Eye, Download } from 'lucide-react'
+import { X, Eye, Download, ChevronUp, ChevronDown } from 'lucide-react'
 import { PropertyImage } from '@/hooks/usePropertyImages'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -13,10 +13,12 @@ interface ImageGalleryProps {
   images: PropertyImage[]
   onImagesChange: (images: PropertyImage[]) => void
   onDeleteImage?: (imageId: string) => Promise<void>
+  onReorderImage?: (imageId: string, direction: 'up' | 'down') => Promise<void>
 }
 
-export function ImageGallery({ images, onImagesChange, onDeleteImage }: ImageGalleryProps) {
+export function ImageGallery({ images, onImagesChange, onDeleteImage, onReorderImage }: ImageGalleryProps) {
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isReordering, setIsReordering] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const { toast } = useToast()
 
@@ -52,6 +54,28 @@ export function ImageGallery({ images, onImagesChange, onDeleteImage }: ImageGal
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+  }
+
+  const handleReorder = async (imageId: string, direction: 'up' | 'down') => {
+    if (!onReorderImage) return
+    
+    try {
+      setIsReordering(true)
+      await onReorderImage(imageId, direction)
+      toast({
+        title: 'Success',
+        description: `Image moved ${direction} successfully`,
+      })
+    } catch (error) {
+      console.error('Error reordering image:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to reorder image',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsReordering(false)
+    }
   }
 
   if (!images.length) {
@@ -112,6 +136,35 @@ export function ImageGallery({ images, onImagesChange, onDeleteImage }: ImageGal
                   >
                     <Download className="h-4 w-4" />
                   </Button>
+                  
+                  {/* Reorder buttons */}
+                  {onReorderImage && (
+                    <>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleReorder(image.id, 'up')}
+                        disabled={isReordering || index === 0}
+                        title="Move up"
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleReorder(image.id, 'down')}
+                        disabled={isReordering || index === images.length - 1}
+                        title="Move down"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
                   
                   <Button
                     type="button"
