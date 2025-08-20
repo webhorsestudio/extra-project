@@ -32,7 +32,8 @@ import {
   Calendar,
   HomeIcon,
   Clock,
-  Mail
+  Mail,
+  Megaphone
 } from 'lucide-react'
 
 interface AdminNavigationProps {
@@ -69,7 +70,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Calendar,
   HomeIcon,
   Clock,
-  Mail
+  Mail,
+  Megaphone
 };
 
 export function AdminNavigation({ 

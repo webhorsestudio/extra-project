@@ -6,9 +6,11 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import SearchBar from "./search/SearchBar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import UserMenuButton from '@/components/web/ui/UserMenuButton'
 import { supabase } from '@/lib/supabaseClient';
 import { ConfigurationData } from '@/lib/configuration-data-client'
+import { FileText } from 'lucide-react';
 import { BudgetData } from '@/lib/budget-data'
 import { Location } from '@/hooks/useLocations'
 import type { Session } from '@supabase/supabase-js'
@@ -462,6 +464,14 @@ export default function Navbar({
           <SearchBar locations={locations} configurationData={configurationData} budgetData={budgetData} />
           
           <div className="hidden md:flex items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={() => router.push('/public-listings')}
+              className="flex items-center gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              Public Listings
+            </Button>
             <UserMenuButton 
               user={userObj} 
               onSignIn={handleSignIn} 

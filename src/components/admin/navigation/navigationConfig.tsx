@@ -64,6 +64,7 @@ export const navigationItems: NavigationItem[] = [
     subItems: [
       { name: 'Footer Design', href: '/admin/frontend-ui/footer', icon: 'Layout' },
       { name: 'Policies Design', href: '/admin/frontend-ui/policies', icon: 'FileCheck' },
+      { name: 'Public Listings', href: '/admin/frontend-ui/public-listings', icon: 'Megaphone' },
     ]
   },
   {
