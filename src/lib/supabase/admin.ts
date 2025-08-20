@@ -17,18 +17,18 @@ export const createSupabaseAdminClient = async () => {
           try {
             cookieStore.set({ name, value, ...options })
           } catch (error) {
-            console.error('Cookie set error in Admin Client:', error)
-            // Throw error to prevent silent failures
-            throw new Error(`Failed to set authentication cookie: ${error instanceof Error ? error.message : 'Unknown error'}`)
+            console.warn('Cookie set error in Admin Client (non-critical):', error)
+            // Don't throw error - cookies can't always be set in Server Components
+            // This is expected behavior and shouldn't break the application
           }
         },
         remove(name: string, options: Record<string, unknown>) {
           try {
             cookieStore.set({ name, value: '', ...options })
           } catch (error) {
-            console.error('Cookie remove error in Admin Client:', error)
-            // Throw error to prevent silent failures
-            throw new Error(`Failed to remove authentication cookie: ${error instanceof Error ? error.message : 'Unknown error'}`)
+            console.warn('Cookie remove error in Admin Client (non-critical):', error)
+            // Don't throw error - cookies can't always be set in Server Components
+            // This is expected behavior and shouldn't break the application
           }
         },
       },
@@ -52,18 +52,18 @@ export const createSupabaseAdminUserClient = async () => {
           try {
             cookieStore.set({ name, value, ...options })
           } catch (error) {
-            console.error('Cookie set error in Admin User Client:', error)
-            // Throw error to prevent silent failures
-            throw new Error(`Failed to set authentication cookie: ${error instanceof Error ? error.message : 'Unknown error'}`)
+            console.warn('Cookie set error in Admin User Client (non-critical):', error)
+            // Don't throw error - cookies can't always be set in Server Components
+            // This is expected behavior and shouldn't break the application
           }
         },
         remove(name: string, options: Record<string, unknown>) {
           try {
             cookieStore.set({ name, value: '', ...options })
           } catch (error) {
-            console.error('Cookie remove error in Admin User Client:', error)
-            // Throw error to prevent silent failures
-            throw new Error(`Failed to remove authentication cookie: ${error instanceof Error ? error.message : 'Unknown error'}`)
+            console.warn('Cookie remove error in Admin User Client (non-critical):', error)
+            // Don't throw error - cookies can't always be set in Server Components
+            // This is expected behavior and shouldn't break the application
           }
         },
       },

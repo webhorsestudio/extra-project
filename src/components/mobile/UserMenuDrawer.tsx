@@ -126,12 +126,39 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
       { label: 'Profile', icon: <User className="w-6 h-6" />, href: '/m/profile' },
       { label: 'Notifications', icon: <MessageSquare className="w-6 h-6" />, href: '/m/notifications' },
     ] : []),
+    { label: 'Public Listing', icon: <FileText className="w-6 h-6" />, href: '/m/public-listings' },
     { label: 'Contact Us', icon: <Phone className="w-6 h-6" />, href: '/m/contact' },
     { label: 'Support', icon: <Headphones className="w-6 h-6" />, href: '/m/support' },
     { label: 'Terms Of Use', icon: <FileText className="w-6 h-6" />, href: '/m/terms' },
     { label: 'Privacy Policy', icon: <FileText className="w-6 h-6" />, href: '/m/privacy' },
     { label: 'FAQs', icon: <HelpCircle className="w-6 h-6" />, href: '/m/faqs' },
   ];
+
+  // Mobile-specific navigation handler
+  const handleMobileNavigation = (href: string) => {
+    // Ensure we're on mobile route
+    if (!href.startsWith('/m/')) {
+      console.error('❌ Invalid mobile route:', href)
+      return
+    }
+    
+    // Prevent event bubbling
+    event?.stopPropagation()
+    event?.preventDefault()
+    
+    // Close drawer first
+    onClose()
+    
+    // Small delay to ensure drawer closes before navigation
+    setTimeout(() => {
+      // Use window.location for mobile navigation to ensure it works
+      if (href === '/m/public-listings') {
+        window.location.href = href
+      } else {
+        router.push(href)
+      }
+    }, 100)
+  }
 
   return (
     <>
@@ -142,12 +169,14 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
       />
       {/* Drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full z-50 bg-white/90 backdrop-blur-md shadow-2xl border-l border-gray-200/50 transition-transform duration-300 ease-in-out flex flex-col
+        className={`mobile-navigation-drawer fixed top-0 right-0 h-full z-50 bg-white/90 backdrop-blur-md shadow-2xl border-l border-gray-200/50 transition-transform duration-300 ease-in-out flex flex-col
           ${open ? 'translate-x-0' : 'translate-x-full'}
         `}
         style={{ width: '80vw', maxWidth: 360 }}
         role="dialog"
         aria-modal="true"
+        data-mobile-navigation="true"
+        data-testid="mobile-user-menu-drawer"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50 bg-white/50">
@@ -185,24 +214,26 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
             <X className="w-6 h-6 text-gray-500" />
           </button>
         </div>
-        {/* Menu Items */}
-        <nav className="flex-1 overflow-y-auto py-2">
-          <ul className="flex flex-col divide-y divide-gray-200/50">
-            {menuItems.map((item) => (
-              <li key={item.label}>
-                <a
-                  href={item.href}
-                  className="flex items-center gap-4 px-6 py-5 text-base text-gray-700 hover:bg-gray-50/80 hover:text-gray-900 transition-all duration-200 focus:bg-gray-100/80 outline-none"
-                  tabIndex={0}
-                  onClick={onClose}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+                 {/* Menu Items */}
+         <nav className="flex-1 overflow-y-auto py-2">
+           <ul className="flex flex-col divide-y divide-gray-200/50">
+                           {menuItems.map((item) => (
+                <li key={item.label}>
+                  <button
+                    onClick={() => handleMobileNavigation(item.href)}
+                    className={`mobile-menu-item flex items-center gap-4 px-6 py-5 text-base text-gray-700 hover:bg-gray-50/80 hover:text-gray-900 transition-all duration-200 focus:bg-gray-100/80 outline-none w-full text-left`}
+                    tabIndex={0}
+                    data-mobile-menu-item="true"
+                    data-mobile-route={item.href}
+                    data-mobile-label={item.label}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </button>
+                </li>
+              ))}
+           </ul>
+         </nav>
         {/* Footer (Log Out) */}
         {user && (
           <div className="border-t border-gray-200/50 px-6 py-4 bg-white/30">

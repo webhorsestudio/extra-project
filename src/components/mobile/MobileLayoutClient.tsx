@@ -26,7 +26,7 @@ export default function MobileLayoutClient({ children, footerData }: MobileLayou
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Pages that don't need the header
-  const pagesWithoutHeader = ['/m/profile', '/m/contact', '/m/support', '/m/terms', '/m/privacy', '/m/faqs', '/m/properties/[id]', '/m/blogs', '/m/blogs/[id]']
+  const pagesWithoutHeader = ['/m/profile', '/m/contact', '/m/support', '/m/terms', '/m/privacy', '/m/faqs', '/m/public-listings', '/m/properties/[id]', '/m/blogs', '/m/blogs/[id]']
 
   const shouldShowHeader = !pagesWithoutHeader.includes(pathname) && !pathname.startsWith('/m/properties/') && !pathname.startsWith('/m/blogs/')
 

@@ -1,11 +1,7 @@
 'use client'
 
-import { useEffect, useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-
-// Screen width breakpoints
-const MOBILE_BREAKPOINT = 768 // 768px and below = mobile/tablet
-const TABLET_BREAKPOINT = 1024 // 1024px and below = tablet
 
 export default function DeviceDetectionLoader({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
@@ -16,21 +12,18 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
 
   // Function to detect device type
   function detectDeviceType() {
+    if (typeof window === 'undefined') {
+      return { shouldUseMobile: false, deviceType: 'desktop' as const, width: 0, height: 0, userAgent: '' }
+    }
+    
     const width = window.innerWidth
     const height = window.innerHeight
-    
-    // Check user agent
     const userAgent = navigator.userAgent
-    const isMobileByUserAgent = /iPhone|iPad|Android|Mobile|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
     
-    // Determine device type
-    const isMobileBySize = width <= MOBILE_BREAKPOINT
-    const isTabletBySize = width > MOBILE_BREAKPOINT && width <= TABLET_BREAKPOINT
+    // Check if device is mobile or tablet
+    const isMobileDevice = /iPhone|iPad|Android|Mobile|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+    const shouldUseMobile = isMobileDevice || width <= 1024
     
-    const mobile = isMobileBySize || isMobileByUserAgent
-    const tablet = isTabletBySize || (isMobileByUserAgent && /iPad|Android(?=.*\bMobile\b)(?=.*\bSafari\b)/i.test(userAgent))
-    
-    const shouldUseMobile = mobile || tablet
     const deviceType: 'mobile' | 'desktop' = shouldUseMobile ? 'mobile' : 'desktop'
     
     return { shouldUseMobile, deviceType, width, height, userAgent }
@@ -53,19 +46,29 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
                       path === '/register' ||
                       path === '/signup'
     
+    // IMPORTANT: Don't redirect if user is already on a mobile route
+    // This prevents interference with manual navigation in mobile menu
+    if (isOnMobileRoute) {
+      setLastDeviceType(deviceType)
+      return
+    }
+    
     // Don't redirect if user is on an authentication page
     if (isAuthPage) {
       setLastDeviceType(deviceType)
       return
     }
     
-    if (shouldUseMobile && isOnWebRoute) {
-      isRedirecting.current = true
-      router.push('/m')
-    } else if (!shouldUseMobile && isOnMobileRoute) {
-      isRedirecting.current = true
-      router.push('/')
-    }
+    // Add a small delay to prevent interference with manual navigation
+    setTimeout(() => {
+      if (shouldUseMobile && isOnWebRoute) {
+        isRedirecting.current = true
+        router.push('/m')
+      } else if (!shouldUseMobile && isOnMobileRoute) {
+        isRedirecting.current = true
+        router.push('/')
+      }
+    }, 100) // Small delay to allow manual navigation to complete
   
     setLastDeviceType(deviceType)
     
@@ -140,6 +143,15 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
       clearTimeout(resizeTimeout)
     }
   }, [handleLayoutChange, lastDeviceType, isInitialLoad])
+
+  // Track navigation state to prevent interference
+  useEffect(() => {
+    // In Next.js App Router, we can't use router.events
+    // Simple timeout-based approach to prevent interference
+    return () => {
+      // Cleanup if needed
+    }
+  }, [])
 
   // Show loading spinner only during initial load
   if (isLoading && isInitialLoad) {

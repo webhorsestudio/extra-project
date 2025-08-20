@@ -7,14 +7,6 @@ export async function middleware(request: NextRequest) {
   const userAgent = request.headers.get('user-agent') || ''
   const isMobile = /iPhone|iPad|Android|Mobile|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
 
-  // Debug logging
-  console.log('MIDDLEWARE DEBUG:', { 
-    pathname, 
-    userAgent: userAgent.substring(0, 100) + '...', 
-    isMobile,
-    timestamp: new Date().toISOString()
-  })
-
   // Skip middleware for API routes and static files
   if (
     pathname.startsWith('/api') ||
@@ -25,10 +17,21 @@ export async function middleware(request: NextRequest) {
   }
 
   // --- SMART URL SHARING REDIRECTS ---
+  
+  // IMPORTANT: If user is already on a mobile route (/m/*), NEVER redirect them away
+  if (pathname.startsWith('/m/')) {
+    // Let mobile users access mobile routes without any redirects
+    return NextResponse.next()
+  }
+
+  // Special handling for public-listings routes
+  if (pathname === '/public-listings' && isMobile) {
+    return NextResponse.redirect(new URL('/m/public-listings', request.url))
+  }
+
   // Handle mobile-to-web redirects (desktop users accessing mobile URLs)
   if (pathname.startsWith('/m/') && !isMobile) {
     const webPath = pathname.replace('/m/', '/')
-    console.log('MIDDLEWARE: Desktop user accessing mobile URL, redirecting to web version:', pathname, '->', webPath)
     return NextResponse.redirect(new URL(webPath, request.url))
   }
 
@@ -42,20 +45,12 @@ export async function middleware(request: NextRequest) {
       !pathname.startsWith('/api') &&
       pathname !== '/' &&
       pathname !== '/m') {
-    console.log('MIDDLEWARE: Mobile user accessing web URL, redirecting to mobile version:', pathname, '->', '/m' + pathname)
     return NextResponse.redirect(new URL('/m' + pathname, request.url))
   }
 
   // Keep existing root path redirect for mobile devices
   if (pathname === '/' && isMobile) {
-    console.log('MIDDLEWARE: Redirecting mobile device from / to /m')
     return NextResponse.redirect(new URL('/m', request.url))
-  }
-
-  // For mobile devices, we'll let the page handle the device detection
-  // This is just for logging and potential future use
-  if (isMobile) {
-    console.log('MIDDLEWARE: Mobile/Tablet device detected for:', pathname)
   }
 
   // Create a response
