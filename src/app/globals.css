@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@import "tailwindcss/preflight";
-@import "tailwindcss/utilities";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -188,6 +186,10 @@
     height: 100dvh; /* Dynamic viewport height for mobile */
   }
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Popup Ads Animations */
 @keyframes fadeIn {
