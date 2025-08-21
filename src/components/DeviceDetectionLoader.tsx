@@ -61,13 +61,13 @@ export default function DeviceDetectionLoader({ children }: { children: React.Re
     
     // Add a small delay to prevent interference with manual navigation
     setTimeout(() => {
-      if (shouldUseMobile && isOnWebRoute) {
-        isRedirecting.current = true
-        router.push('/m')
-      } else if (!shouldUseMobile && isOnMobileRoute) {
-        isRedirecting.current = true
-        router.push('/')
-      }
+    if (shouldUseMobile && isOnWebRoute) {
+      isRedirecting.current = true
+      router.push('/m')
+    } else if (!shouldUseMobile && isOnMobileRoute) {
+      isRedirecting.current = true
+      router.push('/')
+    }
     }, 100) // Small delay to allow manual navigation to complete
   
     setLastDeviceType(deviceType)

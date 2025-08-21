@@ -16,6 +16,7 @@ import { useCategories } from "@/hooks/useCategories"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import CategoryBarErrorFallback from './CategoryBarErrorFallback'
 import { Location } from '@/hooks/useLocations'
+import PopupAdsManager from './PopupAdsManager'
 
 // Proper TypeScript interfaces
 interface User {
@@ -146,6 +147,9 @@ export default function ClientLayout({
         {children}
       </main>
       {footerData && <Footer footerData={footerData} />}
+      
+      {/* Popup Ads Manager */}
+      <PopupAdsManager />
     </div>
   )
 } 

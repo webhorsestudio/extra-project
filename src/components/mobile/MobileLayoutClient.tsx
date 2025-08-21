@@ -9,6 +9,7 @@ import { FooterVisibleProvider } from './FooterVisibleContext'
 import { FooterData } from '@/types/footer'
 import { usePathname } from 'next/navigation'
 import { useMobileViewMode } from './MobileViewModeContext';
+import PopupAdsManager from '../web/PopupAdsManager'
 
 interface MobileLayoutClientProps {
   children: React.ReactNode
@@ -89,6 +90,9 @@ export default function MobileLayoutClient({ children, footerData }: MobileLayou
             onClose={() => setIsFilterModalOpen(false)}
             city="Mumbai"
           />
+          
+          {/* Popup Ads Manager for Mobile */}
+          <PopupAdsManager />
         </div>
       </div>
     </FooterVisibleProvider>
