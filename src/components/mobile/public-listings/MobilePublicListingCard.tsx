@@ -1,18 +1,17 @@
 'use client'
 
-import { useState } from 'react'
 import { PublicListing } from '@/types/public-listing'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar, ExternalLink } from 'lucide-react'
-import { MobilePublicListingModal } from './MobilePublicListingModal'
+import { useRouter } from 'next/navigation'
 
 interface MobilePublicListingCardProps {
   listing: PublicListing
 }
 
 export function MobilePublicListingCard({ listing }: MobilePublicListingCardProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const router = useRouter()
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -23,7 +22,7 @@ export function MobilePublicListingCard({ listing }: MobilePublicListingCardProp
   }
 
   const handleViewFullListing = () => {
-    setIsModalOpen(true)
+    router.push(`/m/public-listings/${listing.slug}`)
   }
 
   return (
@@ -61,13 +60,6 @@ export function MobilePublicListingCard({ listing }: MobilePublicListingCardProp
           </div>
         </CardContent>
       </Card>
-
-      {/* Modal for Full Listing View */}
-      <MobilePublicListingModal
-        listing={listing}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </>
   )
 }

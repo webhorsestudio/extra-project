@@ -6,7 +6,7 @@ export default function PublicListingsLayout({
   children: React.ReactNode
 }) {
   return (
-    <ServerLayout showCategoryBar={true}>
+    <ServerLayout showCategoryBar={false}>
       {children}
     </ServerLayout>
   )

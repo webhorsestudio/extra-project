@@ -18,8 +18,15 @@ export default function PublicListingsPage({ initialListings = [] }: PublicListi
 
   return (
     <div className="space-y-8 px-6 sm:px-8 lg:px-12 xl:px-16">
-
-
+      {/* Header */}
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Public Listings
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Discover the latest announcements, updates, and featured content from our community.
+        </p>
+      </div>
 
       {/* Listings Grid */}
       {filteredListings.length === 0 ? (
