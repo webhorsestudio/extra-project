@@ -13,23 +13,15 @@ export const createSupabaseAdminClient = async () => {
         get(name: string) {
           return cookieStore.get(name)?.value
         },
-        set(name: string, value: string, options: Record<string, unknown>) {
-          try {
-            cookieStore.set({ name, value, ...options })
-          } catch (error) {
-            console.warn('Cookie set error in Admin Client (non-critical):', error)
-            // Don't throw error - cookies can't always be set in Server Components
-            // This is expected behavior and shouldn't break the application
-          }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        set(_name: string, _value: string, _options: Record<string, unknown>) {
+          // Silently ignore cookie setting in Server Components
+          // This is expected behavior and won't break the application
         },
-        remove(name: string, options: Record<string, unknown>) {
-          try {
-            cookieStore.set({ name, value: '', ...options })
-          } catch (error) {
-            console.warn('Cookie remove error in Admin Client (non-critical):', error)
-            // Don't throw error - cookies can't always be set in Server Components
-            // This is expected behavior and shouldn't break the application
-          }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        remove(_name: string, _options: Record<string, unknown>) {
+          // Silently ignore cookie removal in Server Components
+          // This is expected behavior and won't break the application
         },
       },
     }
@@ -48,23 +40,15 @@ export const createSupabaseAdminUserClient = async () => {
         get(name: string) {
           return cookieStore.get(name)?.value
         },
-        set(name: string, value: string, options: Record<string, unknown>) {
-          try {
-            cookieStore.set({ name, value, ...options })
-          } catch (error) {
-            console.warn('Cookie set error in Admin User Client (non-critical):', error)
-            // Don't throw error - cookies can't always be set in Server Components
-            // This is expected behavior and shouldn't break the application
-          }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        set(_name: string, _value: string, _options: Record<string, unknown>) {
+          // Silently ignore cookie setting in Server Components
+          // This is expected behavior and won't break the application
         },
-        remove(name: string, options: Record<string, unknown>) {
-          try {
-            cookieStore.set({ name, value: '', ...options })
-          } catch (error) {
-            console.warn('Cookie remove error in Admin User Client (non-critical):', error)
-            // Don't throw error - cookies can't always be set in Server Components
-            // This is expected behavior and shouldn't break the application
-          }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        remove(_name: string, _options: Record<string, unknown>) {
+          // Silently ignore cookie removal in Server Components
+          // This is expected behavior and won't break the application
         },
       },
     }

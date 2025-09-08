@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+// Removed unused Metadata import since we removed generateMetadata from root layout
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,49 +9,10 @@ import { TrackingScripts } from "@/components/analytics/TrackingScripts";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const supabase = await createSupabaseApiClient();
-    const { data } = await supabase
-      .from('settings')
-      .select('favicon_url')
-      .single();
-    
-    const faviconUrl = data?.favicon_url ? `/favicon?t=${Date.now()}` : '/favicon.ico';
-    
-    return {
-      title: "Property Management System",
-      description: "A comprehensive property management system",
-      icons: {
-        icon: [
-          {
-            url: faviconUrl,
-            sizes: '32x32',
-            type: 'image/png',
-          },
-          {
-            url: faviconUrl,
-            sizes: '16x16',
-            type: 'image/png',
-          },
-        ],
-        shortcut: faviconUrl,
-        apple: faviconUrl,
-      },
-    };
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-    return {
-      title: "Property Management System",
-      description: "A comprehensive property management system",
-      icons: {
-        icon: '/favicon.ico',
-        shortcut: '/favicon.ico',
-        apple: '/favicon.ico',
-      },
-    };
-  }
-}
+// Removed generateMetadata from root layout to allow page-specific metadata
+// Each page will handle its own metadata generation
+
+// Favicon is now handled by metadata generation
 
 export const viewport = {
   width: 'device-width',
@@ -270,6 +231,7 @@ export default async function RootLayout({
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
+        <link rel="icon" href="/favicon" />
       </head>
       <body className={inter.className} suppressHydrationWarning={true}>
         {/* Google Tag Manager NoScript fallback */}
@@ -292,6 +254,7 @@ export default async function RootLayout({
               width="1" 
               style={{display:'none'}}
               src={`https://www.facebook.com/tr?id=${safeTrackingSettings.meta_pixel_id}&ev=PageView&noscript=1`}
+              alt=""
             />
           </noscript>
         )}

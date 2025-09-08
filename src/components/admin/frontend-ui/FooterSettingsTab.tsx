@@ -95,10 +95,6 @@ export default function FooterSettingsTab() {
   })
 
   // Fetch settings on component mount
-  useEffect(() => {
-    fetchSettings()
-  }, [])
-
   const fetchSettings = async () => {
     try {
       setLoading(true)
@@ -121,6 +117,10 @@ export default function FooterSettingsTab() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchSettings()
+  }, [fetchSettings])
 
   const handleSave = async () => {
     try {

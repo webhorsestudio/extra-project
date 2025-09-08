@@ -60,11 +60,6 @@ export function KeysAuthGate() {
     }
   }
 
-  useEffect(() => {
-    checkAuth()
-    checkConfig()
-  }, [])
-
   const checkConfig = () => {
     const hasUrl = !!process.env.NEXT_PUBLIC_SUPABASE_URL
     const hasKey = !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -77,6 +72,11 @@ export function KeysAuthGate() {
       isConfigured
     }))
   }
+
+  useEffect(() => {
+    checkAuth()
+    checkConfig()
+  }, [checkAuth])
 
   const testConnection = async () => {
     setIsTesting(true)

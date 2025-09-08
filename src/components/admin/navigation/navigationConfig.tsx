@@ -68,6 +68,7 @@ export const navigationItems: NavigationItem[] = [
       { name: 'Popup Ads', href: '/admin/frontend-ui/popup-ads', icon: 'Zap' },
     ]
   },
+  { name: 'SEO Configuration', href: '/admin/settings/seo-config', icon: 'BarChart3' },
   {
     name: 'Settings',
     href: '/admin/settings',

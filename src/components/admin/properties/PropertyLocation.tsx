@@ -145,7 +145,7 @@ export default function PropertyLocation({
     }, 1000) // Wait 1 second after user stops typing
 
     return () => clearTimeout(timeoutId)
-  }, [locationValue])
+  }, [locationValue, geocodeAddress])
 
   // Handle map position changes
   const handleMapPositionChange = (position: [number, number]) => {

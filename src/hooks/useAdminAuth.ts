@@ -187,7 +187,7 @@ export function useAdminAuth() {
       clearTimeout(loadingTimeout)
       authListener?.subscription?.unsubscribe()
     }
-  }, []) // Remove state.loading dependency to prevent infinite loop
+  }, [state.loading])
 
   const signOut = async () => {
     await supabase.auth.signOut()

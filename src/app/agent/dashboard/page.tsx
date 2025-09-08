@@ -23,10 +23,6 @@ export default function AgentDashboard() {
   const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    checkUser()
-  }, [])
-
   const checkUser = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -67,6 +63,10 @@ export default function AgentDashboard() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    checkUser()
+  }, [checkUser])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()

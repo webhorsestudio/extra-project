@@ -57,27 +57,6 @@ export default function PopupAdForm({ popupAdId }: PopupAdFormProps) {
     metadata: {}
   })
 
-  // Load existing data if editing
-  useEffect(() => {
-    if (isEditing && popupAdId) {
-      loadPopupAd(popupAdId)
-    }
-  }, [isEditing, popupAdId])
-
-  // Ensure form data is always properly initialized
-  useEffect(() => {
-    if (!formData.content) {
-      setFormData(prev => ({
-        ...prev,
-        content: {
-          title: '',
-          description: '',
-          button_text: ''
-        }
-      }))
-    }
-  }, [formData.content])
-
   const loadPopupAd = async (id: string) => {
     setInitialLoading(true)
     try {
@@ -137,6 +116,28 @@ export default function PopupAdForm({ popupAdId }: PopupAdFormProps) {
       setInitialLoading(false)
     }
   }
+
+  // Load existing data if editing
+  useEffect(() => {
+    if (isEditing && popupAdId) {
+      loadPopupAd(popupAdId)
+    }
+  }, [isEditing, popupAdId, loadPopupAd])
+
+  // Ensure form data is always properly initialized
+  useEffect(() => {
+    if (!formData.content) {
+      setFormData(prev => ({
+        ...prev,
+        content: {
+          title: '',
+          description: '',
+          button_text: ''
+        }
+      }))
+    }
+  }, [formData.content])
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

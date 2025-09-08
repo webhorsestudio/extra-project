@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
@@ -37,7 +37,7 @@ export default function InquiryList() {
   const [detailOpen, setDetailOpen] = useState(false)
   const { toast } = useToast()
 
-  const fetchInquiries = async () => {
+  const fetchInquiries = useCallback(async () => {
     try {
       console.log('Fetching inquiries...')
       
@@ -136,7 +136,7 @@ export default function InquiryList() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [toast])
 
   useEffect(() => {
     fetchInquiries()

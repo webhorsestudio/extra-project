@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { X, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useDeviceType } from '@/hooks/useDeviceType'
@@ -31,11 +31,7 @@ export default function PopupAdsManager() {
   const [visibleAds, setVisibleAds] = useState<Set<string>>(new Set())
   const [displayedCounts, setDisplayedCounts] = useState<Record<string, number>>({})
 
-  useEffect(() => {
-    fetchPopupAds()
-  }, [deviceType, currentPath])
-
-  const fetchPopupAds = async () => {
+  const fetchPopupAds = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         device: deviceType,
@@ -52,7 +48,11 @@ export default function PopupAdsManager() {
     } catch (error) {
       console.error('PopupAdsManager: Error fetching popup ads:', error)
     }
-  }
+  }, [deviceType, currentPath])
+
+  useEffect(() => {
+    fetchPopupAds()
+  }, [deviceType, currentPath, fetchPopupAds])
 
   const shouldShowAd = (ad: PopupAd): boolean => {
     // Check if ad has been displayed too many times
@@ -111,7 +111,7 @@ export default function PopupAdsManager() {
         return () => clearTimeout(timer)
       }
     })
-  }, [popupAds, visibleAds, displayedCounts])
+  }, [popupAds, visibleAds, displayedCounts, shouldShowAd, showAd])
 
   const getPositionClasses = (position: string): string => {
     switch (position) {

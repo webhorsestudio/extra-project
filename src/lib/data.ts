@@ -1,7 +1,7 @@
-import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { createSupabaseAdminUserClient } from '@/lib/supabase/admin'
 
 export async function getFeaturedProperties() {
-  const supabase = await createSupabaseServerClient()
+  const supabase = await createSupabaseAdminUserClient()
   
   console.log('Attempting to fetch featured properties...')
   
@@ -64,7 +64,7 @@ export async function getFeaturedProperties() {
 }
 
 export async function getNewlyLaunchedProperties() {
-  const supabase = await createSupabaseServerClient()
+  const supabase = await createSupabaseAdminUserClient()
   
   console.log('Attempting to fetch newly launched properties...')
   
@@ -127,7 +127,7 @@ export async function getNewlyLaunchedProperties() {
 }
 
 export async function getLatestProperties(limit = 20) {
-  const supabase = await createSupabaseServerClient()
+  const supabase = await createSupabaseAdminUserClient()
   
   console.log('Attempting to fetch latest properties...')
   
@@ -188,7 +188,7 @@ export async function getLatestProperties(limit = 20) {
 }
 
 export async function getLatestBlogs(limit = 3, retryCount = 0) {
-  const supabase = await createSupabaseServerClient()
+  const supabase = await createSupabaseAdminUserClient()
   
   console.log(`Attempting to fetch latest blogs (attempt ${retryCount + 1})...`)
   
@@ -244,7 +244,7 @@ export async function getLatestBlogs(limit = 3, retryCount = 0) {
 }
 
 export async function getLogoUrl() {
-  const supabase = await createSupabaseServerClient()
+  const supabase = await createSupabaseAdminUserClient()
   const { data, error } = await supabase
     .from('settings')
     .select('logo_url')
@@ -259,7 +259,7 @@ export async function getLogoUrl() {
 }
 
 export async function getWebsiteInfo() {
-  const supabase = await createSupabaseServerClient()
+  const supabase = await createSupabaseAdminUserClient()
   const { data, error } = await supabase
     .from('settings')
     .select('contact_email, contact_phone, contact_address, contact_website')

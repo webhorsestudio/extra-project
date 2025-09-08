@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { createSupabaseAdminUserClient } from '@/lib/supabase/admin'
 
 export interface CategoryData {
   id: string
@@ -13,7 +13,7 @@ export async function getCategoriesData(): Promise<CategoryData[]> {
   try {
     console.log('Categories Server: Starting data fetch')
     
-    const supabase = await createSupabaseServerClient()
+    const supabase = await createSupabaseAdminUserClient()
     console.log('Categories Server: Supabase client created')
 
     const { data: categories, error } = await supabase

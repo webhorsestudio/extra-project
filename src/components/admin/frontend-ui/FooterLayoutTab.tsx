@@ -46,11 +46,6 @@ export default function FooterLayoutTab() {
     alignment: 'left'
   })
 
-  // Fetch layout settings on component mount
-  useEffect(() => {
-    fetchLayoutSettings()
-  }, [])
-
   const fetchLayoutSettings = async () => {
     try {
       setLoading(true)
@@ -73,6 +68,11 @@ export default function FooterLayoutTab() {
       setLoading(false)
     }
   }
+
+  // Fetch layout settings on component mount
+  useEffect(() => {
+    fetchLayoutSettings()
+  }, [fetchLayoutSettings])
 
   const handleSave = async () => {
     try {

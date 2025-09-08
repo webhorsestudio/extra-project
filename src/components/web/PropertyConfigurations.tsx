@@ -155,6 +155,24 @@ function DownloadBrochureButton({ config }: { config: BHKConfiguration | undefin
   );
 }
 
+// Private Exclusives Card
+function PrivateExclusivesCard() {
+  return (
+    <div className="bg-black rounded-2xl p-6 mb-6 flex flex-col items-center justify-center relative">
+      <div className="text-3xl font-extralight text-white mb-2 tracking-widest">∣∣∣</div>
+      <div className="text-xs tracking-widest text-yellow-400 mb-2">PRIVATE EXCLUSIVES</div>
+      <div className="text-sm text-white text-center mb-2">
+        Connect with our Private Client Concierge<br />for access to floorplans.
+      </div>
+      <button className="absolute bottom-3 right-3 bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors">
+        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 export default function PropertyConfigurations({ property }: PropertyConfigurationsProps) {
   const configs = property.property_configurations || [];
   const uniqueBhks = Array.from(new Set(configs.map(c => c.bhk))).sort((a, b) => b - a);
@@ -162,6 +180,9 @@ export default function PropertyConfigurations({ property }: PropertyConfigurati
   const bhkConfigs = configs.filter(c => c.bhk === activeBhk);
   const [activeConfigId, setActiveConfigId] = useState(bhkConfigs[0]?.id || '');
   const activeConfig = bhkConfigs.find(c => c.id === activeConfigId) || bhkConfigs[0];
+
+  // Private Exclusives (show only if a config has ready_by === null or no floor plan)
+  const showPrivateExclusives = bhkConfigs.some(cfg => !cfg.ready_by) || !activeConfig?.floor_plan_url;
 
   // Update config selector if BHK changes
   React.useEffect(() => {
@@ -192,6 +213,10 @@ export default function PropertyConfigurations({ property }: PropertyConfigurati
       )}
       <ConfigurationsSelectors configs={bhkConfigs} activeConfigId={activeConfigId} onChange={setActiveConfigId} />
       <ConfigurationsInfoText config={activeConfig} />
+      
+      {/* Private Exclusives Card */}
+      {showPrivateExclusives && <PrivateExclusivesCard />}
+      
       <FloorPlanPreview config={activeConfig} />
       <BrochurePreview config={activeConfig} />
       <DownloadBrochureButton config={activeConfig} />

@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ArrowLeft, Calendar, Clock, Share2, Eye } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { PublicListingBreadcrumbs } from '@/components/seo/Breadcrumbs'
+import { RelatedPublicListings } from '@/components/seo/RelatedContent'
 
 interface PublicListingPageProps {
   listing: PublicListing
@@ -100,6 +102,10 @@ export function PublicListingPage({ listing }: PublicListingPageProps) {
       {/* Main Content Container */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          {/* SEO Breadcrumbs */}
+          <div className="mb-6">
+            <PublicListingBreadcrumbs listing={listing} />
+          </div>
           {/* Article Card */}
           <Card className="shadow-lg border-0 overflow-hidden">
             <CardContent className="p-0">
@@ -190,6 +196,14 @@ export function PublicListingPage({ listing }: PublicListingPageProps) {
               </Button>
             </div>
           </div>
+          
+          {/* Related Public Listings */}
+          <RelatedPublicListings 
+            listing={listing}
+            title="Related Updates"
+            limit={4}
+            className="mt-12"
+          />
         </div>
       </div>
     </div>

@@ -19,10 +19,9 @@ export default function PropertyMap({ markerPosition, onMapClick }: PropertyMapP
   const markerRef = useRef<L.Marker | null>(null)
   const [isClient, setIsClient] = useState(false)
 
-  // Mumbai coordinates
-  const defaultPosition: [number, number] = [19.0760, 72.8777]
-
   useEffect(() => {
+    // Mumbai coordinates
+    const defaultPosition: [number, number] = [19.0760, 72.8777]
     setIsClient(true)
     
     // Dynamically import Leaflet
@@ -80,7 +79,7 @@ export default function PropertyMap({ markerPosition, onMapClick }: PropertyMapP
         mapRef.current = null
       }
     }
-  }, [markerPosition, onMapClick, defaultPosition])
+  }, [markerPosition, onMapClick])
 
   // Show loading state during SSR
   if (!isClient) {

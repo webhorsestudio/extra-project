@@ -619,7 +619,7 @@ export const PublicPropertyForm: React.FC = () => {
         variant: 'destructive',
       });
     }
-  }, [updateFormData, toast]);
+  }, [updateFormData]);
 
   // Reverse geocoding function to convert coordinates to address
   const reverseGeocode = async (position: [number, number]) => {
@@ -678,7 +678,7 @@ export const PublicPropertyForm: React.FC = () => {
     ) return;
     reverseGeocode([formData.latitude, formData.longitude]);
     coordsChangedByUser.current = false;
-  }, [formData.latitude, formData.longitude, isManualMapUpdate]);
+  }, [formData.latitude, formData.longitude, isManualMapUpdate, reverseGeocode]);
 
   // Form submission
   const handleSubmit = async () => {

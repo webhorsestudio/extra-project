@@ -27,7 +27,7 @@ export default function MobilePropertyPageClient({
   const [enquiryModalOpen, setEnquiryModalOpen] = useState<'contact' | 'tour' | null>(null);
 
   // Memoize the property object to prevent unnecessary re-renders
-  const memoizedProperty = React.useMemo(() => property, [property.id, property.title, property.location]);
+  const memoizedProperty = React.useMemo(() => property, [property]);
 
   const handleBack = () => {
     router.push('/m/properties');
