@@ -4,28 +4,6 @@
 
 // import { SEOConfig } from './types'
 
-/**
- * Generate FAQ structured data
- */
-export function generateFAQStructuredData(
-  faqs: Array<{
-    question: string
-    answer: string
-  }>
-): Record<string, unknown> {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map(faq => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
-  }
-}
 
 /**
  * Generate How-To structured data

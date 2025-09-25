@@ -6,6 +6,7 @@ import PropertyInfoCard from '@/components/web/property/PropertyInfoCard';
 import PropertyFeatures from '@/components/web/property/PropertyFeatures';
 import PropertyDescription from '@/components/web/property/PropertyDescription';
 import PropertyLocationMap from '@/components/web/property/PropertyLocationMap';
+import PropertyVideo from '@/components/web/property/PropertyVideo';
 import PropertyEnquiryForm from '@/components/web/property/PropertyEnquiryForm';
 import PropertyBreadcrumbs from '@/components/web/property/PropertyBreadcrumbs';
 import ListingBySection from '@/components/web/property/ListingBySection';
@@ -51,6 +52,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
         property_type,
         latitude,
         longitude,
+        video_url,
         property_images(image_url),
         property_configurations(price, bedrooms, bathrooms, area),
         status,
@@ -80,6 +82,7 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
       property_type: property.property_type,
       latitude: property.latitude,
       longitude: property.longitude,
+      video_url: property.video_url,
       images: property.property_images?.map((img: { image_url: string }) => img.image_url) || [],
       // Get price and other details from first configuration
       price: property.property_configurations?.[0]?.price,
@@ -92,6 +95,11 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
 
     // Generate metadata
     const metadata = generatePropertyMetadata(propertyData, seoConfig);
+
+    // Add canonical URL for web version
+    metadata.alternates = {
+      canonical: `${seoConfig.siteUrl}/properties/${slug}`
+    };
 
     // Add structured data
     const structuredData = generatePropertyStructuredData(propertyData, seoConfig);
@@ -209,12 +217,13 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     verified_by: null,
     developer_id: undefined,
     property_nature: 'Sell' as 'Sell' | 'Rent',
-    slug: related.id, // Use ID as slug for now
+    slug: related.slug || related.id, // Use actual slug if available, otherwise ID
   }));
 
   return (
-    <ServerLayout showCategoryBar={false}>
-      <div className="min-h-screen bg-gray-50">
+    <>
+      <ServerLayout showCategoryBar={false}>
+        <div className="min-h-screen bg-gray-50">
         {/* Breadcrumbs */}
         <div className="max-w-7xl mx-auto px-6 py-4">
           <PropertyBreadcrumbs property={property} />
@@ -247,6 +256,9 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
               {/* Location Map */}
               <PropertyLocationMap property={property} />
 
+              {/* Property Video Section */}
+              <PropertyVideo videoUrl={property.video_url} />
+
               {/* Features Section */}
               <section id="features">
                 <PropertyFeatures 
@@ -275,6 +287,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
 
         </div>
       </div>
-    </ServerLayout>
+      </ServerLayout>
+    </>
   );
 }

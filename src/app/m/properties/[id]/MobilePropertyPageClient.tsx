@@ -9,6 +9,7 @@ import MobilePropertyDescription from '@/components/mobile/property/MobileProper
 import MobilePropertyConfigurations from '@/components/mobile/property/MobilePropertyConfigurations';
 import MobilePropertyFeatures from '@/components/mobile/property/MobilePropertyFeatures';
 import MobilePropertyLocationMap from '@/components/mobile/property/MobilePropertyLocationMap';
+import MobilePropertyVideo from '@/components/mobile/property/MobilePropertyVideo';
 
 import MobileListingBySection from '@/components/mobile/property/MobileListingBySection';
 import MobileSimilarProperties from '@/components/mobile/property/MobileSimilarProperties';
@@ -74,6 +75,9 @@ export default function MobilePropertyPageClient({
             <MobilePropertyLocationMap property={memoizedProperty} locationName={memoizedProperty.location_data.name} />
           </section>
         ) : null}
+
+        {/* Property Video Section */}
+        <MobilePropertyVideo videoUrl={memoizedProperty.video_url} />
 
         {/* Property Features */}
         <section id="features" className="mb-1">

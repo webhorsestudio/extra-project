@@ -118,6 +118,7 @@ export default async function HomePage() {
     const property_images = Array.isArray(prop.property_images) ? prop.property_images : [];
     return {
       id: prop.id as string,
+      slug: prop.slug as string || prop.id as string, // Include slug field
       title: prop.title as string,
       description: prop.description as string || '',
       property_type,

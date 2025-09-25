@@ -142,6 +142,14 @@ export interface PropertyStructuredData extends StructuredData {
     value: number
     unitCode: string
   }
+  video?: {
+    '@type': 'VideoObject'
+    name: string
+    description: string
+    contentUrl: string
+    embedUrl: string
+    thumbnailUrl?: string
+  }
 }
 
 export interface OrganizationStructuredData extends StructuredData {

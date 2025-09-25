@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/mobile/PropertyCard';
 import PropertyCardSkeleton from '@/components/mobile/PropertyCardSkeleton';
@@ -24,7 +24,7 @@ interface ApiResponse {
   count: number;
 }
 
-export default function MobilePropertiesPage() {
+function MobilePropertiesPageContent() {
   const router = useRouter();
   const footerVisible = useFooterVisible();
   const searchParams = useSearchParams();
@@ -221,5 +221,25 @@ export default function MobilePropertiesPage() {
         </div>
       )}
     </>
+  );
+}
+
+export default function MobilePropertiesPage() {
+  return (
+    <Suspense fallback={
+      <div className="space-y-6 px-6 sm:px-10 relative">
+        <div className="flex items-center justify-between mt-6">
+          <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">Properties</h2>
+          <span className="text-sm text-gray-500">Loading...</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <PropertyCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    }>
+      <MobilePropertiesPageContent />
+    </Suspense>
   );
 } 

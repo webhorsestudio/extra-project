@@ -25,6 +25,9 @@ const fieldToTabMap: Record<string, { tab: string; icon: string }> = {
   latitude: { tab: 'location', icon: 'MapPin' },
   longitude: { tab: 'location', icon: 'MapPin' },
   
+  // Images tab
+  video_url: { tab: 'images', icon: 'ImageIcon' },
+  
   // Pricing & Rooms tab
   bhk_configurations: { tab: 'configurations', icon: 'Settings' },
 }
@@ -44,6 +47,7 @@ const fieldDisplayNames: Record<string, string> = {
   has_rera: 'RERA Registration',
   rera_number: 'RERA Number',
   bhk_configurations: 'BHK Configuration',
+  video_url: 'Property Video URL',
   amenities: 'Amenities',
   categories: 'Categories',
 }

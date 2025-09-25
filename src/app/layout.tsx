@@ -2,10 +2,10 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import DeviceDetectionLoader from "@/components/DeviceDetectionLoader";
 import Script from "next/script";
 import { createSupabaseApiClient } from "@/lib/supabase/api";
 import { TrackingScripts } from "@/components/analytics/TrackingScripts";
+import GlobalDeviceRedirect from "@/components/GlobalDeviceRedirect";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -259,9 +259,8 @@ export default async function RootLayout({
           </noscript>
         )}
         
-        <DeviceDetectionLoader>
+        <GlobalDeviceRedirect />
         {children}
-        </DeviceDetectionLoader>
         
         {/* Client-side tracking scripts for dynamic updates */}
         <TrackingScripts 

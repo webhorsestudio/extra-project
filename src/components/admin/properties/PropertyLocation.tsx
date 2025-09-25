@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { MapPin, Loader2 } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import { useLocations } from '@/hooks/useLocations'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -95,7 +96,7 @@ export default function PropertyLocation({
   }, [form, initialPosition])
 
   // Geocoding function to convert address to coordinates
-  const geocodeAddress = async (address: string) => {
+  const geocodeAddress = useCallback(async (address: string) => {
     if (!address.trim()) return
 
     setIsGeocoding(true)
@@ -134,7 +135,7 @@ export default function PropertyLocation({
     } finally {
       setIsGeocoding(false)
     }
-  }
+  }, [form, onPositionChange])
 
   // Handle location field changes with debouncing
   useEffect(() => {
@@ -222,10 +223,12 @@ export default function PropertyLocation({
                     <SelectItem key={location.id} value={location.id}>
                       <div className="flex items-center gap-2">
                         {location.image_url && (
-                          <img 
+                          <Image 
                             src={location.image_url} 
                             alt={location.name}
-                            className="w-6 h-6 rounded object-cover"
+                            width={24}
+                            height={24}
+                            className="rounded object-cover"
                           />
                         )}
                         <span>{location.name}</span>

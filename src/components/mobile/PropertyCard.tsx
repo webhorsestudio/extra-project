@@ -45,7 +45,7 @@ const ShareDialog = ({ open, onClose, property }: { open: boolean; onClose: () =
   if (!open) return null;
   
   const beds = property.bedrooms || property.property_configurations?.[0]?.bedrooms || property.property_configurations?.[0]?.bhk || '—';
-  const url = typeof window !== 'undefined' ? window.location.origin + '/m/properties/' + property.id : '';
+  const url = typeof window !== 'undefined' ? window.location.origin + '/m/properties/' + (property.slug || property.id) : '';
 
   // Copy to clipboard
   const handleCopy = async () => {
@@ -424,8 +424,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 
   // Handle card click navigation
   const handleCardClick = () => {
-    // Use property ID for navigation
-    router.push(`/m/properties/${property.id}`);
+    // Use property slug if available, otherwise use ID
+    const propertySlug = property.slug || property.id;
+    router.push(`/m/properties/${propertySlug}`);
   };
 
   // Only fetch favorite state if initialIsFavorited is not provided

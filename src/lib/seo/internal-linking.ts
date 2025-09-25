@@ -9,6 +9,7 @@ import { createSupabaseClient } from '@/lib/supabase/client'
  */
 export interface RelatedContent {
   id: string
+  slug?: string
   title: string
   url: string
   type: 'property' | 'blog' | 'public_listing'
@@ -101,6 +102,7 @@ export async function getRelatedProperties(
       
       return {
         id: property.id,
+        slug: property.slug,
         title: property.title,
         url: `/properties/${property.slug || property.id}`,
         type: 'property' as const,

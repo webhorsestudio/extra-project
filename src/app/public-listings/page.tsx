@@ -1,5 +1,27 @@
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 import PublicListingsPage from '@/components/web/public-listings/PublicListingsPage'
+import { generatePublicListingsPageMetadata, getSEOConfig } from '@/lib/seo'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = await createSupabaseAdminClient()
+  
+  // Fetch public listings data for metadata (limited count for performance)
+  const { data: listings } = await supabase
+    .from('public_listings')
+    .select('*')
+    .eq('status', 'published')
+    .or('expire_date.is.null,expire_date.gt.now()')
+    .order('order_index', { ascending: true })
+    .order('created_at', { ascending: false })
+    .limit(10) // Limit for performance
+  
+  // Get SEO config
+  const seoConfig = await getSEOConfig()
+  
+  // Generate metadata
+  return generatePublicListingsPageMetadata(listings || [], seoConfig)
+}
 
 export default async function PublicListingsRoute() {
   const supabase = await createSupabaseAdminClient()

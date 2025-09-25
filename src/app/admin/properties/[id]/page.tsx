@@ -51,6 +51,7 @@ const formSchema = z.object({
   longitude: z.number().optional(),
   posted_by: z.string().min(1, 'Posted by is required'),
   developer_id: z.string().optional(),
+  video_url: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
 })
 
 export default function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
@@ -78,6 +79,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
         latitude: values.latitude,
         longitude: values.longitude,
         rera_number: values.has_rera && values.rera_number ? values.rera_number : undefined,
+        video_url: values.video_url && values.video_url.trim() !== '' ? values.video_url : null,
         posted_by: values.posted_by,
         developer_id: values.developer_id || undefined,
       }

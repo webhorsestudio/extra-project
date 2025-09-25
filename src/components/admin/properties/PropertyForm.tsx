@@ -70,6 +70,7 @@ export const formSchema = z.object({
   longitude: z.number().optional(),
   posted_by: z.string().min(1, 'Posted by is required'),
   developer_id: z.string().optional(),
+  video_url: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
 });
 
 interface PropertyFormProps {
@@ -120,6 +121,7 @@ export function PropertyForm({
       longitude: 0,
       posted_by: '',
       developer_id: '',
+      video_url: '',
     },
   });
 
@@ -165,6 +167,7 @@ export function PropertyForm({
         longitude: property.longitude || 0,
         posted_by: property.posted_by || '',
         developer_id: property.developer_id || '',
+        video_url: property.video_url || '',
       };
       
       form.reset(formData);
@@ -286,7 +289,7 @@ export function PropertyForm({
                 </TabsTrigger>
                 <TabsTrigger value="images" className="flex items-center gap-2 text-xs sm:text-sm">
                   <ImageIcon className="h-4 w-4" />
-                  <span className="hidden sm:inline">Images</span>
+                  <span className="hidden sm:inline">Images & Video</span>
                 </TabsTrigger>
                 <TabsTrigger value="amenities" className="flex items-center gap-2 text-xs sm:text-sm">
                   <Dumbbell className="h-4 w-4" />

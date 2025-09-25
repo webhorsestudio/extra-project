@@ -16,6 +16,7 @@ export default async function FeaturedProperties() {
   // Transform the data to match Property interface
   const transformedProperties: Property[] = properties.map(property => ({
     id: property.id,
+    slug: property.slug || property.id, // Include slug field
     title: property.title,
     description: property.description,
     property_type: 'Apartment' as const, // Default type since not in query

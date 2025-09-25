@@ -15,6 +15,7 @@ export async function getPropertiesData(filters?: {
     .from('properties')
     .select(`
       id,
+      slug,
       title,
       description,
       location,

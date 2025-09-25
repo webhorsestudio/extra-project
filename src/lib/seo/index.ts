@@ -7,8 +7,9 @@ export {
   generatePropertyMetadata,
   generateArticleMetadata,
   generatePublicListingMetadata,
+  generatePublicListingsPageMetadata,
   generateHomeMetadata,
-  generateCanonicalUrl,
+  generatePropertiesListingMetadata,
   generateKeywords,
 } from './metadata'
 
@@ -104,7 +105,6 @@ export {
 
 // Export rich snippets functions
 export {
-  generateFAQStructuredData,
   generateHowToStructuredData,
   generateRecipeStructuredData,
   generateEventStructuredData,

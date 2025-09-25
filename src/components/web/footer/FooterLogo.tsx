@@ -78,6 +78,7 @@ export default function FooterLogo({
           width={logoWidth} 
           height={logoHeight} 
           className="mb-2" 
+          style={{ width: 'auto', height: 'auto' }}
           unoptimized 
         />
       ) : (

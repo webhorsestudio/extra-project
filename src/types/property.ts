@@ -18,6 +18,7 @@ export interface Property {
   parking: boolean
   parking_spots?: number
   rera_number?: string | null
+  video_url?: string | null
   bhk_configurations?: BHKConfiguration[]
   property_configurations?: BHKConfiguration[]
   images?: PropertyImage[]

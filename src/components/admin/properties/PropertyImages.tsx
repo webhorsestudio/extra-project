@@ -1,13 +1,15 @@
 'use client'
 
-
+import { useFormContext } from 'react-hook-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { ImageUploader } from './ImageUploader'
 import { ImageGallery } from './ImageGallery'
 import { PropertyImage, usePropertyImages } from '@/hooks/usePropertyImages'
-import { Image, Upload, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react'
+import { Image, Upload, AlertCircle, ChevronUp, ChevronDown, Video, ExternalLink } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 
 interface PropertyImagesProps {
   propertyId?: string
@@ -24,6 +26,7 @@ export function PropertyImages({
   onTempImagesChange,
   tempImages = []
 }: PropertyImagesProps) {
+  const form = useFormContext()
   const { images, isLoading, error, deleteImage, reorderImage } = usePropertyImages(propertyId || '')
 
   // Use images from hook if propertyId is provided, otherwise use prop images
@@ -80,10 +83,10 @@ export function PropertyImages({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Image className="h-5 w-5" />
-            Property Images
+            Property Images & Video
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Upload high-quality images to showcase your property
+            Upload high-quality images and add a video URL to showcase your property
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -105,6 +108,52 @@ export function PropertyImages({
               onImagesChange={handleImagesChange}
               maxFiles={10}
               className="border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors"
+            />
+          </div>
+
+          {/* Video URL Field */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Video className="h-4 w-4" />
+              <span>Property Video (Optional)</span>
+            </div>
+            
+            <FormField
+              control={form.control}
+              name="video_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <Video className="h-4 w-4" />
+                    Video URL
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        placeholder="https://www.youtube.com/watch?v=..."
+                        className="pr-10"
+                      />
+                      {field.value && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-1 top-1 h-8 w-8"
+                          onClick={() => window.open(field.value, '_blank')}
+                          title="Open video in new tab"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                  <p className="text-xs text-muted-foreground">
+                    Add a YouTube or other video URL to showcase your property
+                  </p>
+                </FormItem>
+              )}
             />
           </div>
 
@@ -199,10 +248,10 @@ export function PropertyImages({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Image className="h-5 w-5" />
-          Property Images
+          Property Images & Video
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Upload high-quality images to showcase your property
+          Upload high-quality images and add a video URL to showcase your property
         </p>
         {error && (
           <p className="text-sm text-red-600">
@@ -223,6 +272,52 @@ export function PropertyImages({
             onImagesChange={handleImagesChange}
             maxFiles={10}
             className="border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-colors"
+          />
+        </div>
+
+        {/* Video URL Field */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Video className="h-4 w-4" />
+            <span>Property Video (Optional)</span>
+          </div>
+          
+          <FormField
+            control={form.control}
+            name="video_url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-2">
+                  <Video className="h-4 w-4" />
+                  Video URL
+                </FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      className="pr-10"
+                    />
+                    {field.value && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1 h-8 w-8"
+                        onClick={() => window.open(field.value, '_blank')}
+                        title="Open video in new tab"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </FormControl>
+                <FormMessage />
+                <p className="text-xs text-muted-foreground">
+                  Add a YouTube or other video URL to showcase your property
+                </p>
+              </FormItem>
+            )}
           />
         </div>
 

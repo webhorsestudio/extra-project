@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { detectDeviceFromScreen } from '@/lib/device-detection'
 
 export type DeviceType = 'mobile' | 'tablet' | 'desktop'
 
@@ -7,21 +8,8 @@ export function useDeviceType(): DeviceType {
 
   useEffect(() => {
     const detectDevice = () => {
-      const userAgent = navigator.userAgent.toLowerCase()
-      const width = window.innerWidth
-
-      // Check for mobile devices
-      if (/mobile|android|iphone|ipad|ipod|blackberry|windows phone/.test(userAgent) || width <= 768) {
-        setDeviceType('mobile')
-      }
-      // Check for tablets
-      else if (/ipad|tablet/.test(userAgent) || (width > 768 && width <= 1024)) {
-        setDeviceType('tablet')
-      }
-      // Default to desktop
-      else {
-        setDeviceType('desktop')
-      }
+      const deviceInfo = detectDeviceFromScreen(navigator.userAgent, window.innerWidth)
+      setDeviceType(deviceInfo.deviceType)
     }
 
     // Detect on mount

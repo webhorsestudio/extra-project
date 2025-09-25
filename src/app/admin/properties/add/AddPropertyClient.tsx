@@ -47,6 +47,7 @@ export default function AddPropertyClient({ user }: { user: User }) {
         latitude: data.latitude || null,
         longitude: data.longitude || null,
         rera_number: data.has_rera && data.rera_number ? data.rera_number : null,
+        video_url: data.video_url && data.video_url.trim() !== '' ? data.video_url : null,
         created_by: user.id,
         posted_by: data.posted_by,
         developer_id: data.developer_id || null,

@@ -46,7 +46,7 @@ const ShareDialog = ({ open, onClose, property }: { open: boolean; onClose: () =
   if (!open) return null;
   const config = property.property_configurations?.[0];
   const beds = config?.bedrooms || config?.bhk || '—';
-  const url = typeof window !== 'undefined' ? window.location.origin + '/properties/' + property.id : '';
+  const url = typeof window !== 'undefined' ? window.location.origin + '/properties/' + (property.slug || property.id) : '';
 
   // Copy to clipboard
   const handleCopy = async () => {

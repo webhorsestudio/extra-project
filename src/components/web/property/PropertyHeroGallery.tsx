@@ -68,6 +68,7 @@ function GalleryImage({ src, alt, onClick, className }: { src: string; alt: stri
       className={cn('object-cover w-full h-full rounded-2xl cursor-pointer transition hover:brightness-90', className)}
       onClick={onClick}
       fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       style={{ objectFit: 'cover' }}
       draggable={false}
     />
@@ -165,8 +166,10 @@ function GalleryModal({ images, open, initialIndex, onClose, property }: { image
                 alt={`Gallery ${current + 1}`}
                 className="object-contain w-full h-full rounded-2xl drop-shadow-lg"
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
                 style={{ objectFit: 'contain' }}
                 draggable={false}
+                priority={current === 0}
               />
             ) : (
               <BlankImagePlaceholder className="w-full h-full" />

@@ -1,8 +1,6 @@
 'use client';
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import dynamic from 'next/dynamic';
 import { Property } from '@/types/property';
 
 // Golden SVG pin as data URI
@@ -14,25 +12,70 @@ const goldenPinSVG = encodeURIComponent(`
   </svg>
 `);
 
-const customIcon = new L.Icon({
-  iconUrl: `data:image/svg+xml,${goldenPinSVG}`,
-  iconSize: [32, 48],
-  iconAnchor: [16, 48],
-  popupAnchor: [0, -48],
-});
+// Create icon only on client side
+const createCustomIcon = (): L.Icon | null => {
+  if (typeof window === 'undefined') return null;
+  
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const L = require('leaflet');
+  return new L.Icon({
+    iconUrl: `data:image/svg+xml,${goldenPinSVG}`,
+    iconSize: [32, 48],
+    iconAnchor: [16, 48],
+    popupAnchor: [0, -48],
+  });
+};
 
-function RecenterButton({ position }: { position: [number, number] }) {
-  const map = useMap();
+// Internal Map Component that uses all Leaflet hooks and components
+function InternalMapComponent({ 
+  position, 
+  property, 
+  customIcon 
+}: { 
+  position: [number, number]; 
+  property: Property; 
+  customIcon: L.Icon | null;
+}) {
+  const { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap } = React.useMemo(() => {
+    // Import react-leaflet components dynamically
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap } = require('react-leaflet');
+    return { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap };
+  }, []);
+
+  // RecenterButton component that uses the useMap hook
+  function RecenterButton({ position }: { position: [number, number] }) {
+    const map = useMap();
+    return (
+      <button
+        className="absolute z-[1000] top-4 right-4 bg-white border border-gray-300 rounded shadow px-3 py-1 text-sm hover:bg-gray-100"
+        onClick={() => map.setView(position, map.getZoom())}
+        type="button"
+      >
+        Recenter
+      </button>
+    );
+  }
+
   return (
-    <button
-      className="absolute z-[1000] top-4 right-4 bg-white border border-gray-300 rounded shadow px-3 py-1 text-sm hover:bg-gray-100"
-      onClick={() => map.setView(position, map.getZoom())}
-      type="button"
-    >
-      Recenter
-    </button>
+    <MapContainer center={position} zoom={15} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }} zoomControl={false}>
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Marker position={position} icon={customIcon}>
+        <Popup>
+          {property.title}
+        </Popup>
+      </Marker>
+      <ZoomControl position="bottomright" />
+      <RecenterButton position={position} />
+    </MapContainer>
   );
 }
+
+// Dynamically import the internal map component to avoid SSR issues
+const DynamicMapComponent = dynamic(() => Promise.resolve(InternalMapComponent), { ssr: false });
 
 interface PropertyLocationMapProps {
   property: Property;
@@ -42,7 +85,14 @@ interface PropertyLocationMapProps {
 export default function PropertyLocationMap({ property, locationName }: PropertyLocationMapProps) {
   const [position, setPosition] = React.useState<[number, number] | null>(null);
   const [loading, setLoading] = React.useState(false);
-  const zoom = 15;
+  const [isClient, setIsClient] = React.useState(false);
+  const [customIcon, setCustomIcon] = React.useState<L.Icon | null>(null);
+
+  // Initialize client-side state
+  React.useEffect(() => {
+    setIsClient(true);
+    setCustomIcon(createCustomIcon());
+  }, []);
 
   React.useEffect(() => {
     if (property.latitude && property.longitude) {
@@ -68,6 +118,20 @@ export default function PropertyLocationMap({ property, locationName }: Property
     }
   }, [property.latitude, property.longitude, locationName]);
 
+  // Don't render map until client-side hydration is complete
+  if (!isClient) {
+    return (
+      <section className="bg-white rounded-2xl p-6 md:p-8 mb-8 relative">
+        <h2 className="text-xl font-semibold mb-6 text-[#0A1736]">Location</h2>
+        <div className="w-full h-[350px] md:h-[420px] rounded-2xl overflow-hidden relative">
+          <div className="flex items-center justify-center h-full w-full">
+            <span className="text-gray-400">Loading map...</span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-white rounded-2xl p-6 md:p-8 mb-8 relative">
       <h2 className="text-xl font-semibold mb-6 text-[#0A1736]">Location</h2>
@@ -77,19 +141,11 @@ export default function PropertyLocationMap({ property, locationName }: Property
             <span className="text-gray-400">Loading map...</span>
           </div>
         ) : (
-          <MapContainer center={position} zoom={zoom} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }} zoomControl={false}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={position} icon={customIcon}>
-              <Popup>
-                {property.title}
-              </Popup>
-            </Marker>
-            <ZoomControl position="bottomright" />
-            <RecenterButton position={position} />
-          </MapContainer>
+          <DynamicMapComponent 
+            position={position} 
+            property={property} 
+            customIcon={customIcon} 
+          />
         )}
       </div>
     </section>

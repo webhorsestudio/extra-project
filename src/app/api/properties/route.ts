@@ -10,10 +10,12 @@ export async function GET(req: NextRequest) {
       .from('properties')
       .select(`
         id,
+        slug,
         title,
         description,
         location,
         property_nature,
+        video_url,
         created_at,
         updated_at,
         status,
@@ -71,6 +73,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
+
     // Filter by BHK configuration after fetching
     let filteredData = data || []
     const bhk = searchParams.get('bhk')
@@ -117,12 +120,6 @@ export async function GET(req: NextRequest) {
       location_data: Array.isArray(property.property_locations) ? property.property_locations[0] : property.property_locations
     }))
 
-    // Debug log for first 3 properties
-    console.log('Sample properties:', propertiesWithLocation.slice(0, 3).map(p => ({
-      id: (p as Record<string, unknown>).id,
-      property_locations: (p as Record<string, unknown>).property_locations,
-      location_data: (p as Record<string, unknown>).location_data
-    })))
 
     // Add cache headers for better performance
     const response = NextResponse.json({ 

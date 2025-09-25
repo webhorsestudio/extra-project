@@ -2,7 +2,9 @@ import React from 'react';
 import { getPropertiesData } from '@/lib/properties-data';
 import ServerLayout from '@/components/web/ServerLayout';
 import PropertiesGrid from '@/components/web/properties/PropertiesGrid';
+import { generatePropertiesListingMetadata, getSEOConfig } from '@/lib/seo';
 import type { Property } from '@/types/property';
+import type { Metadata } from 'next';
 
 interface PropertiesPageProps {
   searchParams: Promise<{
@@ -13,6 +15,29 @@ interface PropertiesPageProps {
     type?: string;
     bhk?: string;
   }>;
+}
+
+export async function generateMetadata({ searchParams }: PropertiesPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  
+  // Parse filters from URL parameters
+  const filters = {
+    location: params.location,
+    locationName: params.locationName,
+    min_price: params.min_price ? Number(params.min_price) : undefined,
+    max_price: params.max_price ? Number(params.max_price) : undefined,
+    type: params.type,
+    bhk: params.bhk ? Number(params.bhk) : undefined,
+  };
+
+  // Fetch properties for metadata (limited count for performance)
+  const properties = await getPropertiesData(filters);
+  
+  // Get SEO config
+  const seoConfig = await getSEOConfig();
+  
+  // Generate metadata
+  return generatePropertiesListingMetadata(properties, filters, seoConfig);
 }
 
 export default async function PropertiesPage({ searchParams }: PropertiesPageProps) {
@@ -54,6 +79,7 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
     const property_images = Array.isArray(prop.property_images) ? prop.property_images : [];
     return {
       id: prop.id as string,
+      slug: prop.slug as string || prop.id as string, // Include slug field
       title: prop.title as string,
       description: prop.description as string || '',
       property_type,

@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
       .from('properties')
       .select(`
         id,
+        slug,
         title,
         description,
         property_type,
@@ -164,6 +165,7 @@ export async function GET(req: NextRequest) {
     // Transform data for mobile display
     const mobileProperties = filteredData.map((property: Record<string, unknown>) => ({
       id: property.id as string,
+      slug: property.slug as string || property.id as string, // Include slug field
       title: property.title as string,
       description: property.description as string,
       property_type: property.property_type as string || 'Apartment',

@@ -129,6 +129,7 @@ export default function EnhancedPropertiesPage() {
         .from('properties')
         .select(`
           id,
+          slug,
           title,
           property_type,
           property_collection,

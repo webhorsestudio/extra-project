@@ -225,6 +225,41 @@ export function generatePublicListingMetadata(
 }
 
 /**
+ * Generate public listings page metadata
+ */
+export function generatePublicListingsPageMetadata(
+  listings: unknown[] = [],
+  config: SEOConfig = DEFAULT_SEO_CONFIG
+): Metadata {
+  const listingCount = listings.length
+  
+  // Build dynamic title based on listings count
+  let title = 'Public Listings & Property Updates'
+  const description = 'Stay updated with the latest property news, announcements, and real estate updates from Extra Realty.'
+  const keywords = ['public listings', 'property news', 'real estate updates', 'property announcements', 'bangalore real estate']
+  
+  // Add listing count to title
+  if (listingCount > 0) {
+    title = `${title} (${listingCount}+ Updates)`
+  }
+  
+  // Add site name
+  title = `${title} | ${config.siteName}`
+
+  const seoData: SEOData = {
+    title,
+    description,
+    keywords,
+    canonical: '/public-listings',
+    ogImage: config.defaultOgImage,
+    ogType: 'website',
+    twitterCard: 'summary_large_image',
+  }
+
+  return generateMetadata(seoData, config)
+}
+
+/**
  * Generate home page metadata
  */
 export function generateHomeMetadata(
@@ -248,6 +283,82 @@ export function generateHomeMetadata(
       'bangalore real estate market'
     ],
     canonical: '/',
+    ogImage: config.defaultOgImage,
+    ogType: 'website',
+    twitterCard: 'summary_large_image',
+  }
+
+  return generateMetadata(seoData, config)
+}
+
+/**
+ * Generate properties listing page metadata
+ */
+export function generatePropertiesListingMetadata(
+  properties: unknown[] = [],
+  filters: {
+    location?: string;
+    locationName?: string;
+    min_price?: number;
+    max_price?: number;
+    type?: string;
+    bhk?: number;
+  } = {},
+  config: SEOConfig = DEFAULT_SEO_CONFIG
+): Metadata {
+  const propertyCount = properties.length
+  
+  // Build dynamic title based on filters
+  let title = 'Properties for Sale & Rent'
+  let description = 'Browse our extensive collection of premium properties including apartments, houses, villas, and commercial spaces.'
+  const keywords = ['properties for sale', 'real estate', 'apartments', 'houses', 'property listings']
+  
+  // Add location-specific content
+  if (filters.locationName) {
+    title = `${filters.locationName} Properties - ${title}`
+    description = `Find the best properties in ${filters.locationName}. ${description}`
+    keywords.push(filters.locationName.toLowerCase())
+  }
+  
+  // Add property type-specific content
+  if (filters.type && filters.type !== 'Any') {
+    title = `${filters.type} Properties - ${title}`
+    description = `Discover premium ${filters.type.toLowerCase()} properties. ${description}`
+    keywords.push(filters.type.toLowerCase())
+  }
+  
+  // Add BHK-specific content
+  if (filters.bhk && filters.bhk !== 0) {
+    title = `${filters.bhk} BHK Properties - ${title}`
+    description = `Find ${filters.bhk} BHK properties with modern amenities. ${description}`
+    keywords.push(`${filters.bhk} bhk`, `${filters.bhk} bedroom`)
+  }
+  
+  // Add price range content
+  if (filters.min_price || filters.max_price) {
+    const priceText = filters.min_price && filters.max_price 
+      ? `₹${filters.min_price.toLocaleString()} - ₹${filters.max_price.toLocaleString()}`
+      : filters.min_price 
+        ? `₹${filters.min_price.toLocaleString()}+`
+        : `up to ₹${filters.max_price?.toLocaleString()}`
+    title = `${title} - ${priceText}`
+    description = `Properties in ${priceText} range. ${description}`
+    keywords.push('budget properties', 'affordable properties')
+  }
+  
+  // Add property count
+  if (propertyCount > 0) {
+    title = `${title} (${propertyCount}+ Properties)`
+  }
+  
+  // Add site name
+  title = `${title} | ${config.siteName}`
+
+  const seoData: SEOData = {
+    title,
+    description,
+    keywords,
+    canonical: '/properties',
     ogImage: config.defaultOgImage,
     ogType: 'website',
     twitterCard: 'summary_large_image',
@@ -285,13 +396,6 @@ function extractTextFromContent(content: unknown): string {
   return ''
 }
 
-/**
- * Generate canonical URL
- */
-export function generateCanonicalUrl(path: string, config: SEOConfig = DEFAULT_SEO_CONFIG): string {
-  const cleanPath = path.startsWith('/') ? path : `/${path}`
-  return `${config.siteUrl}${cleanPath}`
-}
 
 /**
  * Generate meta keywords from content

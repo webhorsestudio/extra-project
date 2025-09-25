@@ -31,6 +31,7 @@ export function generatePropertyStructuredData(
     area?: number
     latitude?: number
     longitude?: number
+    video_url?: string | null
     images?: string[]
     status?: string
     created_at: string
@@ -61,6 +62,18 @@ export function generatePropertyStructuredData(
       addressLocality: property.location,
       addressCountry: 'IN',
     },
+  }
+
+  // Add video URL if available
+  if (property.video_url) {
+    structuredData.video = {
+      '@type': 'VideoObject',
+      name: `${property.title} - Property Video`,
+      description: `Video showcasing ${property.title} in ${property.location}`,
+      contentUrl: property.video_url,
+      embedUrl: property.video_url,
+      thumbnailUrl: property.images?.[0] || undefined,
+    }
   }
 
   // Add geo coordinates if available

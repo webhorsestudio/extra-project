@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { getFooterData } from '@/lib/footer-data'
 import { getBrandingData } from '@/lib/branding-server'
 import { getLocationsData } from '@/lib/locations-data-server'
@@ -33,6 +34,18 @@ interface UserData {
 interface ServerLayoutProps {
   children: React.ReactNode
   showCategoryBar?: boolean
+}
+
+// Loading component for Suspense fallback
+function WebLayoutLoading() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600 text-sm">Loading...</p>
+      </div>
+    </div>
+  )
 }
 
 export default async function ServerLayout({ children, showCategoryBar = false }: ServerLayoutProps) {
@@ -103,17 +116,19 @@ export default async function ServerLayout({ children, showCategoryBar = false }
   }
 
   return (
-    <ClientLayout
-      showCategoryBar={showCategoryBar}
-      initialFooterData={footerData}
-      initialBrandingData={brandingData}
-      initialLocationsData={locationsData}
-      initialConfigurationData={configurationData}
-      initialBudgetData={budgetData}
-      initialCategoriesData={categoriesData}
-      initialUser={userObj}
-    >
-      {children}
-    </ClientLayout>
+    <Suspense fallback={<WebLayoutLoading />}>
+      <ClientLayout
+        showCategoryBar={showCategoryBar}
+        initialFooterData={footerData}
+        initialBrandingData={brandingData}
+        initialLocationsData={locationsData}
+        initialConfigurationData={configurationData}
+        initialBudgetData={budgetData}
+        initialCategoriesData={categoriesData}
+        initialUser={userObj}
+      >
+        {children}
+      </ClientLayout>
+    </Suspense>
   )
 } 

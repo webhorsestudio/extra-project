@@ -9,6 +9,7 @@ export async function getFeaturedProperties() {
     .from('properties')
     .select(`
       id,
+      slug,
       title,
       description,
       location,
@@ -72,6 +73,7 @@ export async function getNewlyLaunchedProperties() {
     .from('properties')
     .select(`
       id,
+      slug,
       title,
       description,
       location,
@@ -135,6 +137,7 @@ export async function getLatestProperties(limit = 20) {
     .from('properties')
     .select(`
       id,
+      slug,
       title,
       description,
       location,

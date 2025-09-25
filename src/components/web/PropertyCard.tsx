@@ -7,6 +7,7 @@ import { MapPin, Bed, Bath, Square } from 'lucide-react'
 interface PropertyCardProps {
   property: {
     id: string
+    slug?: string
     title: string
     main_image_url?: string
     location: string
@@ -47,7 +48,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   }
 
   return (
-    <Link href={`/properties/${property.id}`}>
+    <Link href={`/properties/${property.slug || property.id}`}>
       <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col group">
         <CardHeader className="p-0">
           <div className="relative h-64 w-full overflow-hidden">

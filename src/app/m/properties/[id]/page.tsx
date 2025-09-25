@@ -2,10 +2,60 @@ import React from 'react';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import MobilePropertyPageClient from './MobilePropertyPageClient';
 import { SimilarPropertiesService } from '@/lib/services/similar-properties-service';
+import { getSEOConfig } from '@/lib/seo';
+import { Metadata } from 'next';
 import Link from 'next/link';
 
 interface PropertyPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PropertyPageProps): Promise<Metadata> {
+  try {
+    const { id } = await params;
+    const supabase = await createSupabaseServerClient();
+    
+    // Check if the identifier is a UUID or slug
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    
+    // Build query based on identifier type
+    let query = supabase
+      .from('properties')
+      .select('id, title, description, slug, status')
+      .eq('status', 'active');
+    
+    if (isUUID) {
+      query = query.eq('id', id);
+    } else {
+      query = query.eq('slug', id);
+    }
+    
+    const { data: property, error } = await query.single();
+
+    if (error || !property) {
+      return {
+        title: 'Property Not Found',
+        description: 'The property you are looking for does not exist.',
+      };
+    }
+
+    // Get SEO configuration
+    const seoConfig = await getSEOConfig();
+
+    return {
+      title: `${property.title} - Mobile View`,
+      description: property.description || 'View this property on mobile',
+      alternates: {
+        canonical: `${seoConfig.siteUrl}/properties/${property.slug}`
+      },
+    };
+  } catch (error) {
+    console.error('Error generating mobile property metadata:', error);
+    return {
+      title: 'Property Details - Mobile',
+      description: 'View detailed information about this property on mobile.',
+    };
+  }
 }
 
 interface AmenityRelation {
@@ -26,8 +76,11 @@ export default async function MobilePropertyPage({ params }: PropertyPageProps) 
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
   
-  // Fetch property data by id - use the correct foreign key relationships
-  const { data: property, error } = await supabase
+  // Check if the identifier is a UUID or slug
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  
+  // Build query based on identifier type
+  let query = supabase
     .from('properties')
     .select(`
       *,
@@ -44,9 +97,16 @@ export default async function MobilePropertyPage({ params }: PropertyPageProps) 
         property_categories(*)
       )
     `)
-    .eq('id', id)
-    .eq('status', 'active')
-    .single();
+    .eq('status', 'active');
+  
+  // Apply the appropriate filter
+  if (isUUID) {
+    query = query.eq('id', id);
+  } else {
+    query = query.eq('slug', id);
+  }
+  
+  const { data: property, error } = await query.single();
 
   if (error || !property) {
     return (
@@ -96,8 +156,8 @@ export default async function MobilePropertyPage({ params }: PropertyPageProps) 
   const similarPropertiesResult = await similarPropertiesService.getSimilarProperties(property, undefined, 4);
 
   return (
-    <MobilePropertyPageClient 
-      property={property} 
+    <MobilePropertyPageClient
+      property={property}
       similarProperties={similarPropertiesResult.properties}
     />
   );

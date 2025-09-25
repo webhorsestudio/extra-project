@@ -43,10 +43,20 @@ export default function PopupAdsManager() {
         const data = await response.json()
         setPopupAds(data.popupAds || [])
       } else {
-        console.error('PopupAdsManager: Failed to fetch popup ads:', response.status, response.statusText)
+        // Don't log as error for 404 or empty results - this is normal
+        if (response.status !== 404) {
+          console.warn('PopupAdsManager: Failed to fetch popup ads:', response.status, response.statusText)
+        }
+        setPopupAds([])
       }
     } catch (error) {
-      console.error('PopupAdsManager: Error fetching popup ads:', error)
+      // Only log network errors, not missing tables
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        console.warn('PopupAdsManager: Network error fetching popup ads (table may not exist):', error.message)
+      } else {
+        console.error('PopupAdsManager: Error fetching popup ads:', error)
+      }
+      setPopupAds([])
     }
   }, [deviceType, currentPath])
 
