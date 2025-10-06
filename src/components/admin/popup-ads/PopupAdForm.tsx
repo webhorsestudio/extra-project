@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
@@ -57,7 +57,7 @@ export default function PopupAdForm({ popupAdId }: PopupAdFormProps) {
     metadata: {}
   })
 
-  const loadPopupAd = async (id: string) => {
+  const loadPopupAd = useCallback(async (id: string) => {
     setInitialLoading(true)
     try {
       const response = await fetch(`/api/admin/popup-ads/${id}`)
@@ -115,7 +115,7 @@ export default function PopupAdForm({ popupAdId }: PopupAdFormProps) {
     } finally {
       setInitialLoading(false)
     }
-  }
+  }, [toast])
 
   // Load existing data if editing
   useEffect(() => {
