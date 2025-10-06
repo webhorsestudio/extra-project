@@ -15,6 +15,7 @@ export interface Settings {
   // SEO fields
   google_analytics_id?: string
   google_tag_manager_id?: string
+  google_site_verification?: string
   meta_pixel_id?: string
   site_url?: string
   robots_txt?: string
@@ -127,6 +128,7 @@ export async function createDefaultSettings(): Promise<Settings | null> {
       enable_shadows: true,
       google_analytics_id: '',
       google_tag_manager_id: '',
+      google_site_verification: '',
       meta_pixel_id: '',
       robots_txt: '',
       sitemap_schedule: 'daily',

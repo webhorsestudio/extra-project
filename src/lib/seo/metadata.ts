@@ -98,6 +98,14 @@ export function generateMetadata(
     }
   }
 
+  // Add Google Search Console verification
+  if (config.googleSiteVerification) {
+    if (!metadata.other) {
+      metadata.other = {}
+    }
+    metadata.other['google-site-verification'] = config.googleSiteVerification
+  }
+
   return metadata
 }
 

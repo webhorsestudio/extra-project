@@ -37,7 +37,8 @@ export async function getSEOConfig(): Promise<SEOConfig> {
         contact_address,
         default_og_image_url,
         favicon_url,
-        google_tag_manager_id
+        google_tag_manager_id,
+        google_site_verification
       `)
       .single()
 
@@ -76,7 +77,7 @@ export async function getSEOConfig(): Promise<SEOConfig> {
       faviconUrl: settings.favicon_url,
       twitterHandle,
       facebookAppId: socialProfiles.facebook,
-      googleSiteVerification: settings.google_tag_manager_id,
+      googleSiteVerification: settings.google_site_verification,
       bingSiteVerification: undefined, // Not available in current schema
     }
   } catch (error) {

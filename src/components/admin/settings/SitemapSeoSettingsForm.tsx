@@ -49,6 +49,7 @@ export function SitemapSeoSettingsForm({ settings }: Props) {
   const [formData, setFormData] = useState({
     google_analytics_id: settings?.google_analytics_id || '',
     google_tag_manager_id: settings?.google_tag_manager_id || '',
+    google_site_verification: settings?.google_site_verification || '',
     meta_pixel_id: settings?.meta_pixel_id || '',
     site_url: settings?.site_url || '',
     robots_txt: settings?.robots_txt || '',
@@ -91,6 +92,13 @@ export function SitemapSeoSettingsForm({ settings }: Props) {
     if (!id || id.trim() === '') return true
     const pixelRegex = /^\d{15,16}$/
     return pixelRegex.test(id.trim())
+  }
+
+  const validateGoogleSiteVerification = (verification: string) => {
+    if (!verification || verification.trim() === '') return true
+    // Google Search Console verification codes are typically alphanumeric strings
+    const verificationRegex = /^[a-zA-Z0-9_-]+$/
+    return verificationRegex.test(verification.trim())
   }
 
   const validateUrl = (url: string) => {
@@ -191,6 +199,7 @@ export function SitemapSeoSettingsForm({ settings }: Props) {
         body: JSON.stringify({
           google_analytics_id: data.google_analytics_id,
           google_tag_manager_id: data.google_tag_manager_id,
+          google_site_verification: data.google_site_verification,
           meta_pixel_id: data.meta_pixel_id,
           site_url: data.site_url,
           robots_txt: data.robots_txt,
@@ -249,7 +258,7 @@ export function SitemapSeoSettingsForm({ settings }: Props) {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="google_analytics_id" className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-blue-500" />
@@ -300,6 +309,33 @@ export function SitemapSeoSettingsForm({ settings }: Props) {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="google_site_verification" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Search className="h-4 w-4 text-orange-500" />
+                Google Search Console Verification
+              </Label>
+              <Input
+                id="google_site_verification"
+                name="google_site_verification"
+                value={formData.google_site_verification}
+                onChange={handleChange}
+                placeholder="abc123def456ghi789"
+                className="border-gray-200 focus:border-orange-500 focus:ring-orange-500"
+              />
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-gray-500">
+                  HTML meta tag verification code from Google Search Console
+                </p>
+                {formData.google_site_verification && (
+                  <Badge variant={validateGoogleSiteVerification(formData.google_site_verification) ? "default" : "destructive"} className="text-xs">
+                    {validateGoogleSiteVerification(formData.google_site_verification) ? "Valid" : "Invalid"}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="meta_pixel_id" className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-purple-500" />
