@@ -3,7 +3,6 @@ import { getPublicSettings } from '@/lib/settings'
 import { getFooterData } from '@/lib/footer-data'
 import EnquiryButton from './EnquiryButton'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { HydrationWrapper } from '@/components/HydrationWrapper'
 import HeroSectionErrorFallback from './HeroSectionErrorFallback'
 
 interface HeroSectionProps {
@@ -70,24 +69,22 @@ export default async function HeroSection({
 
   return (
     <ErrorBoundary fallback={HeroSectionErrorFallback}>
-      <HydrationWrapper>
-        <div className="relative bg-white w-screen flex flex-col justify-center items-center p-0 m-0 overflow-hidden py-12">
-          <div className="w-screen flex flex-col items-center justify-center">
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-center text-gray-900 mb-2">
-              The Ultimate Address for your Luxury Homes
-            </h1>
-            <p className="text-base sm:text-lg text-center text-gray-700 mb-6">
-              Discover the best homes for you & your family
-            </p>
-            <EnquiryButton 
-              companyName={brandingData.company_name}
-              contactEmail={settingsData?.contact_email || ''}
-              contactPhone={settingsData?.contact_phone || ''}
-              whatsappUrl={footerData?.content?.whatsapp_url || ''}
-            />
-          </div>
+      <div className="relative bg-white w-screen flex flex-col justify-center items-center p-0 m-0 overflow-hidden py-12">
+        <div className="w-screen flex flex-col items-center justify-center">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-center text-gray-900 mb-2">
+            The Ultimate Address for your Luxury Homes
+          </h1>
+          <p className="text-base sm:text-lg text-center text-gray-700 mb-6">
+            Discover the best homes for you & your family
+          </p>
+          <EnquiryButton 
+            companyName={brandingData.company_name}
+            contactEmail={settingsData?.contact_email || ''}
+            contactPhone={settingsData?.contact_phone || ''}
+            whatsappUrl={footerData?.content?.whatsapp_url || ''}
+          />
         </div>
-      </HydrationWrapper>
+      </div>
     </ErrorBoundary>
   )
 } 

@@ -298,6 +298,7 @@ export default function SearchBar({
           budgetData={budgetData}
         />
       )}
+
     </>
   )
 } 
