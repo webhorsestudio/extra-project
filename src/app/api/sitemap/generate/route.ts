@@ -66,7 +66,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const baseUrl = settings.site_url
+    // Normalize baseUrl to remove trailing slash
+    const baseUrl = settings.site_url.replace(/\/$/, '')
     const urls: { url: { loc: string; lastmod: string; changefreq: string; priority: string } }[] = []
 
     // Add homepage
@@ -83,8 +84,9 @@ export async function POST(request: NextRequest) {
     if (include_properties) {
       const { data: properties, error: propertiesError } = await supabase
         .from('properties')
-        .select('id, updated_at, status')
-        .eq('status', 'active')  // Changed from 'published' to 'active'
+        .select('slug, updated_at, status')
+        .eq('status', 'active')
+        .not('slug', 'is', null)
 
       if (propertiesError) {
         console.error('Error fetching properties:', propertiesError)
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
         properties.forEach(property => {
           urls.push({
             url: {
-              loc: `${baseUrl}/properties/${property.id}`,
+              loc: `${baseUrl}/properties/${property.slug}`,
               lastmod: new Date(property.updated_at).toISOString(),
               changefreq: 'weekly',
               priority: '0.8'

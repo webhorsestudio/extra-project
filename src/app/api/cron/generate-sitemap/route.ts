@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: 'Sitemap generation not enabled or site URL not configured' })
     }
 
-    const baseUrl = settings.site_url
+    const baseUrl = settings.site_url.replace(/\/$/, '')
     const urls: { url: { loc: string; lastmod: string; changefreq: string; priority: string } }[] = []
 
     // Add homepage
@@ -44,8 +44,9 @@ export async function GET(request: Request) {
     if (settings.sitemap_include_properties) {
       const { data: properties, error: propertiesError } = await supabase
         .from('properties')
-        .select('id, updated_at')
-        .eq('status', 'active')  // Changed from 'published' to 'active'
+        .select('slug, updated_at')
+        .eq('status', 'active')
+        .not('slug', 'is', null)
 
       if (propertiesError) {
         console.error('Error fetching properties:', propertiesError)
@@ -53,7 +54,7 @@ export async function GET(request: Request) {
         properties.forEach(property => {
           urls.push({
             url: {
-              loc: `${baseUrl}/properties/${property.id}`,
+              loc: `${baseUrl}/properties/${property.slug}`,
               lastmod: new Date(property.updated_at).toISOString(),
               changefreq: 'weekly',
               priority: '0.8'

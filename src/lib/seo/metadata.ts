@@ -123,6 +123,7 @@ export function generatePropertyMetadata(
     area?: number
     images?: string[]
     id: string
+    slug?: string
   },
   config: SEOConfig = DEFAULT_SEO_CONFIG
 ): Metadata {
@@ -145,7 +146,7 @@ export function generatePropertyMetadata(
       'house',
       'bangalore properties'
     ],
-    canonical: `/properties/${property.id}`,
+    canonical: `/properties/${property.slug || property.id}`,
     ogImage: property.images?.[0] || config.defaultOgImage,
     ogType: 'product',
     twitterCard: 'summary_large_image',

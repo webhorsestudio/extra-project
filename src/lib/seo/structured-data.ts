@@ -36,11 +36,12 @@ export function generatePropertyStructuredData(
     status?: string
     created_at: string
     updated_at: string
+    slug?: string
   },
   config: SEOConfig = DEFAULT_SEO_CONFIG
 ): PropertyStructuredData {
   const baseUrl = config.siteUrl
-  const propertyUrl = `${baseUrl}/properties/${property.id}`
+  const propertyUrl = `${baseUrl}/properties/${property.slug || property.id}`
   
   const structuredData: PropertyStructuredData = {
     '@context': 'https://schema.org',

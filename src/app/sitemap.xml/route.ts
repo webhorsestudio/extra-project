@@ -16,7 +16,8 @@ export async function GET() {
       return new NextResponse('Sitemap not available', { status: 404 })
     }
 
-    const baseUrl = settings.site_url
+    // Normalize baseUrl to remove trailing slash
+    const baseUrl = settings.site_url.replace(/\/$/, '')
     const urls: { url: { loc: string; lastmod: string; changefreq: string; priority: string } }[] = []
 
     // Add homepage
@@ -43,14 +44,15 @@ export async function GET() {
     if (settings.sitemap_include_properties) {
       const { data: properties, error: propertiesError } = await supabase
         .from('properties')
-        .select('id, updated_at, status')
+        .select('slug, updated_at, status')
         .eq('status', 'active')
+        .not('slug', 'is', null)
 
       if (!propertiesError && properties) {
         properties.forEach(property => {
           urls.push({
             url: {
-              loc: `${baseUrl}/properties/${property.id}`,
+              loc: `${baseUrl}/properties/${property.slug}`,
               lastmod: new Date(property.updated_at).toISOString(),
               changefreq: 'weekly',
               priority: '0.8'
