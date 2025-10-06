@@ -28,6 +28,19 @@ export default function GlobalDeviceRedirect() {
         return;
       }
 
+      // Skip device detection for admin, API, and auth routes (matching middleware logic)
+      const isAdminRoute = pathname.startsWith('/admin');
+      const isApiRoute = pathname.startsWith('/api');
+      const isAuthRoute = pathname.startsWith('/users/') ||
+                         pathname.startsWith('/login') ||
+                         pathname.startsWith('/register') ||
+                         pathname.startsWith('/signup');
+
+      if (isAdminRoute || isApiRoute || isAuthRoute) {
+        console.log('🌍 GlobalDeviceRedirect: Skipping device detection for route:', pathname);
+        return;
+      }
+
       const userAgent = navigator.userAgent;
       const screenWidth = window.innerWidth;
       const deviceInfo = detectDeviceFromScreen(userAgent, screenWidth);
