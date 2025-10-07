@@ -54,7 +54,7 @@ export default function GlobalDeviceRedirect() {
       });
 
       let targetUrl: string | null = null;
-      const isMobileRoute = pathname.startsWith('/m/');
+      const isMobileRoute = pathname.startsWith('/m/') || pathname === '/m';
       const isWebRoute = !isMobileRoute;
 
       // Define a "tablet" range where we don't force a redirect to avoid flickering

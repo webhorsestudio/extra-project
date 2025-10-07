@@ -8,7 +8,7 @@ const DEFAULT_SEO_CONFIG: SEOConfig = {
   siteName: 'Extra Realty Private Limited',
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://extrarealtygroup.com',
   defaultTitle: 'Extra Realty - Explore all Premium Properties near you',
-  defaultDescription: 'Discover the best homes for you & your family. Premium properties in Bangalore with modern amenities and excellent connectivity.',
+  defaultDescription: 'Discover the best homes for you & your family. Premium properties in Mumbai with modern amenities and excellent connectivity.',
   defaultOgImage: '/images/og-default.jpg',
   twitterHandle: '@extrarealty',
 }
