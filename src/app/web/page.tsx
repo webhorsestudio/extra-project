@@ -8,7 +8,10 @@ import NewlyLaunchedProperties from "@/components/web/NewlyLaunchedProperties";
 import LocalitiesYouMayLike from "@/components/web/LocalitiesYouMayLike";
 import LatestProperties from "@/components/web/LatestProperties";
 import LatestBlogs from "@/components/web/LatestBlogs";
+import TestimonialsSection from "@/components/web/TestimonialsSection";
+import { getActiveTestimonials } from "@/lib/testimonials-data-server";
 import type { Property } from '@/types/property';
+import type { Testimonial } from '@/types/testimonial';
 import { generateHomeMetadata, getSEOConfig, generateWebsiteStructuredData, generateOrganizationStructuredData, getOrganizationData } from '@/lib/seo';
 import { Metadata } from 'next';
 
@@ -64,11 +67,12 @@ export default async function HomePage() {
   console.log('HomePage: Starting SSR data fetch')
 
   // Fetch data in parallel with error handling
-  const [brandingDataResult, settingsDataResult, footerDataResult, latestPropertiesResult] = await Promise.allSettled([
+  const [brandingDataResult, settingsDataResult, footerDataResult, latestPropertiesResult, testimonialsResult] = await Promise.allSettled([
     getBrandingData(),
     getPublicSettings(),
     getFooterData(),
-    getLatestProperties(20)
+    getLatestProperties(20),
+    getActiveTestimonials()
   ])
 
   // Extract data with fallbacks
@@ -93,6 +97,7 @@ export default async function HomePage() {
   }
 
   const latestProperties = latestPropertiesResult.status === 'fulfilled' ? latestPropertiesResult.value : []
+  const testimonials: Testimonial[] = testimonialsResult.status === 'fulfilled' ? testimonialsResult.value : []
 
   // When mapping latestProperties for LatestProperties, ensure all required fields are present
   const allowedTypes = ['Apartment', 'House', 'Commercial', 'Land', 'Villa', 'Penthouse'];
@@ -156,8 +161,10 @@ export default async function HomePage() {
     settingsData: settingsDataResult.status,
     footerData: footerDataResult.status,
     latestProperties: latestPropertiesResult.status,
+    testimonials: testimonialsResult.status,
     companyName: brandingData.company_name,
-    latestPropertiesCount: latestProperties.length
+    latestPropertiesCount: latestProperties.length,
+    testimonialsCount: testimonials.length
   })
 
   return (
@@ -171,6 +178,15 @@ export default async function HomePage() {
       <FeaturedProperties />
       <NewlyLaunchedProperties />
       <LocalitiesYouMayLike />
+      <TestimonialsSection
+        testimonials={testimonials.map((testimonial) => ({
+          id: testimonial.id,
+          quote: testimonial.quote,
+          name: testimonial.name,
+          title: testimonial.title,
+          avatar_url: testimonial.avatar_url,
+        }))}
+      />
       <LatestBlogs />
     </div>
   );

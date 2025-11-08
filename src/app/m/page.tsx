@@ -7,6 +7,14 @@ import { EnquiryModal } from '@/components/mobile/EnquiryModal';
 import Image from 'next/image';
 import type { Property as PropertyType } from '@/types/property';
 
+interface Testimonial {
+  id: string;
+  quote: string;
+  name: string;
+  title: string;
+  avatar_url?: string | null;
+}
+
 interface Category {
   id: string;
   name: string;
@@ -43,6 +51,8 @@ export default function MobileHomePage() {
   const [loadingLocalities, setLoadingLocalities] = useState(true);
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loadingTestimonials, setLoadingTestimonials] = useState(true);
 
   useEffect(() => {
     setLoadingProperties(true);
@@ -99,6 +109,17 @@ export default function MobileHomePage() {
       .catch(() => {
         setBlogs([]);
         setLoadingBlogs(false);
+      });
+    setLoadingTestimonials(true);
+    fetch('/api/mobile/testimonials?limit=12')
+      .then(res => res.json())
+      .then(data => {
+        setTestimonials(data.testimonials || []);
+        setLoadingTestimonials(false);
+      })
+      .catch(() => {
+        setTestimonials([]);
+        setLoadingTestimonials(false);
       });
   }, []);
 
@@ -325,6 +346,69 @@ export default function MobileHomePage() {
               </div>
             </div>
           </>
+        )}
+      </section>
+
+      {/* Testimonials */}
+      <section className="pt-2">
+        <div className="flex items-center justify-between px-2 mb-4">
+          <h3 className="text-2xl font-bold text-gray-900">Our Testimonials</h3>
+        </div>
+        {loadingTestimonials ? (
+          <div className="flex items-center justify-center py-8">
+            <span className="text-gray-400 text-base">Loading testimonials...</span>
+          </div>
+        ) : testimonials.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No testimonials available.</p>
+          </div>
+        ) : (
+          <div className="relative">
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 pb-2 snap-x snap-mandatory">
+              {testimonials.map((testimonial) => (
+                <div
+                  key={testimonial.id}
+                  className="flex-shrink-0 w-[85vw] snap-center"
+                >
+                  <div className="h-full rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      {testimonial.avatar_url ? (
+                        <div className="h-12 w-12 overflow-hidden rounded-full border border-gray-200">
+                          <Image
+                            src={testimonial.avatar_url}
+                            alt={testimonial.name}
+                            width={48}
+                            height={48}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-sm font-semibold text-white">
+                          {testimonial.name
+                            .split(' ')
+                            .map(part => part.charAt(0).toUpperCase())
+                            .slice(0, 2)
+                            .join('')}
+                        </div>
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-gray-900">{testimonial.name}</span>
+                        <span className="text-xs text-gray-500">{testimonial.title}</span>
+                      </div>
+                    </div>
+                    <p className="mt-4 text-sm leading-relaxed text-gray-700">
+                      “{testimonial.quote}”
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-center gap-2 mt-3">
+              {testimonials.map((_, idx) => (
+                <span key={idx} className="w-2 h-2 rounded-full bg-gray-300" />
+              ))}
+            </div>
+          </div>
         )}
       </section>
 

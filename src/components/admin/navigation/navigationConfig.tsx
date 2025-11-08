@@ -66,6 +66,7 @@ export const navigationItems: NavigationItem[] = [
       { name: 'Policies Design', href: '/admin/frontend-ui/policies', icon: 'FileCheck' },
       { name: 'Public Listings', href: '/admin/frontend-ui/public-listings', icon: 'Megaphone' },
       { name: 'Popup Ads', href: '/admin/frontend-ui/popup-ads', icon: 'Zap' },
+      { name: 'Testimonials', href: '/admin/frontend-ui/testimonials', icon: 'MessageCircle' },
     ]
   },
   { name: 'SEO Configuration', href: '/admin/settings/seo-config', icon: 'BarChart3' },
