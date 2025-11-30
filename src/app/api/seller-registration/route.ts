@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseApiClient } from '@/lib/supabase/api'
-import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +37,24 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createSupabaseApiClient()
-    const adminSupabase = await createSupabaseAdminClient()
+
+    // REQUIRE AUTHENTICATION - Only authenticated users can register as sellers
+    const { data: { user: authenticatedUser }, error: authCheckError } = await supabase.auth.getUser()
+    
+    if (authCheckError || !authenticatedUser) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please log in to register as a seller.' },
+        { status: 401 }
+      )
+    }
+
+    // Verify the email matches the authenticated user's email
+    if (authenticatedUser.email !== email) {
+      return NextResponse.json(
+        { error: 'Email does not match your logged-in account. Please use your account email.' },
+        { status: 400 }
+      )
+    }
 
     // Check if seller already exists with this email
     const { data: existingSeller } = await supabase
@@ -50,17 +66,6 @@ export async function POST(request: NextRequest) {
     if (existingSeller) {
       return NextResponse.json(
         { error: 'A developer with this email already exists' },
-        { status: 409 }
-      )
-    }
-
-    // Check if user already exists in auth
-    const { data: existingUser } = await adminSupabase.auth.admin.listUsers()
-    const userExists = existingUser.users.find(u => u.email === email)
-    
-    if (userExists) {
-      return NextResponse.json(
-        { error: 'A user with this email already exists. Please log in instead.' },
         { status: 409 }
       )
     }
@@ -124,26 +129,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create user account in auth system
-    const generatedPassword = Math.random().toString(36).slice(-12); // Generate random password
-    
-    const { data: authUser, error: authError } = await adminSupabase.auth.admin.createUser({
-      email: email,
-      password: generatedPassword,
-      email_confirm: true, // Auto-confirm email
-      user_metadata: {
-        full_name: name,
-        role: 'customer' // Default role, can be updated later
-      }
-    });
-
-    if (authError) {
-      console.error('Error creating user account:', authError);
-      return NextResponse.json(
-        { error: 'Failed to create user account' },
-        { status: 500 }
-      );
-    }
+    // User is already authenticated - no need to create user account
 
     // Create new developer record
     const { data: newSeller, error } = await supabase
@@ -167,10 +153,6 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Error creating developer:', error)
-      // Clean up the created user if developer creation fails
-      if (authUser.user) {
-        await adminSupabase.auth.admin.deleteUser(authUser.user.id);
-      }
       return NextResponse.json(
         { error: 'Failed to create developer account' },
         { status: 500 }
@@ -186,11 +168,10 @@ export async function POST(request: NextRequest) {
         logo_url: newSeller.logo_url
       },
       user: {
-        id: authUser.user.id,
-        email: authUser.user.email,
-        password: generatedPassword // Return password for auto-login
+        id: authenticatedUser.id,
+        email: authenticatedUser.email
       },
-      message: 'Developer account created successfully'
+      message: 'Seller account created successfully. You can now add properties.'
     })
 
   } catch (error) {

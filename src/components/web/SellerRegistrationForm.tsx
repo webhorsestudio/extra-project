@@ -52,6 +52,27 @@ export default function SellerRegistrationForm() {
     logo: null
   });
 
+  // Check if user is authenticated and redirect if not
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        toast({
+          title: 'Authentication Required',
+          description: 'Please log in to register as a seller.',
+          variant: 'destructive',
+        });
+        setTimeout(() => {
+          router.push('/users/login');
+        }, 2000);
+      } else if (user.email && !formData.email) {
+        // Auto-fill email from authenticated user
+        updateFormData({ email: user.email });
+      }
+    };
+    checkAuth();
+  }, [router, toast, formData.email]);
+
   const updateFormData = useCallback((data: Partial<SellerFormData>) => {
     setFormData(prev => ({ ...prev, ...data }));
   }, []);
@@ -92,50 +113,14 @@ export default function SellerRegistrationForm() {
       const result = await response.json();
 
       if (response.ok) {
-        // Show success toast message
+        // User is already authenticated, just redirect to property form
         toast({
-          title: 'Developer Registration Successful!',
-          description: 'Your developer account has been created successfully. You can now start adding properties.',
+          title: 'Seller Registration Successful!',
+          description: 'Your seller account has been created. You can now add properties.',
         });
-        
-        // Auto-login the user after successful registration
-        try {
-          const { error: authError } = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: result.user?.password || '', // Use the password returned from API
-          });
-
-          if (authError) {
-            console.error('Auto-login error:', authError);
-            // If auto-login fails, redirect to login page
-            toast({
-              title: 'Account Created',
-              description: 'Please log in with your email to start adding properties.',
-            });
-            setTimeout(() => {
-              router.push('/users/login');
-            }, 2000);
-          } else {
-            // Auto-login successful, redirect to property form
-            toast({
-              title: 'Welcome!',
-              description: 'You have been automatically logged in. Redirecting to property form...',
-            });
-            setTimeout(() => {
-              router.push('/properties/add');
-            }, 2000);
-          }
-        } catch (loginError) {
-          console.error('Auto-login error:', loginError);
-          // Fallback to login page
-          toast({
-            title: 'Account Created',
-            description: 'Please log in with your email to start adding properties.',
-          });
-          setTimeout(() => {
-            router.push('/users/login');
-          }, 2000);
-        }
+        setTimeout(() => {
+          router.push('/properties/add');
+        }, 1500);
       } else {
         // Show error toast message
         toast({
