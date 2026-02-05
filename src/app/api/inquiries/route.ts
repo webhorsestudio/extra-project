@@ -57,15 +57,9 @@ export async function POST(req: NextRequest) {
       tour_status,
     } = formData
 
-    // Validation
+    // Validation (only name is required; email and message are optional)
     if (!(name as string)?.trim()) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
-    }
-    if (!(email as string)?.trim()) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
-    }
-    if (!(message as string)?.trim()) {
-      return NextResponse.json({ error: 'Message is required' }, { status: 400 })
     }
 
     const supabase = await createSupabaseApiClient()
@@ -111,16 +105,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Insert the inquiry
+    // Insert the inquiry (email and message optional)
     const { data, error: insertError } = await supabase
       .from('inquiries')
       .insert([
         {
           name: (name as string).trim(),
-          email: (email as string).trim(),
+          email: (email as string)?.trim() || null,
           phone: (phone as string)?.trim() || null,
           subject: (subject as string)?.trim() || null,
-          message: (message as string).trim(),
+          message: (message as string)?.trim() || null,
           priority,
           category,
           inquiry_type,

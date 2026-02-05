@@ -202,7 +202,7 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
           email: tourForm.email,
           phone: tourForm.phone,
           message: 'Tour request',
-          inquiry_type: 'tour',
+          inquiry_type: 'tour_booking',
           property_id: property.id,
           property_name: property.title,
           property_location: property.location,
@@ -306,7 +306,7 @@ export default function PropertyEnquiryForm({ property }: PropertyEnquiryFormPro
             </div>
           )}
           <textarea
-            placeholder={`I'm interested in learning more about ${property.title} in ${property.location_data?.name || property.location}.`}
+            placeholder={`I'm interested in learning more about ${property.title} in ${property.location_data?.name || property.location}. (optional)`}
             className="w-full rounded-xl border border-gray-200 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#0A1736] resize-none"
             rows={3}
             value={contactForm.message}

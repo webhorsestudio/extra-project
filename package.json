@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "node -e \"const fs=require('fs');const p='node_modules/.bin';try{fs.readdirSync(p).filter(f=>!f.endsWith('.cmd')&&!f.endsWith('.ps1')).forEach(f=>{try{fs.chmodSync(p+'/'+f,0o755)}catch(_){}})}catch(_){}\"",
     "dev": "next dev",
     "dev:no-warnings": "next dev",
     "build": "next build",
@@ -54,13 +55,13 @@
     "embla-carousel-react": "^8.6.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.511.0",
-    "next": "^15.3.4",
+    "next": "^15.3.9",
     "next-themes": "^0.4.6",
     "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.5",
-    "react": "^19.1.0",
+    "react": "^19.1.5",
     "react-day-picker": "^9.7.0",
-    "react-dom": "^19.1.0",
+    "react-dom": "^19.1.5",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.56.4",
     "react-icons": "^4.12.0",
@@ -81,12 +82,15 @@
     "@types/react-dom": "^19",
     "dotenv": "^16.6.1",
     "eslint": "^9",
-    "eslint-config-next": "^15.3.4",
+    "eslint-config-next": "^15.3.9",
     "puppeteer": "^24.16.2",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
     "ts-node": "^10.9.2",
     "tw-animate-css": "^1.3.0",
     "typescript": "^5"
+  },
+  "optionalDependencies": {
+    "lightningcss-darwin-arm64": "^1.30.1"
   }
 }

@@ -25,7 +25,7 @@ export async function POST(
       .from('property_views')
       .select('id')
       .eq('property_id', id)
-      .eq('ip_address', ip)
+      .eq('viewer_ip', ip)
       .eq('user_agent', userAgent)
       .gte('created_at', yesterday.toISOString())
       .single()
@@ -39,7 +39,7 @@ export async function POST(
       .from('property_views')
       .insert([{
         property_id: id,
-        ip_address: ip,
+        viewer_ip: ip,
         user_agent: userAgent,
         viewed_at: new Date().toISOString()
       }])

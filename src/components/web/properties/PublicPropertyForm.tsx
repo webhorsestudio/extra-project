@@ -919,13 +919,13 @@ export const PublicPropertyForm: React.FC = () => {
           type="text" 
           value={formData.title}
           onChange={(e) => updateFormData('title', e.target.value)}
-          maxLength={25}
+          maxLength={50}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-          placeholder="Enter property title (max 25 characters)" 
+          placeholder="Enter property title (max 50 characters)" 
         />
         <div className="flex justify-between items-center mt-1">
           <span className="text-xs text-gray-500">
-            {formData.title.length}/25 characters
+            {formData.title.length}/50 characters
           </span>
         </div>
       </div>
